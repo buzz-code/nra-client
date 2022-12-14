@@ -4,16 +4,7 @@ import { RequestQueryBuilder } from '@nestjsx/crud-request';
 import { stringify } from 'query-string';
 
 import { apiUrl } from './constantsProvider';
-
-
-const fetchJson = (url, options = {}) => {
-    if (!options.headers) {
-        options.headers = new Headers({});
-    }
-    const token = localStorage.getItem('auth');
-    options.headers.set('Authorization', `Bearer ${token}`);
-    return fetchUtils.fetchJson(url, options);
-}
+import { fetchJson } from '@shared/utils/httpUtil';
 
 const dataProvider = crudProvider(apiUrl, fetchJson);
 
