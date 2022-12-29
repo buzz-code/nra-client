@@ -47,7 +47,7 @@ const authProvider = {
         return identity;
     },
     getPermissions: async () => {
-        const { permissions } = authProvider.getIdentity();
+        const { permissions } = await authProvider.getIdentity();
         return permissions;
     },
 };
