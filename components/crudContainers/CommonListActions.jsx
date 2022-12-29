@@ -1,8 +1,8 @@
 import { useMemo, useContext } from 'react';
-import { List, Datagrid, CreateButton, ExportButton, TopToolbar, BulkDeleteButton, FilterButton, useListContext, useResourceContext, useResourceDefinition, FilterContext } from 'react-admin';
-import { ImportButton } from './ImportButton';
+import { CreateButton, ExportButton, TopToolbar, FilterButton, useListContext, useResourceContext, useResourceDefinition, FilterContext } from 'react-admin';
+import { ImportButton } from '@shared/components/crudContainers/ImportButton';
 
-const ListActions = ({ importer, ...props }) => {
+export const CommonListActions = ({ importer, ...props }) => {
     const {
         sort,
         filterValues,
@@ -49,23 +49,3 @@ const ListActions = ({ importer, ...props }) => {
         ]
     );
 }
-
-const BulkActionButtons = () => (
-    <>
-        {/* <BulkExportButton /> */}
-        <BulkDeleteButton />
-    </>
-);
-
-
-export const CommonList = ({ children, importer, ...props }) => (
-    <List actions={<ListActions importer={importer} />} {...props}>
-        {children}
-    </List>
-)
-
-export const CommonDatagrid = ({ children, ...props }) => (
-    <Datagrid rowClick="edit" bulkActionButtons={<BulkActionButtons />} {...props}>
-        {children}
-    </Datagrid>
-)

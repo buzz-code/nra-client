@@ -3,7 +3,7 @@ import { fetchUtils } from 'react-admin';
 import { RequestQueryBuilder } from '@nestjsx/crud-request';
 import { stringify } from 'query-string';
 
-import { apiUrl } from './constantsProvider';
+import { apiUrl } from '@shared/providers/constantsProvider';
 import { fetchJson } from '@shared/utils/httpUtil';
 
 const dataProvider = crudProvider(apiUrl, fetchJson);

@@ -1,5 +1,5 @@
 import { fetchJson } from "@shared/utils/httpUtil";
-import { apiUrl } from "./constantsProvider";
+import { apiUrl } from "@shared/providers/constantsProvider";
 
 const authProvider = {
     login: async ({ username, password }) => {

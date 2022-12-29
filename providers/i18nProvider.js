@@ -1,7 +1,7 @@
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import en from 'ra-language-english';
 import he from 'ra-language-hebrew-il';
-import { deepMerge } from '../utils/deepMerge';
+import { deepMerge } from '@shared/utils/deepMerge';
 
 export const generalResourceFieldsTranslation = {
     id: 'מזהה',

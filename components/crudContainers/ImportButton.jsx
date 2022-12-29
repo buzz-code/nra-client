@@ -8,7 +8,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import LinearProgress from '@mui/material/LinearProgress';
 import { useMutation } from 'react-query';
-import { useIsAdmin } from './AdminRestricted';
+import { useIsAdmin } from '@shared/utils/permissionsUtil';
 
 export const ImportButton = ({ resource, refetch, fields, datagrid }) => {
     const [uploadedData, setUploadedData] = useState(null);

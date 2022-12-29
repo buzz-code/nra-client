@@ -1,7 +1,7 @@
-import { useIsAdmin } from '@shared/components/AdminRestricted';
-import { CommonList } from '@shared/components/CommonList';
-import { CommonEdit } from '@shared/components/CommonEdit';
-import { CommonCreate } from '@shared/components/CommonCreate';
+import { useIsAdmin } from '@shared/utils/permissionsUtil';
+import { CommonList } from '@shared/components/crudContainers/CommonList';
+import { CommonEdit } from '@shared/components/crudContainers/CommonEdit';
+import { CommonCreate } from '@shared/components/crudContainers/CommonCreate';
 
 export function getResourceComponents({ Datagrid, Inputs, Representation = 'id', filters = [], importer = null }) {
     const importerDef = importer
