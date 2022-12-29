@@ -10,7 +10,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { useMutation } from 'react-query';
 import { useIsAdmin } from './AdminRestricted';
 
-export const ImportButton = ({ resource, fields, datagrid }) => {
+export const ImportButton = ({ resource, refetch, fields, datagrid }) => {
     const [uploadedData, setUploadedData] = useState(null);
     //todo: do something with file name
     const [fileName, setFileName] = useState(null);
@@ -26,6 +26,7 @@ export const ImportButton = ({ resource, fields, datagrid }) => {
             setFileName(null);
 
             notify('ra.message.import_success', { type: 'info' });
+            refetch();
         },
         onError: (err) => {
             notify('ra.message.error', { type: 'warning' });

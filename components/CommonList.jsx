@@ -8,6 +8,7 @@ const ListActions = ({ importer, ...props }) => {
         filterValues,
         exporter,
         total,
+        refetch,
     } = useListContext(props);
     const resource = useResourceContext(props);
     const { hasCreate } = useResourceDefinition(props);
@@ -29,6 +30,7 @@ const ListActions = ({ importer, ...props }) => {
                 {importer !== null && (
                     <ImportButton
                         resource={resource}
+                        refetch={refetch}
                         fields={importer.fields}
                         datagrid={importer.datagrid}
                     />
