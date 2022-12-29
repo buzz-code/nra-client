@@ -58,8 +58,16 @@ dataProvider.getCount = (resource, params) => {
 };
 
 dataProvider.simulateYemotCall = async (body) => fetchJson(
-    apiUrl + '/yemot_call/handle-call',
+    `${apiUrl}/yemot_call/handle-call`,
     {
         method: 'POST',
         body: JSON.stringify(body)
+    }
+);
+
+dataProvider.createMany = (resource, bulk) => fetchJson(
+    `${apiUrl}/${resource}/bulk`,
+    {
+        method: 'POST',
+        body: JSON.stringify({ bulk }),
     })

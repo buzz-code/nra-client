@@ -1,7 +1,8 @@
 import { useMemo, useContext } from 'react';
 import { List, Datagrid, CreateButton, ExportButton, TopToolbar, BulkDeleteButton, FilterButton, useListContext, useResourceContext, useResourceDefinition, FilterContext } from 'react-admin';
+import { ImportButton } from './ImportButton';
 
-const ListActions = (props) => {
+const ListActions = ({ importer, ...props }) => {
     const {
         sort,
         filterValues,
@@ -23,6 +24,13 @@ const ListActions = (props) => {
                         resource={resource}
                         sort={sort}
                         filterValues={filterValues}
+                    />
+                )}
+                {importer !== null && (
+                    <ImportButton
+                        resource={resource}
+                        fields={importer.fields}
+                        datagrid={importer.datagrid}
                     />
                 )}
             </TopToolbar>
@@ -48,8 +56,8 @@ const BulkActionButtons = () => (
 );
 
 
-export const CommonList = ({ children, ...props }) => (
-    <List actions={<ListActions />} {...props}>
+export const CommonList = ({ children, importer, ...props }) => (
+    <List actions={<ListActions importer={importer} />} {...props}>
         {children}
     </List>
 )

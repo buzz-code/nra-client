@@ -25,10 +25,13 @@ const extendedTranslation = {
             open: 'פתיחה',
             toggle_theme: 'החלפת ערכת נושא',
             select_columns: 'עמודות',
+            import: 'ייבא',
         },
         message: {
             bulk_update_content: 'האם אתה בטוח שברצונך לעדכן %{name}? |||| האם אתה בטוח שברצונך לעדכן רשומות %{smart_count}?',
             bulk_update_title: 'עדכון %{name} |||| עדכון %{smart_count} %{name}',
+            import_title: 'ייבוא רשומות',
+            import_success: 'הייבוא הסתיים בהצלחה',
         },
         navigation: {
             partial_page_range_info: '%{offsetBegin}-%{offsetEnd} מתוך יותר מ %{offsetEnd}',

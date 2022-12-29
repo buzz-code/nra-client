@@ -3,12 +3,19 @@ import { CommonList } from '@shared/components/CommonList';
 import { CommonEdit } from '@shared/components/CommonEdit';
 import { CommonCreate } from '@shared/components/CommonCreate';
 
-export function getResourceComponents({ Datagrid, Inputs, Representation = 'id', filters = [] }) {
+export function getResourceComponents({ Datagrid, Inputs, Representation = 'id', filters = [], importer = null }) {
+    const importerDef = importer
+        ? {
+            ...importer,
+            datagrid: Datagrid
+        }
+        : null;
+
     const List = () => {
         const isAdmin = useIsAdmin();
 
         return (
-            <CommonList filters={filters}>
+            <CommonList filters={filters} importer={importerDef}>
                 <Datagrid isAdmin={isAdmin} />
             </CommonList>
         );
