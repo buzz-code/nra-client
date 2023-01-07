@@ -70,4 +70,31 @@ dataProvider.createMany = (resource, bulk) => fetchJson(
     {
         method: 'POST',
         body: JSON.stringify({ bulk }),
+    }
+);
+
+dataProvider.export = (resource, params, format) => {
+    const { page, perPage } = params.pagination;
+    const { q: queryParams, $OR: orFilter, ...filter } = params.filter || {};
+
+    const encodedQueryParams = composeQueryParams(queryParams)
+    const encodedQueryFilter = RequestQueryBuilder.create({
+        filter: composeFilter(filter),
+        or: composeFilter(orFilter || {})
     })
+        .setLimit(perPage)
+        .setPage(page)
+        .sortBy(params.sort)
+        .setOffset((page - 1) * perPage)
+        .query();
+
+    const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter);
+
+    const url = `${apiUrl}/${resource}/export/${format}?${query}`;
+
+    window.open(url, '_blank');
+    // return fetchJson(url).then(({ json }) => ({
+    //     data: json.data,
+    //     total: json.total,
+    // }));
+};

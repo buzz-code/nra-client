@@ -9,8 +9,8 @@ const BulkActionButtons = () => (
 );
 
 
-export const CommonList = ({ children, importer, ...props }) => (
-    <List actions={<CommonListActions importer={importer} />} {...props}>
+export const CommonList = ({ children, importer, exporter, ...props }) => (
+    <List actions={<CommonListActions importer={importer} />} exporter={exporter} {...props}>
         {children}
     </List>
 )

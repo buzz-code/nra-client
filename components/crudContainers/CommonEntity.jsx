@@ -3,7 +3,7 @@ import { CommonList } from '@shared/components/crudContainers/CommonList';
 import { CommonEdit } from '@shared/components/crudContainers/CommonEdit';
 import { CommonCreate } from '@shared/components/crudContainers/CommonCreate';
 
-export function getResourceComponents({ Datagrid, Inputs, Representation = 'id', filters = [], importer = null }) {
+export function getResourceComponents({ Datagrid, Inputs, Representation = 'id', filters = [], importer = null, exporter = true }) {
     const importerDef = importer
         ? {
             ...importer,
@@ -15,7 +15,7 @@ export function getResourceComponents({ Datagrid, Inputs, Representation = 'id',
         const isAdmin = useIsAdmin();
 
         return (
-            <CommonList filters={filters} importer={importerDef}>
+            <CommonList filters={filters} importer={importerDef} exporter={exporter}>
                 <Datagrid isAdmin={isAdmin} />
             </CommonList>
         );
