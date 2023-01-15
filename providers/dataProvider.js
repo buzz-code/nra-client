@@ -1,7 +1,8 @@
 import crudProvider from 'ra-data-nestjsx-crud';
-import { fetchUtils } from 'react-admin';
+import { fetchUtils, HttpError } from 'react-admin';
 import { RequestQueryBuilder } from '@nestjsx/crud-request';
 import { stringify } from 'query-string';
+import { saveAs } from 'file-saver';
 
 import { apiUrl } from '@shared/providers/constantsProvider';
 import { fetchJson } from '@shared/utils/httpUtil';
@@ -73,7 +74,7 @@ dataProvider.createMany = (resource, bulk) => fetchJson(
     }
 );
 
-dataProvider.export = (resource, params, format) => {
+dataProvider.export = (resource, params, format, resourceLabel) => {
     const { page, perPage } = params.pagination;
     const { q: queryParams, $OR: orFilter, ...filter } = params.filter || {};
 
@@ -92,12 +93,30 @@ dataProvider.export = (resource, params, format) => {
 
     const url = `${apiUrl}/${resource}/export/${format}?${query}`;
 
-    window.open(url, '_blank');
-
-    return Promise.resolve();
-
-    // return fetchJson(url).then(({ json }) => ({
-    //     data: json.data,
-    //     total: json.total,
-    // }));
+    return fetch(url, { credentials: 'include' })
+        .then(response =>
+            response.blob().then(blob => ({
+                status: response.status,
+                statusText: response.statusText,
+                headers: response.headers,
+                body: blob,
+            }))
+        )
+        .then(({ status, statusText, headers, body }) => {
+            if (status < 200 || status >= 300) {
+                return Promise.reject(
+                    new HttpError(
+                        statusText,
+                        status
+                    )
+                );
+            }
+            return Promise.resolve({ status, headers, body });
+        })
+        .then(({ body }) => {
+            const timestamp = new Date().toISOString();
+            const extension = format === 'excel' ? 'xlsx' : 'pdf';
+            const filename = `${resourceLabel}-${timestamp}.${extension}`;
+            saveAs(body, filename);
+        });
 };

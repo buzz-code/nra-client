@@ -9,6 +9,7 @@ import {
     SortPayload,
     FilterPayload,
     useResourceContext,
+    useGetResourceLabel,
 } from 'ra-core';
 import { Button, ButtonProps } from 'react-admin';
 
@@ -28,17 +29,21 @@ export const ExportButton = (props: ExportButtonProps) => {
     } = useListContext(props);
     const resource = useResourceContext(props);
     const dataProvider = useDataProvider();
+    const getResourceLabel = useGetResourceLabel();
     const notify = useNotify();
     const handleClick = useCallback(
         event => {
             dataProvider
-                .export(resource, {
-                    sort,
-                    filter: filter
-                        ? { ...filterValues, ...filter }
-                        : filterValues,
-                    pagination: { page: 1, perPage: maxResults },
-                }, 'excel')
+                .export(resource,
+                    {
+                        sort,
+                        filter: filter
+                            ? { ...filterValues, ...filter }
+                            : filterValues,
+                        pagination: { page: 1, perPage: maxResults },
+                    },
+                    'excel',
+                    getResourceLabel(resource))
                 .catch(error => {
                     console.error(error);
                     notify('ra.notification.http_error', { type: 'warning' });
@@ -49,6 +54,7 @@ export const ExportButton = (props: ExportButtonProps) => {
             filter,
             filterValues,
             maxResults,
+            getResourceLabel,
             notify,
             resource,
             sort,
