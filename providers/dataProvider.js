@@ -93,6 +93,9 @@ dataProvider.export = (resource, params, format) => {
     const url = `${apiUrl}/${resource}/export/${format}?${query}`;
 
     window.open(url, '_blank');
+
+    return Promise.resolve();
+
     // return fetchJson(url).then(({ json }) => ({
     //     data: json.data,
     //     total: json.total,
