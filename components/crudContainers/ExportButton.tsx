@@ -42,7 +42,8 @@ export const ExportButton = (props: ExportButtonProps) => {
                             : filterValues,
                         pagination: { page: 1, perPage: maxResults },
                     },
-                    'excel',
+                    'pdf',
+                    // 'excel',
                     getResourceLabel(resource))
                 .catch(error => {
                     console.error(error);
