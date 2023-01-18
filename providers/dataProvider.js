@@ -93,30 +93,12 @@ dataProvider.export = (resource, params, format, resourceLabel) => {
 
     const url = `${apiUrl}/${resource}/export/${format}?${query}`;
 
-    return fetch(url, { credentials: 'include' })
-        .then(response =>
-            response.blob().then(blob => ({
-                status: response.status,
-                statusText: response.statusText,
-                headers: response.headers,
-                body: blob,
-            }))
-        )
-        .then(({ status, statusText, headers, body }) => {
-            if (status < 200 || status >= 300) {
-                return Promise.reject(
-                    new HttpError(
-                        statusText,
-                        status
-                    )
-                );
-            }
-            return Promise.resolve({ status, headers, body });
-        })
-        .then(({ body }) => {
+    return fetchJson(url)
+        .then(async ({ json }) => {
+            const blob = await fetch(`data:${json.type};base64,${json.data}`).then(res => res.blob());
             const timestamp = new Date().toISOString();
             const extension = format === 'excel' ? 'xlsx' : 'pdf';
             const filename = `${resourceLabel}-${timestamp}.${extension}`;
-            saveAs(body, filename);
+            saveAs(blob, filename);
         });
 };
