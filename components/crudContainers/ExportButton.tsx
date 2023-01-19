@@ -12,6 +12,8 @@ import {
     useGetResourceLabel,
 } from 'ra-core';
 import { Button, ButtonProps } from 'react-admin';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 export const ExportButton = (props: ExportButtonProps) => {
     const {
@@ -31,8 +33,10 @@ export const ExportButton = (props: ExportButtonProps) => {
     const dataProvider = useDataProvider();
     const getResourceLabel = useGetResourceLabel();
     const notify = useNotify();
-    const handleClick = useCallback(
-        event => {
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const handleExport = useCallback(
+        format => {
             dataProvider
                 .export(resource,
                     {
@@ -42,8 +46,7 @@ export const ExportButton = (props: ExportButtonProps) => {
                             : filterValues,
                         pagination: { page: 1, perPage: maxResults },
                     },
-                    'pdf',
-                    // 'excel',
+                    format,
                     getResourceLabel(resource))
                 .catch(error => {
                     console.error(error);
@@ -62,7 +65,14 @@ export const ExportButton = (props: ExportButtonProps) => {
         ]
     );
 
-    return (
+    const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    }, [setAnchorEl]);
+    const handleClose = useCallback(() => setAnchorEl(null), [setAnchorEl]);
+    const handleExportExcel = useCallback(() => (handleClose(), handleExport('excel')), [handleClose, handleExport]);
+    const handleExportPdf = useCallback(() => (handleClose(), handleExport('pdf')), [handleClose, handleExport]);
+
+    return <>
         <Button
             onClick={handleClick}
             label={label}
@@ -71,7 +81,15 @@ export const ExportButton = (props: ExportButtonProps) => {
         >
             {icon}
         </Button>
-    );
+        <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+        >
+            <MenuItem onClick={handleExportExcel}>Excel</MenuItem>
+            <MenuItem onClick={handleExportPdf}>Pdf</MenuItem>
+        </Menu>
+    </>;
 };
 
 const defaultIcon = <DownloadIcon />;
