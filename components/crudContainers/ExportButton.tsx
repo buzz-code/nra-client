@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import DownloadIcon from '@mui/icons-material/GetApp';
+import DownloadingIcon from '@mui/icons-material/Downloading';
 import {
     useDataProvider,
     useNotify,
@@ -34,9 +35,11 @@ export const ExportButton = (props: ExportButtonProps) => {
     const getResourceLabel = useGetResourceLabel();
     const notify = useNotify();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [isLoading, setIsLoading] = React.useState<Boolean>(false);
     const open = Boolean(anchorEl);
     const handleExport = useCallback(
         format => {
+            setIsLoading(true);
             dataProvider
                 .export(resource,
                     {
@@ -51,6 +54,9 @@ export const ExportButton = (props: ExportButtonProps) => {
                 .catch(error => {
                     console.error(error);
                     notify('ra.notification.http_error', { type: 'warning' });
+                })
+                .finally(() => {
+                    setIsLoading(false);
                 });
         },
         [
@@ -79,7 +85,7 @@ export const ExportButton = (props: ExportButtonProps) => {
             disabled={total === 0}
             {...sanitizeRestProps(rest)}
         >
-            {icon}
+            {isLoading ? loader : icon}
         </Button>
         <Menu
             anchorEl={anchorEl}
@@ -93,6 +99,7 @@ export const ExportButton = (props: ExportButtonProps) => {
 };
 
 const defaultIcon = <DownloadIcon />;
+const loader = <DownloadingIcon />;
 
 const sanitizeRestProps = ({
     filterValues,
