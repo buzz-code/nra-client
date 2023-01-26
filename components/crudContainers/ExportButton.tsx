@@ -11,6 +11,7 @@ import {
     FilterPayload,
     useResourceContext,
     useGetResourceLabel,
+    useTranslate,
 } from 'ra-core';
 import { Button, ButtonProps } from 'react-admin';
 import Menu from '@mui/material/Menu';
@@ -32,6 +33,7 @@ export const ExportButton = (props: ExportButtonProps) => {
     } = useListContext(props);
     const resource = useResourceContext(props);
     const dataProvider = useDataProvider();
+    const translate = useTranslate()
     const getResourceLabel = useGetResourceLabel();
     const notify = useNotify();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -92,8 +94,8 @@ export const ExportButton = (props: ExportButtonProps) => {
             open={open}
             onClose={handleClose}
         >
-            <MenuItem onClick={handleExportExcel}>Excel</MenuItem>
-            <MenuItem onClick={handleExportPdf}>Pdf</MenuItem>
+            <MenuItem onClick={handleExportExcel}>{translate('ra.action.exportExcel')}</MenuItem>
+            <MenuItem onClick={handleExportPdf}>{translate('ra.action.exportPdf')}</MenuItem>
         </Menu>
     </>;
 };

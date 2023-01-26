@@ -4,6 +4,9 @@ const theme = {
     ...defaultTheme,
     direction: 'rtl',
     isRtl: true,
+    palette: {
+        type: "light"
+    },
     components: {
         ...defaultTheme.components,
         RaLayout: {
@@ -15,24 +18,7 @@ const theme = {
                     },
                 }
             }
-        },
-        RaUserMenu: {
-            styleOverrides: {
-                root: {
-                    "& .MuiButton-startIcon": {
-                        marginInlineEnd: 8,
-                        marginInlineStart: -4
-                    }
-                }
-            }
-        },
-        MuiTableCell: {
-            styleOverrides: {
-                root: {
-                    textAlign: 'right'
-                }
-            }
-        },
+        }
     }
 };
 

@@ -62,7 +62,7 @@ const YemotSimulator = () => {
     const toolbar = (
         <Toolbar>
             <SaveButton disabled={isHangup} />
-            <RefreshButton onClick={handleReload} />
+            <RefreshButton onClick={handleReload} sx={{marginInline: '1rem'}} size='medium'/>
             <HangupButton params={params} isHangup={isHangup} handleSubmit={handleSubmit} />
         </Toolbar>
     )
@@ -114,6 +114,6 @@ const HangupButton = ({ params, isHangup, handleSubmit }) => {
         return null;
     }
     
-    return <SaveButton onClick={handleClick} icon={<CallEndIcon />} disabled={!params.length} />
+    return <SaveButton onClick={handleClick} label={'ra.action.hangup'} icon={<CallEndIcon />} disabled={!params.length} />
 }
 export default YemotSimulator;

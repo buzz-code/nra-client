@@ -26,6 +26,9 @@ const extendedTranslation = {
             toggle_theme: 'החלפת ערכת נושא',
             select_columns: 'עמודות',
             import: 'ייבא',
+            exportExcel: 'אקסל',
+            exportPdf: 'pdf',
+            hangup: 'נתק שיחה',
         },
         message: {
             bulk_update_content: 'האם אתה בטוח שברצונך לעדכן %{name}? |||| האם אתה בטוח שברצונך לעדכן רשומות %{smart_count}?',
@@ -81,6 +84,6 @@ export const getI18nProvider = (domainTranslations) => {
         'he', // default locale
         [{ locale: 'en', name: 'English' }, { locale: 'he', name: 'עברית' }],
     );
-    
+
     return i18nProvider;
 }

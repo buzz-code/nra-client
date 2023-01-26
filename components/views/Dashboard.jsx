@@ -3,13 +3,13 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import Loading from '@mui/material/LinearProgress';
+import CircularProgress from '@mui/material/CircularProgress';
 import { createElement, useEffect } from 'react';
 import { Title, useDataProvider, useGetResourceLabel } from 'react-admin';
 import { Link } from 'react-router-dom';
 import { useMutation } from 'react-query';
 
-export default ({items}) => {
+export default ({ items }) => {
     return <Grid container spacing={2} mt={1}>
         <Grid item xs={12}>
             <Title title={"לוח המחוונים"} />
@@ -46,6 +46,12 @@ const DashboardItem = ({ resource, icon, title }) => {
         />
     )
 }
+
+const Loading = () => (
+    <Box height='2rem' display='flex' alignItems='center' justifyContent='center'>
+        <CircularProgress size='1.5rem' />
+    </Box>
+)
 
 const CardWithIcon = ({ icon, title, subtitle, to, children }) => {
     return (
