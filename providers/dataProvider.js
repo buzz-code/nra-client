@@ -1,6 +1,6 @@
 import crudProvider from 'ra-data-nestjsx-crud';
 import { fetchUtils, HttpError } from 'react-admin';
-import { RequestQueryBuilder } from '@nestjsx/crud-request';
+import { CondOperator, RequestQueryBuilder } from '@nestjsx/crud-request';
 import { stringify } from 'query-string';
 import { saveAs } from 'file-saver';
 
