@@ -15,8 +15,8 @@ export const CommonList = ({ children, importer, exporter, ...props }) => (
     </List>
 )
 
-export const CommonDatagrid = ({ children, ...props }) => (
-    <Datagrid rowClick="edit" bulkActionButtons={<BulkActionButtons />} {...props}>
+export const CommonDatagrid = ({ children, readonly, ...props }) => (
+    <Datagrid rowClick={!readonly && 'edit'} bulkActionButtons={!readonly && <BulkActionButtons />} {...props}>
         {children}
     </Datagrid>
 )
