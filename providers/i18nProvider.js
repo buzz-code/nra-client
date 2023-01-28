@@ -10,6 +10,7 @@ export const generalResourceFieldsTranslation = {
     userId: 'משתמש',
     createdAt: 'תאריך יצירה',
     updatedAt: 'תאריך עדכון',
+    'name:$cont': 'שם',
 }
 
 const extendedTranslation = {
