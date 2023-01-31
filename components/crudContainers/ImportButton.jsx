@@ -41,7 +41,7 @@ export const ImportButton = ({ resource, refetch, fields, datagrid }) => {
     const handleDataParse = useCallback(({ name, data }) => {
         setUploadedData(data);
         setFileName(name);
-    }, [setUploadedData]);
+    }, [setUploadedData, setFileName]);
 
     const handlePreviewClose = useCallback((isSave, userId) => {
         if (isSave) {
