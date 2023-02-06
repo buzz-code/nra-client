@@ -21,7 +21,7 @@ export function getResourceComponents({ Datagrid, Inputs, Representation = 'id',
         );
     }
 
-    const Edit = () => {
+    const Edit = Inputs && (() => {
         const isAdmin = useIsAdmin();
 
         return (
@@ -29,9 +29,9 @@ export function getResourceComponents({ Datagrid, Inputs, Representation = 'id',
                 <Inputs isAdmin={isAdmin} isCreate={false} />
             </CommonEdit>
         );
-    }
+    })
 
-    const Create = () => {
+    const Create = Inputs && (() => {
         const isAdmin = useIsAdmin();
 
         return (
@@ -39,7 +39,7 @@ export function getResourceComponents({ Datagrid, Inputs, Representation = 'id',
                 <Inputs isAdmin={isAdmin} isCreate={true} />
             </CommonCreate>
         );
-    }
+    })
 
     return {
         list: List,
