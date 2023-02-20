@@ -36,7 +36,7 @@ interface ExtendedDataProvider extends DataProvider {
   getCount: (
     resource: string,
     params: GetListParams,
-  ) => Promise<{ count: Number }>;
+  ) => Promise<Number>;
   export: (
     resource: string,
     params: GetListParams,
@@ -217,7 +217,6 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
     ).then((responses) => ({ data: responses.map(({ json }) => json) })),
 
   getCount: (resource, params) => {
-    const { page, perPage } = params.pagination;
     const { q: queryParams, $OR: orFilter, ...filter } = params.filter || {};
 
     const encodedQueryParams = composeQueryParams(queryParams)
@@ -225,10 +224,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
       filter: composeFilter(filter),
       or: composeFilter(orFilter || {})
     })
-      .setLimit(perPage)
-      .setPage(page)
       .sortBy(params.sort as QuerySort)
-      .setOffset((page - 1) * perPage)
       .setJoin(getQueryJoin(params.sort as QuerySort))
       .query();
 
@@ -236,9 +232,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
     const url = `${apiUrl}/${resource}/get-count?${query}`;
 
-    return httpClient(url).then(({ json }) => ({
-      count: json.count,
-    }));
+    return httpClient(url).then(({ json }) => json.count);
   },
 
   export: (resource, params, format, resourceLabel) => {
