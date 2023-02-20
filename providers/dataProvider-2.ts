@@ -2,6 +2,8 @@ import { CondOperator, QueryFilter, QueryJoin, QuerySort, RequestQueryBuilder } 
 import omitBy from 'lodash.omitby';
 import { DataProvider, fetchUtils } from 'ra-core';
 import { stringify } from 'query-string';
+import { GetListParams, RaRecord } from 'react-admin';
+import saveAs from 'file-saver';
 
 /**
  * Maps react-admin queries to a nestjsx/crud powered REST API
@@ -26,10 +28,32 @@ import { stringify } from 'query-string';
  * export default App;
  */
 
+interface ExtendedDataProvider extends DataProvider {
+  createMany: (
+    resource: string,
+    bulk: RaRecord[],
+  ) => Promise<RaRecord[]>;
+  getCount: (
+    resource: string,
+    params: GetListParams,
+  ) => Promise<{ count: Number }>;
+  export: (
+    resource: string,
+    params: GetListParams,
+    format: string,
+    resourceLabel: string,
+  ) => Promise<void>;
+  exec: (
+    resource: string,
+    url: string,
+    params: fetchUtils.Options
+  ) => Promise<any>;
+}
+
 const countDiff = (o1: Record<string, any>, o2: Record<string, any>): Record<string, any> =>
   omitBy(o1, (v, k) => o2[k] === v);
 
-exconst composeFilter = (paramsFilter: any): QueryFilter[] => {
+const composeFilter = (paramsFilter: any): QueryFilter[] => {
   const flatFilter = fetchUtils.flattenObject(paramsFilter);
   return Object.keys(flatFilter).map((key) => {
     const splitKey = key.split(/\|\||:/)
@@ -66,7 +90,7 @@ const getQueryJoin = (sort: QuerySort): QueryJoin => {
   return null;
 }
 
-export default (apiUrl: string, httpClient = fetchUtils.fetchJson): DataProvider => ({
+export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedDataProvider => ({
   getList: (resource, params) => {
     const { page, perPage } = params.pagination;
     const { q: queryParams, $OR: orFilter, ...filter } = params.filter || {};
@@ -172,6 +196,12 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): DataProvider
       data: { ...params.data, id: json.id },
     })),
 
+  createMany: (resource, bulk) =>
+    httpClient(`${apiUrl}/${resource}/bulk`, {
+      method: 'POST',
+      body: JSON.stringify({ bulk }),
+    }).then(({ json }) => json),
+
   delete: (resource, params) =>
     httpClient(`${apiUrl}/${resource}/${params.id}`, {
       method: 'DELETE',
@@ -185,4 +215,62 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): DataProvider
         }),
       ),
     ).then((responses) => ({ data: responses.map(({ json }) => json) })),
+
+  getCount: (resource, params) => {
+    const { page, perPage } = params.pagination;
+    const { q: queryParams, $OR: orFilter, ...filter } = params.filter || {};
+
+    const encodedQueryParams = composeQueryParams(queryParams)
+    const encodedQueryFilter = RequestQueryBuilder.create({
+      filter: composeFilter(filter),
+      or: composeFilter(orFilter || {})
+    })
+      .setLimit(perPage)
+      .setPage(page)
+      .sortBy(params.sort as QuerySort)
+      .setOffset((page - 1) * perPage)
+      .setJoin(getQueryJoin(params.sort as QuerySort))
+      .query();
+
+    const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter);
+
+    const url = `${apiUrl}/${resource}/get-count?${query}`;
+
+    return httpClient(url).then(({ json }) => ({
+      count: json.count,
+    }));
+  },
+
+  export: (resource, params, format, resourceLabel) => {
+    const { page, perPage } = params.pagination;
+    const { q: queryParams, $OR: orFilter, ...filter } = params.filter || {};
+
+    const encodedQueryParams = composeQueryParams(queryParams)
+    const encodedQueryFilter = RequestQueryBuilder.create({
+      filter: composeFilter(filter),
+      or: composeFilter(orFilter || {})
+    })
+      .setLimit(perPage)
+      .setPage(page)
+      .sortBy(params.sort as QuerySort)
+      .setOffset((page - 1) * perPage)
+      .setJoin(getQueryJoin(params.sort as QuerySort))
+      .query();
+
+    const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter);
+
+    const url = `${apiUrl}/${resource}/export/${format}?${query}`;
+
+    return httpClient(url)
+      .then(async ({ json }) => {
+        const blob = await fetch(`data:${json.type};base64,${json.data}`).then(res => res.blob());
+        const timestamp = new Date().toISOString();
+        const extension = format === 'excel' ? 'xlsx' : 'pdf';
+        const filename = `${resourceLabel}-${timestamp}.${extension}`;
+        saveAs(blob, filename);
+      });
+  },
+
+  exec: (resource, url, params) =>
+    httpClient(`${apiUrl}/${resource}/${url}`, params),
 });
