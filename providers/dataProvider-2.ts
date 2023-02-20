@@ -1,4 +1,4 @@
-import { CondOperator, QueryFilter, QuerySort, RequestQueryBuilder } from '@nestjsx/crud-request';
+import { CondOperator, QueryFilter, QueryJoin, QuerySort, RequestQueryBuilder } from '@nestjsx/crud-request';
 import omitBy from 'lodash.omitby';
 import { DataProvider, fetchUtils } from 'ra-core';
 import { stringify } from 'query-string';
@@ -29,7 +29,7 @@ import { stringify } from 'query-string';
 const countDiff = (o1: Record<string, any>, o2: Record<string, any>): Record<string, any> =>
   omitBy(o1, (v, k) => o2[k] === v);
 
-const composeFilter = (paramsFilter: any): QueryFilter[] => {
+exconst composeFilter = (paramsFilter: any): QueryFilter[] => {
   const flatFilter = fetchUtils.flattenObject(paramsFilter);
   return Object.keys(flatFilter).map((key) => {
     const splitKey = key.split(/\|\||:/)
@@ -58,6 +58,14 @@ const composeQueryParams = (queryParams: any = {}): string => {
 
 const mergeEncodedQueries = (...encodedQueries) => encodedQueries.map((query) => query).join('&')
 
+const getQueryJoin = (sort: QuerySort): QueryJoin => {
+  if (sort?.field?.includes('.')) {
+    const field = sort.field.split('.')[0];
+    return { field };
+  }
+  return null;
+}
+
 export default (apiUrl: string, httpClient = fetchUtils.fetchJson): DataProvider => ({
   getList: (resource, params) => {
     const { page, perPage } = params.pagination;
@@ -72,6 +80,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): DataProvider
       .setPage(page)
       .sortBy(params.sort as QuerySort)
       .setOffset((page - 1) * perPage)
+      .setJoin(getQueryJoin(params.sort as QuerySort))
       .query();
 
     const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter);
@@ -121,6 +130,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): DataProvider
       .sortBy(params.sort as QuerySort)
       .setLimit(perPage)
       .setOffset((page - 1) * perPage)
+      .setJoin(getQueryJoin(params.sort as QuerySort))
       .query();
 
     const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter);
