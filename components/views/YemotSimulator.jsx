@@ -10,7 +10,7 @@ const defaultValues = {
     ApiDID: '', //0774311257
     ApiPhone: '', //0527609942
 };
-const TEXT_REGEX = /\=t-([^,=\.]*)/
+const TEXT_REGEX = /\=t-([^=\.]*)/
 const PARAM_REGEX = /read=t-[^=]*=([^,\.]*)/
 const required = (message = 'ra.validation.required') =>
     (value, allValues) => (value || allValues.hangup) ? undefined : message;
