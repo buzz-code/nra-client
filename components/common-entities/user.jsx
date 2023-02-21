@@ -1,9 +1,9 @@
 import { DateField, DateInput, EmailField, TextField, TextInput } from 'react-admin';
-import { JsonField, JsonInput } from "react-admin-json-view";
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { QuickFilter } from '@shared/components/QuickFilter';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
+import { CommonJsonField, CommonJsonInput } from '../CommonJsonItem';
 
 const filters = [
     <TextInput source="name" alwaysOn />,
@@ -11,20 +11,6 @@ const filters = [
     <TextInput source="phoneNumber" />,
     <QuickFilter source="fromEmail" defaultValue="gmail" />
 ];
-
-const reactJsonEditOptions = {
-    name: null,
-    style: {
-        direction: 'ltr',
-        textAlign: 'left',
-    },
-};
-const reactJsonViewOptions = {
-    ...reactJsonEditOptions,
-    collapsed: true,
-    collapseStringsAfterLength: 15,
-    enableClipboard: false,
-};
 
 const Datagrid = ({ isAdmin, ...props }) => {
     return (
@@ -35,8 +21,8 @@ const Datagrid = ({ isAdmin, ...props }) => {
             <TextField source="phoneNumber" />
             <TextField source="active" />
             <TextField source="effective_id" />
-            <JsonField source="permissions" reactJsonOptions={reactJsonViewOptions} />
-            <JsonField source="additionalData" reactJsonOptions={reactJsonViewOptions} />
+            <CommonJsonField source="permissions" />
+            <CommonJsonField source="additionalData" />
             <DateField source="createdAt" />
             <DateField source="updatedAt" />
         </CommonDatagrid>
@@ -54,8 +40,8 @@ const Inputs = ({ isCreate, isAdmin }) => {
         <TextInput source="fromEmail" />
         <TextInput source="replyToEmail" />
         <TextInput source="effective_id" />
-        <JsonInput source="permissions" reactJsonOptions={reactJsonEditOptions} />
-        <JsonInput source="additionalData" reactJsonOptions={reactJsonEditOptions} />
+        <CommonJsonInput source="permissions" />
+        <CommonJsonInput source="additionalData" />
         {!isCreate && <DateInput source="createdAt" disabled />}
         {!isCreate && <DateInput source="updatedAt" disabled />}
     </>
