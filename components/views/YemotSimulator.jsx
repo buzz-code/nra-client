@@ -67,6 +67,7 @@ const YemotSimulator = () => {
         </Toolbar>
     )
 
+    // todo: autofill user phone
     return (
         <Card>
             <Title title="סימולטור" />
