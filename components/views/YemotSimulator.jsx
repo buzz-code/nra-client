@@ -62,7 +62,7 @@ const YemotSimulator = () => {
     const toolbar = (
         <Toolbar>
             <SaveButton disabled={isHangup} />
-            <RefreshButton onClick={handleReload} sx={{marginInline: '1rem'}} size='medium'/>
+            <RefreshButton onClick={handleReload} sx={{ marginInline: '1rem' }} size='medium' />
             <HangupButton params={params} isHangup={isHangup} handleSubmit={handleSubmit} />
         </Toolbar>
     )
@@ -72,9 +72,9 @@ const YemotSimulator = () => {
             <Title title="סימולטור" />
             <CardContent>
                 <SimpleForm onSubmit={handleSubmit} defaultValues={defaultValues} toolbar={toolbar}>
-                    <TextInput source="ApiCallId" validate={required()} disabled />
-                    <TextInput source="ApiDID" validate={required()} />
-                    <TextInput source="ApiPhone" validate={required()} />
+                    <TextInput source="ApiCallId" label="resources.yemot.ApiCallId" validate={required()} disabled />
+                    <TextInput source="ApiDID" label="resources.yemot.ApiDID" validate={required()} />
+                    <TextInput source="ApiPhone" label="resources.yemot.ApiPhone" validate={required()} />
                     {params.map(param => (
                         <TextInput source={param} validate={required()} disabled={isHangup} />
                     ))}
@@ -113,7 +113,7 @@ const HangupButton = ({ params, isHangup, handleSubmit }) => {
     if (isHangup) {
         return null;
     }
-    
+
     return <SaveButton onClick={handleClick} label={'ra.action.hangup'} icon={<CallEndIcon />} disabled={!params.length} />
 }
 export default YemotSimulator;
