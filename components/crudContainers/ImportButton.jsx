@@ -20,7 +20,7 @@ export const ImportButton = ({ resource, refetch, fields, datagrid }) => {
     const isAdmin = useIsAdmin();
 
     const { mutate, isLoading } = useMutation({
-        mutationFn: (data) => dataProvider.createMany(resource, data),
+        mutationFn: (data) => dataProvider.importFile(resource, data, fileName),
         onSuccess: (res) => {
             setUploadedData(null);
             setFileName(null);

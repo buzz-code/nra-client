@@ -14,3 +14,15 @@ dataProvider.simulateYemotCall = async (body) =>
         body: JSON.stringify(body)
     });
 
+dataProvider.importFile = async (resource, bulk, fileName) =>
+    dataProvider.createMany(resource, bulk)
+        .then(data =>
+            dataProvider.create('import_file', {
+                data: {
+                    fileName,
+                    entityName: resource,
+                    entityIds: data.map(item => item.id),
+                }
+            })
+        );
+
