@@ -47,7 +47,7 @@ const YemotSimulator = () => {
             notify("Success", { type: 'info' });
         },
         onError: () => {
-            notify("A technical error occured while updating your profile. Please try later.", { type: 'warning' });
+            notify("ארעה שגיאה, נסה שוב מאוחר יותר", { type: 'warning' });
         }
     });
 
