@@ -30,6 +30,7 @@ const extendedTranslation = {
             exportExcel: 'אקסל',
             exportPdf: 'pdf',
             hangup: 'נתק שיחה',
+            show_matching_records: 'הצג רשומות קשורות',
         },
         message: {
             bulk_update_content: 'האם אתה בטוח שברצונך לעדכן %{name}? |||| האם אתה בטוח שברצונך לעדכן רשומות %{smart_count}?',
