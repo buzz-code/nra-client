@@ -12,7 +12,6 @@ import { useIsAdmin } from '@shared/utils/permissionsUtil';
 
 export const ImportButton = ({ resource, refetch, fields, datagrid }) => {
     const [uploadedData, setUploadedData] = useState(null);
-    //todo: do something with file name
     const [fileName, setFileName] = useState(null);
     const fileSelector = useRef();
     const dataProvider = useDataProvider();
