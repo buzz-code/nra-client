@@ -44,10 +44,10 @@ const YemotSimulator = () => {
             if (parsedData.param)
                 setParams(prevData => ([...prevData, parsedData.param]));
 
-            notify("Success", { type: 'info' });
+            notify("התקבל בהצלחה, אפשר להמשיך בתהליך", { type: 'info' });
         },
         onError: () => {
-            notify("ארעה שגיאה, נסה שוב מאוחר יותר", { type: 'warning' });
+            notify("ארעה שגיאה, כדאי לנסות שוב מאוחר יותר", { type: 'warning' });
         }
     });
 
@@ -81,7 +81,7 @@ const YemotSimulator = () => {
                     ))}
                 </SimpleForm>
                 {history.map(item => <HistoryStep key={item} lines={item} />)}
-                {isHangup && 'hangup'}
+                {isHangup && 'השיחה נותקה, אפשר לרענן בשביל להתחיל שיחה חדשה'}
             </CardContent>
         </Card>
     );
