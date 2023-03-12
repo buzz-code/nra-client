@@ -2,6 +2,7 @@ import { DateField, ReferenceField, TextField, Button, useRecordContext, useCrea
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonEntityNameField } from '../CommonEntityNameField';
+import { CommonCountField } from '../CommonCountField';
 import ListIcon from '@mui/icons-material/List';
 
 const Datagrid = ({ isAdmin, ...props }) => {
@@ -10,7 +11,7 @@ const Datagrid = ({ isAdmin, ...props }) => {
             <TextField source="id" />
             {isAdmin && <ReferenceField source="userId" reference="user" />}
             <TextField source="fileName" />
-            <TextField source="entityIds" />
+            <CommonCountField source="entityIds" />
             <CommonEntityNameField source="entityName" />
             <DateField source="createdAt" />
             <ShowMatchingRecordsButton />
