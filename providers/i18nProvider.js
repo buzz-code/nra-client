@@ -32,6 +32,12 @@ const extendedTranslation = {
             hangup: 'נתק שיחה',
             show_matching_records: 'הצג רשומות קשורות',
         },
+        auth: {
+            sign_in_invitation: 'כבר יש לך חשבון? התחברות',
+            sign_up_invitation: 'עדיין אין לך חשבון? הרשמה',
+            sign_up: 'רישום',
+            password_confirm: 'אימות סיסמא',
+        },
         message: {
             bulk_update_content: 'האם אתה בטוח שברצונך לעדכן %{name}? |||| האם אתה בטוח שברצונך לעדכן רשומות %{smart_count}?',
             bulk_update_title: 'עדכון %{name} |||| עדכון %{smart_count} %{name}',
@@ -77,6 +83,9 @@ const extendedTranslation = {
                 secondaryText: 'טקסט משני',
                 tertiaryText: 'טקסט שלישי',
             },
+        },
+        validation: {
+            valueConfirm: 'ערך לא תואם',
         },
     }
 }

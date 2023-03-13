@@ -13,6 +13,13 @@ import { TextInput } from 'react-admin';
 
 import useRegister from './useRegister';
 
+const confirmValue = (field) => (value, allValues) =>
+    value === allValues[field]
+        ? undefined
+        : 'ra.validation.valueConfirm';
+
+const passwordConfirmValidation = [required(), confirmValue('password')];
+
 export const RegisterForm = (props: RegisterFormProps) => {
     const { redirectTo, className } = props;
     const [loading, setLoading] = useSafeSetState(false);
@@ -72,6 +79,13 @@ export const RegisterForm = (props: RegisterFormProps) => {
                     validate={required()}
                     fullWidth
                 />
+                <TextInput
+                    source="passwordConfirm"
+                    label={translate('ra.auth.password_confirm')}
+                    type="password"
+                    validate={passwordConfirmValidation}
+                    fullWidth
+                />
 
                 <Button
                     variant="contained"
@@ -88,7 +102,7 @@ export const RegisterForm = (props: RegisterFormProps) => {
                             thickness={3}
                         />
                     ) : (
-                        translate('ra.auth.sign_in')
+                        translate('ra.auth.sign_up')
                     )}
                 </Button>
             </CardContent>
