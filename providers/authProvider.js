@@ -15,14 +15,37 @@ const authProvider = {
             await authProvider.getIdentity(true);
         } catch (error) {
             console.log(error);
-            throw new Error('Network error');
+            const errorMessage = error.body?.message ?? 'Network error';
+            throw new Error(errorMessage);
+        }
+    },
+    register: async ({ username, password }) => {
+        try {
+            const response = await fetchJson(apiUrl + '/auth/register', {
+                method: 'POST',
+                body: JSON.stringify({ username, password }),
+                headers: new Headers({ 'Content-Type': 'application/json' }),
+            });
+            if (response.status < 200 || response.status >= 300) {
+                throw new Error(response.statusText);
+            }
+            await authProvider.getIdentity(true);
+        } catch (error) {
+            console.log(error);
+            const errorMessage = error.body?.message ?? 'Network error';
+            throw new Error(errorMessage);
         }
     },
     logout: async () => {
         await fetchJson(apiUrl + '/auth/logout', { method: 'POST' });
         localStorage.removeItem('auth');
     },
-    checkAuth: () => localStorage.getItem('auth') ? Promise.resolve() : Promise.reject(),
+    checkAuth: ({ force = false }) => {
+        if (isPublicRoute() && !force) {
+            return Promise.resolve('guest');
+        }
+        return localStorage.getItem('auth') ? Promise.resolve() : Promise.reject();
+    },
     checkError: async (error) => {
         const status = error.status;
         if (status === 401 || status === 403) {
@@ -47,9 +70,16 @@ const authProvider = {
         return identity;
     },
     getPermissions: async () => {
+        if (isPublicRoute()) {
+            return { guest: true };
+        }
         const { permissions } = await authProvider.getIdentity();
         return permissions;
     },
 };
+
+function isPublicRoute() {
+    return location.pathname === '/register';
+}
 
 export default authProvider;
