@@ -50,6 +50,9 @@ const extendedTranslation = {
         notification: {
             not_authorized: "אין לך הרשאה לצפות בנתונים אלו.",
         },
+        page: {
+            empty: 'אין %{name} עדיין.',
+        },
         saved_queries: {
             label: 'שאילתות שנשמרו',
             query_name: 'שם שאילתה',
