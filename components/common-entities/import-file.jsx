@@ -11,8 +11,10 @@ const Datagrid = ({ isAdmin, ...props }) => {
             <TextField source="id" />
             {isAdmin && <ReferenceField source="userId" reference="user" />}
             <TextField source="fileName" />
+            <TextField source="fileSource" />
             <CommonCountField source="entityIds" />
             <CommonEntityNameField source="entityName" />
+            <TextField source="response" />
             <DateField source="createdAt" />
             <ShowMatchingRecordsButton />
         </CommonDatagrid>
