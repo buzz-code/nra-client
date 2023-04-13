@@ -4,6 +4,7 @@ import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonEntityNameField } from '../CommonEntityNameField';
 import { CommonEntityNameInput } from '../CommonEntityNameInput';
+import { CommonMailField } from '../CommonMailField';
 
 const filters = [
     <TextInput source="alias:$cont" label="כתובת מייל" />,
@@ -15,7 +16,7 @@ const Datagrid = ({ isAdmin, ...props }) => {
         <CommonDatagrid {...props}>
             {isAdmin && <TextField source="id" />}
             {isAdmin && <ReferenceField source="userId" reference="user" />}
-            <TextField source="alias" />
+            <CommonMailField source="alias" />
             <CommonEntityNameField source="entity" />
             {isAdmin && <DateField source="createdAt" />}
             {isAdmin && <DateField source="updatedAt" />}
