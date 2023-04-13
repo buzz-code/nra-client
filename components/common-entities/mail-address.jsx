@@ -26,7 +26,7 @@ const Inputs = ({ isCreate, isAdmin }) => {
         {!isCreate && isAdmin && <TextInput source="id" disabled />}
         {isAdmin && <ReferenceInput source="userId" reference="user" />}
         <TextInput source="alias" />
-        <TextInput source="entity" />
+        <TextInput source="entity" disabled={!isCreate} />
         {!isCreate && isAdmin && <DateInput source="createdAt" disabled />}
         {!isCreate && isAdmin && <DateInput source="updatedAt" disabled />}
     </>
