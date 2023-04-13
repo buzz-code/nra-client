@@ -36,8 +36,11 @@ const ShowMatchingRecordsButton = ({ ...props }) => {
     );
 }
 
+const Representation = 'fileName';
+
 const entity = {
     Datagrid,
+    Representation,
     exporter: false,
 };
 
