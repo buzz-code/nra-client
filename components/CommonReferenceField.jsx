@@ -1,4 +1,5 @@
 import { ReferenceField, ReferenceOneField, useRecordContext } from 'react-admin';
+import get from 'lodash/get';
 
 export const CommonReferenceField = ({ source, reference, target }) => (
     <MultiReferenceField optionalSource={source} reference={reference} optionalTarget={target} />
@@ -10,7 +11,7 @@ export const MultiReferenceField = ({ source, reference, optionalSource, optiona
         return null;
     }
 
-    if (record[source]) {
+    if (get(record, source)) {
         return (
             <ReferenceField source={source} reference={reference} sortBy={sortBy} />
         )
