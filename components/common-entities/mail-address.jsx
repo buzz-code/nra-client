@@ -2,6 +2,8 @@ import { DateField, DateInput, ReferenceField, ReferenceInput, TextField, TextIn
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
+import { CommonEntityNameField } from '../CommonEntityNameField';
+import { CommonEntityNameInput } from '../CommonEntityNameInput';
 
 const filters = [
     <TextInput source="alias:$cont" label="כתובת מייל" />,
@@ -14,7 +16,7 @@ const Datagrid = ({ isAdmin, ...props }) => {
             {isAdmin && <TextField source="id" />}
             {isAdmin && <ReferenceField source="userId" reference="user" />}
             <TextField source="alias" />
-            <TextField source="entity" />
+            <CommonEntityNameField source="entity" />
             {isAdmin && <DateField source="createdAt" />}
             {isAdmin && <DateField source="updatedAt" />}
         </CommonDatagrid>
@@ -26,7 +28,7 @@ const Inputs = ({ isCreate, isAdmin }) => {
         {!isCreate && isAdmin && <TextInput source="id" disabled />}
         {isAdmin && <ReferenceInput source="userId" reference="user" />}
         <TextInput source="alias" />
-        <TextInput source="entity" disabled={!isCreate} />
+        <CommonEntityNameInput source="entity" disabled={!isCreate} />
         {!isCreate && isAdmin && <DateInput source="createdAt" disabled />}
         {!isCreate && isAdmin && <DateInput source="updatedAt" disabled />}
     </>
