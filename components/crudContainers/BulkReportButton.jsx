@@ -1,5 +1,6 @@
 import { Button, useDataProvider, useListContext, useNotify } from 'react-admin';
 import { useMutation } from 'react-query';
+import DownloadingIcon from '@mui/icons-material/Downloading';
 
 export const BulkReportButton = ({ label, icon, name, filename }) => {
     const dataProvider = useDataProvider();
@@ -19,6 +20,10 @@ export const BulkReportButton = ({ label, icon, name, filename }) => {
     );
 
     return (
-        <Button label={label} icon={icon} onClick={() => mutate()} disabled={isLoading} />
+        <Button label={label} onClick={() => mutate()} disabled={isLoading}>
+            {isLoading ? loader : icon}
+        </Button>
     )
 }
+
+const loader = <DownloadingIcon />;
