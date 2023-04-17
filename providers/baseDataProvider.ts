@@ -271,7 +271,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
   exec: (resource, url, params) =>
     httpClient(`${apiUrl}/${resource}/${url}`, params),
 
-  execAndSave: (resource, url, params, filename) =>
+  execAndDownload: (resource, url, params, filename) =>
     httpClient(`${apiUrl}/${resource}/${url}`, params)
       .then(res => saveResponseFile(res, filename)),
 });
