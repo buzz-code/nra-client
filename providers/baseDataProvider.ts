@@ -90,7 +90,7 @@ const getQueryJoin = (sort: QuerySort): QueryJoin => {
   return null;
 }
 
-export const saveResponseFile = async ({ json }, filename) => {
+const saveResponseFile = async ({ json }, filename) => {
   const blob = await fetch(`data:${json.type};base64,${json.data}`).then(res => res.blob());
   return saveAs(blob, filename);
 }
@@ -270,4 +270,8 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
   exec: (resource, url, params) =>
     httpClient(`${apiUrl}/${resource}/${url}`, params),
+
+  execAndSave: (resource, url, params, filename) =>
+    httpClient(`${apiUrl}/${resource}/${url}`, params)
+      .then(res => saveResponseFile(res, filename)),
 });
