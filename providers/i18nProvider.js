@@ -43,6 +43,7 @@ const extendedTranslation = {
             bulk_update_title: 'עדכון %{name} |||| עדכון %{smart_count} %{name}',
             import_title: 'ייבוא רשומות',
             import_success: 'הייבוא הסתיים בהצלחה',
+            report_generation_success: 'הקובץ הופק בהצלחה',
         },
         navigation: {
             partial_page_range_info: '%{offsetBegin}-%{offsetEnd} מתוך יותר מ %{offsetEnd}',
