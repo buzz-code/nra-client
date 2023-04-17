@@ -90,6 +90,11 @@ const getQueryJoin = (sort: QuerySort): QueryJoin => {
   return null;
 }
 
+export const saveResponseFile = async ({ json }, filename) => {
+  const blob = await fetch(`data:${json.type};base64,${json.data}`).then(res => res.blob());
+  return saveAs(blob, filename);
+}
+
 export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedDataProvider => ({
   getList: (resource, params) => {
     const { page, perPage } = params.pagination;
@@ -255,14 +260,12 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
     const url = `${apiUrl}/${resource}/export/${format}?${query}`;
 
+    const timestamp = new Date().toISOString();
+    const extension = format === 'excel' ? 'xlsx' : 'pdf';
+    const filename = `${resourceLabel}-${timestamp}.${extension}`;
+
     return httpClient(url)
-      .then(async ({ json }) => {
-        const blob = await fetch(`data:${json.type};base64,${json.data}`).then(res => res.blob());
-        const timestamp = new Date().toISOString();
-        const extension = format === 'excel' ? 'xlsx' : 'pdf';
-        const filename = `${resourceLabel}-${timestamp}.${extension}`;
-        saveAs(blob, filename);
-      });
+      .then(res => saveResponseFile(res, filename));
   },
 
   exec: (resource, url, params) =>
