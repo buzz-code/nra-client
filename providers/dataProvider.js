@@ -20,8 +20,10 @@ dataProvider.importFile = async (resource, bulk, fileName) =>
             dataProvider.create('import_file', {
                 data: {
                     fileName,
+                    fileSource: 'קובץ שהועלה',
                     entityName: resource,
                     entityIds: data.map(item => item.id),
+                    response: 'נשמר',
                 }
             })
         );
