@@ -2,6 +2,7 @@ import { useIsAdmin } from '@shared/utils/permissionsUtil';
 import { CommonList } from '@shared/components/crudContainers/CommonList';
 import { CommonEdit } from '@shared/components/crudContainers/CommonEdit';
 import { CommonCreate } from '@shared/components/crudContainers/CommonCreate';
+import { EmptyPage } from './EmptyPage';
 
 export function getResourceComponents({ Datagrid, Inputs, Representation = 'id', filters = [], importer = null, exporter = true }) {
     const importerDef = importer
@@ -15,7 +16,7 @@ export function getResourceComponents({ Datagrid, Inputs, Representation = 'id',
         const isAdmin = useIsAdmin();
 
         return (
-            <CommonList filters={filters} importer={importerDef} exporter={exporter}>
+            <CommonList filters={filters} importer={importerDef} exporter={exporter} empty={<EmptyPage importer={importerDef} />}>
                 <Datagrid isAdmin={isAdmin} />
             </CommonList>
         );

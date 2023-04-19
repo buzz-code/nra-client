@@ -10,7 +10,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { useMutation } from 'react-query';
 import { useIsAdmin } from '@shared/utils/permissionsUtil';
 
-export const ImportButton = ({ resource, refetch, fields, datagrid }) => {
+export const ImportButton = ({ resource, refetch, fields, datagrid, ...props }) => {
     const [uploadedData, setUploadedData] = useState(null);
     const [fileName, setFileName] = useState(null);
     const fileSelector = useRef();
@@ -57,7 +57,7 @@ export const ImportButton = ({ resource, refetch, fields, datagrid }) => {
     }, [uploadedData, mutate, setUploadedData, setFileName]);
 
     return <>
-        <Button onClick={handleFileSelect} label={'ra.action.import'} startIcon={<Upload />} />
+        <Button onClick={handleFileSelect} label={'ra.action.import'} startIcon={<Upload />} {...props} />
         <ExcelImportInput ref={fileSelector} fields={fields} onDataParsed={handleDataParse} />
         <PreviewListDialog
             isAdmin={isAdmin}

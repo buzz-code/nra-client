@@ -59,6 +59,7 @@ const extendedTranslation = {
         },
         page: {
             empty: 'אין %{name} עדיין.',
+            invite: 'האם ברצונך להוסיף?',
         },
         saved_queries: {
             label: 'שאילתות שנשמרו',
