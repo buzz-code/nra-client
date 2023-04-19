@@ -55,7 +55,7 @@ export const ExportButton = (props: ExportButtonProps) => {
                     getResourceLabel(resource))
                 .catch(error => {
                     console.error(error);
-                    notify('ra.notification.http_error', { type: 'warning' });
+                    notify('ra.notification.http_error', { type: 'error' });
                 })
                 .finally(() => {
                     setIsLoading(false);

@@ -28,7 +28,7 @@ export const ImportButton = ({ resource, refetch, fields, datagrid, ...props }) 
             refetch();
         },
         onError: (err) => {
-            notify('ra.message.error', { type: 'warning' });
+            notify('ra.message.error', { type: 'error' });
         }
     });
 

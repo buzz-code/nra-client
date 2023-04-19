@@ -17,6 +17,9 @@ export const BulkReportButton = ({ label, icon, name, filename }) => {
                 notify('ra.message.report_generation_success');
                 onUnselectItems();
             })
+            .catch(() => {
+                notify('ra.notification.http_error', { type: 'error' });
+            })
     );
 
     return (
