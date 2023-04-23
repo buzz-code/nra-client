@@ -20,7 +20,7 @@ const Datagrid = ({ isAdmin, ...props }) => {
             <TextField source="body" />
             <TextField source="entityName" />
             <ReferenceArrayField source="importFileIds" reference="import_file" />
-            {isAdmin && <DateField source="createdAt" />}
+            {isAdmin && <DateField showDate showTime source="createdAt" />}
             <ShowMatchingFilesButton />
         </CommonDatagrid>
     );

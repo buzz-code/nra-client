@@ -22,7 +22,7 @@ const Datagrid = ({ isAdmin, ...props }) => {
             <CommonCountField source="entityIds" />
             <CommonEntityNameField source="entityName" />
             <TextField source="response" />
-            <DateField source="createdAt" />
+            <DateField showDate showTime source="createdAt" />
             <ShowMatchingRecordsButton />
         </CommonDatagrid>
     );

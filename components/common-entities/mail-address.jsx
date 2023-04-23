@@ -1,4 +1,4 @@
-import { DateField, DateInput, ReferenceField, ReferenceInput, TextField, TextInput } from 'react-admin';
+import { DateField, DateTimeInput, ReferenceField, ReferenceInput, TextField, TextInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
@@ -19,8 +19,8 @@ const Datagrid = ({ isAdmin, ...props }) => {
             {isAdmin && <ReferenceField source="userId" reference="user" />}
             <CommonMailField source="alias" />
             <CommonEntityNameField source="entity" />
-            {isAdmin && <DateField source="createdAt" />}
-            {isAdmin && <DateField source="updatedAt" />}
+            {isAdmin && <DateField showDate showTime source="createdAt" />}
+            {isAdmin && <DateField showDate showTime source="updatedAt" />}
         </CommonDatagrid>
     );
 }
@@ -31,8 +31,8 @@ const Inputs = ({ isCreate, isAdmin }) => {
         {isAdmin && <ReferenceInput source="userId" reference="user" />}
         <TextInput source="alias" />
         <CommonEntityNameInput source="entity" disabled={!isCreate} />
-        {!isCreate && isAdmin && <DateInput source="createdAt" disabled />}
-        {!isCreate && isAdmin && <DateInput source="updatedAt" disabled />}
+        {!isCreate && isAdmin && <DateTimeInput source="createdAt" disabled />}
+        {!isCreate && isAdmin && <DateTimeInput source="updatedAt" disabled />}
     </>
 }
 

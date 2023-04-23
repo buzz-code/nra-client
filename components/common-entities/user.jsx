@@ -1,4 +1,4 @@
-import { DateField, DateInput, EmailField, TextField, TextInput } from 'react-admin';
+import { DateField, DateTimeInput, EmailField, TextField, TextInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { QuickFilter } from '@shared/components/QuickFilter';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
@@ -24,8 +24,8 @@ const Datagrid = ({ isAdmin, ...props }) => {
             <CommonJsonField source="permissions" />
             <CommonJsonField source="additionalData" />
             <CommonJsonField source="userInfo" />
-            <DateField source="createdAt" />
-            <DateField source="updatedAt" />
+            <DateField showDate showTime source="createdAt" />
+            <DateField showDate showTime source="updatedAt" />
         </CommonDatagrid>
     );
 }
@@ -44,8 +44,8 @@ const Inputs = ({ isCreate, isAdmin }) => {
         <CommonJsonInput source="permissions" />
         <CommonJsonInput source="additionalData" />
         <CommonJsonInput source="userInfo" />
-        {!isCreate && <DateInput source="createdAt" disabled />}
-        {!isCreate && <DateInput source="updatedAt" disabled />}
+        {!isCreate && <DateTimeInput source="createdAt" disabled />}
+        {!isCreate && <DateTimeInput source="updatedAt" disabled />}
     </>
 }
 
