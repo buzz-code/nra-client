@@ -7,6 +7,7 @@ import { CommonEntityNameInput } from '../CommonEntityNameInput';
 import { CommonMailField } from '../CommonMailField';
 
 const filters = [
+    ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,
     <TextInput source="alias:$cont" label="כתובת מייל" />,
     <TextInput source="entity:$cont" label="טבלת יעד" />,
 ];

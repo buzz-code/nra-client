@@ -1,9 +1,16 @@
-import { DateField, ReferenceField, TextField, Button, useRecordContext, useCreatePath, Link } from 'react-admin';
+import { DateField, ReferenceField, TextField, Button, useRecordContext, useCreatePath, Link, TextInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonEntityNameField } from '../CommonEntityNameField';
 import { CommonCountField } from '../CommonCountField';
 import ListIcon from '@mui/icons-material/List';
+import { CommonEntityNameInput } from '../CommonEntityNameInput';
+
+const filters = [
+    ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,
+    <CommonEntityNameInput source="entityName" />,
+    <TextInput source="fileName" />
+];
 
 const Datagrid = ({ isAdmin, ...props }) => {
     return (
@@ -40,6 +47,7 @@ const Representation = 'fileName';
 
 const entity = {
     Datagrid,
+    filters,
     Representation,
     exporter: false,
 };

@@ -4,6 +4,7 @@ import { getResourceComponents } from '@shared/components/crudContainers/CommonE
 import ListIcon from '@mui/icons-material/List';
 
 const filters = [
+    ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,
     <TextInput source="from:$cont" label="מאת" />,
     <TextInput source="subject:$cont" label="נושא" />,
 ];

@@ -1,7 +1,14 @@
-import { DateField, ReferenceField, TextField } from 'react-admin';
+import { DateField, ReferenceField, ReferenceInput, TextField } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonJsonField } from '../CommonJsonItem';
+import { CommonEntityNameInput } from '../CommonEntityNameInput';
+import { CommonEntityNameField } from '../CommonEntityNameField';
+
+const filters = [
+    ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,
+    <CommonEntityNameInput source="entityName" />,
+];
 
 const Datagrid = ({ isAdmin, ...props }) => {
     return (
@@ -9,7 +16,7 @@ const Datagrid = ({ isAdmin, ...props }) => {
             <TextField source="id" />
             <ReferenceField source="userId" reference="user" />
             <TextField source="entityId" />
-            <TextField source="entityName" />
+            <CommonEntityNameField source="entityName" />
             <TextField source="operation" />
             <CommonJsonField source="entityData" />
             <DateField showDate showTime source="createdAt" />
@@ -19,6 +26,7 @@ const Datagrid = ({ isAdmin, ...props }) => {
 
 const entity = {
     Datagrid,
+    filters,
     exporter: false,
 };
 
