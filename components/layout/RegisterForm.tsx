@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import PropTypes from 'prop-types';
-import { Button, CardContent, CircularProgress } from '@mui/material';
+import { Button, CardContent, Grid, CircularProgress, Typography } from '@mui/material';
 import {
     Form,
     required,
+    email,
     useTranslate,
     useNotify,
     useSafeSetState,
@@ -39,8 +40,8 @@ export const RegisterForm = (props: RegisterFormProps) => {
                     typeof error === 'string'
                         ? error
                         : typeof error === 'undefined' || !error.message
-                        ? 'ra.auth.sign_in_error'
-                        : error.message,
+                            ? 'ra.auth.sign_in_error'
+                            : error.message,
                     {
                         type: 'error',
                         messageArgs: {
@@ -48,8 +49,8 @@ export const RegisterForm = (props: RegisterFormProps) => {
                                 typeof error === 'string'
                                     ? error
                                     : error && error.message
-                                    ? error.message
-                                    : undefined,
+                                        ? error.message
+                                        : undefined,
                         },
                     }
                 );
@@ -68,7 +69,7 @@ export const RegisterForm = (props: RegisterFormProps) => {
                     autoFocus
                     source="username"
                     label={translate('ra.auth.username')}
-                    validate={required()}
+                    validate={[required(), email()]}
                     fullWidth
                 />
                 <TextInput
@@ -86,6 +87,70 @@ export const RegisterForm = (props: RegisterFormProps) => {
                     validate={passwordConfirmValidation}
                     fullWidth
                 />
+
+                <Typography>{translate('ra.auth.userInfoHeader')}</Typography>
+                <Grid container columnSpacing={2}>
+                    <Grid item xs={6}>
+                        <TextInput
+                            source="userInfo.name"
+                            label={translate('ra.auth.name')}
+                            validate={[required()]}
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextInput
+                            source="userInfo.role"
+                            label={translate('ra.auth.role')}
+                            validate={[required()]}
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextInput
+                            source="userInfo.phone"
+                            label={translate('ra.auth.phone')}
+                            validate={[required()]}
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextInput
+                            source="userInfo.email"
+                            label={translate('ra.auth.email')}
+                            validate={[required()]}
+                            fullWidth
+                        />
+                    </Grid>
+                </Grid>
+
+                <Typography>{translate('ra.auth.userOrganizationInfoHeader')}</Typography>
+                <Grid container columnSpacing={2}>
+                    <Grid item xs={6}>
+                        <TextInput
+                            source="userInfo.organizationName"
+                            label={translate('ra.auth.organizationName')}
+                            validate={[required()]}
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextInput
+                            source="userInfo.organizationAddress"
+                            label={translate('ra.auth.organizationAddress')}
+                            validate={[required()]}
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextInput
+                            source="userInfo.organizationPhone"
+                            label={translate('ra.auth.organizationPhone')}
+                            validate={[]}
+                            fullWidth
+                        />
+                    </Grid>
+                </Grid>
 
                 <Button
                     variant="contained"
@@ -123,7 +188,7 @@ const StyledForm = styled(Form, {
     overridesResolver: (props, styles) => styles.root,
 })(({ theme }) => ({
     [`& .${RegisterFormClasses.content}`]: {
-        width: 300,
+        width: 500,
     },
     [`& .${RegisterFormClasses.button}`]: {
         marginTop: theme.spacing(2),
@@ -141,6 +206,15 @@ export interface RegisterFormProps {
 interface FormData {
     username: string;
     password: string;
+    userInfo: {
+        name: string;
+        role: string;
+        phone: string;
+        email: string;
+        organizationName: string;
+        organizationAddress: string;
+        organizationPhone: string;
+    }
 }
 RegisterForm.propTypes = {
     redirectTo: PropTypes.string,

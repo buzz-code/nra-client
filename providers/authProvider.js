@@ -19,11 +19,11 @@ const authProvider = {
             throw new Error(errorMessage);
         }
     },
-    register: async ({ username, password }) => {
+    register: async ({ username, password, userInfo }) => {
         try {
             const response = await fetchJson(apiUrl + '/auth/register', {
                 method: 'POST',
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ username, password, userInfo }),
                 headers: new Headers({ 'Content-Type': 'application/json' }),
             });
             if (response.status < 200 || response.status >= 300) {

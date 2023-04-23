@@ -23,6 +23,7 @@ const Datagrid = ({ isAdmin, ...props }) => {
             <TextField source="effective_id" />
             <CommonJsonField source="permissions" />
             <CommonJsonField source="additionalData" />
+            <CommonJsonField source="userInfo" />
             <DateField source="createdAt" />
             <DateField source="updatedAt" />
         </CommonDatagrid>
@@ -42,6 +43,7 @@ const Inputs = ({ isCreate, isAdmin }) => {
         <TextInput source="effective_id" />
         <CommonJsonInput source="permissions" />
         <CommonJsonInput source="additionalData" />
+        <CommonJsonInput source="userInfo" />
         {!isCreate && <DateInput source="createdAt" disabled />}
         {!isCreate && <DateInput source="updatedAt" disabled />}
     </>

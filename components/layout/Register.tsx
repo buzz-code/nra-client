@@ -18,7 +18,7 @@ export const Register = (props: RegisterProps) => {
     const checkAuth = useCheckAuth();
     const navigate = useNavigate();
     useEffect(() => {
-        checkAuth({force: true}, false, registerUrl)
+        checkAuth({ force: true }, false, registerUrl)
             .then(() => {
                 // already authenticated, redirect to the home page
                 navigate('/');
@@ -91,10 +91,12 @@ const Root = styled('div', {
     backgroundSize: 'cover',
     backgroundImage:
         'radial-gradient(circle at 50% 14em, #313264 0%, #00023b 60%, #00023b 100%)',
+    overflow: 'auto',
 
     [`& .${RegisterClasses.card}`]: {
         minWidth: 300,
-        marginTop: '6em',
+        marginBlock: '6em',
+        overflow: 'initial',
     },
     [`& .${RegisterClasses.avatar}`]: {
         margin: '1em',
