@@ -15,8 +15,12 @@ export function getResourceComponents({ Datagrid, Inputs, Representation = 'id',
     const List = () => {
         const isAdmin = useIsAdmin();
 
+        const filtersArr= filters
+            .map(item => typeof item === 'function' ? item({ isAdmin }) : item)
+            .filter(item => item);
+
         return (
-            <CommonList filters={filters} importer={importerDef} exporter={exporter} empty={<EmptyPage importer={importerDef} />}>
+            <CommonList filters={filtersArr} importer={importerDef} exporter={exporter} empty={<EmptyPage importer={importerDef} />}>
                 <Datagrid isAdmin={isAdmin} />
             </CommonList>
         );
