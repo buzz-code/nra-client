@@ -1,4 +1,4 @@
-import { DateField, ReferenceField, TextField, Button, useRecordContext, useCreatePath, Link, TextInput } from 'react-admin';
+import { DateField, ReferenceField, TextField, Button, useRecordContext, useCreatePath, Link, TextInput, ReferenceInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonEntityNameField } from '../CommonEntityNameField';

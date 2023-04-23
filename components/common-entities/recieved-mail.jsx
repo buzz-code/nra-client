@@ -1,4 +1,4 @@
-import { Button, DateField, Link, ReferenceArrayField, ReferenceField, TextField, TextInput, useCreatePath, useRecordContext } from 'react-admin';
+import { Button, DateField, Link, ReferenceArrayField, ReferenceField, ReferenceInput, TextField, TextInput, useCreatePath, useRecordContext } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import ListIcon from '@mui/icons-material/List';
