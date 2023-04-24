@@ -15,14 +15,14 @@ const filters = [
 const Datagrid = ({ isAdmin, ...props }) => {
     return (
         <CommonDatagrid {...props}>
-            <TextField source="id" />
+            {isAdmin && <TextField source="id" />}
             <TextField source="name" />
             <EmailField source="email" />
             <TextField source="phoneNumber" />
-            <TextField source="active" />
-            <TextField source="effective_id" />
-            <CommonJsonField source="permissions" />
-            <CommonJsonField source="additionalData" />
+            {isAdmin && <TextField source="active" />}
+            {isAdmin && <TextField source="effective_id" />}
+            {isAdmin && <CommonJsonField source="permissions" />}
+            {isAdmin && <CommonJsonField source="additionalData" />}
             <CommonJsonField source="userInfo" />
             <DateField showDate showTime source="createdAt" />
             <DateField showDate showTime source="updatedAt" />
@@ -32,17 +32,17 @@ const Datagrid = ({ isAdmin, ...props }) => {
 
 const Inputs = ({ isCreate, isAdmin }) => {
     return <>
-        {!isCreate && <TextInput source="id" disabled />}
+        {!isCreate && isAdmin && <TextInput source="id" disabled />}
         <TextInput source="name" />
         <TextInput source="email" />
-        <TextInput source="password" />
+        {isAdmin && <TextInput source="password" />}
         <TextInput source="phoneNumber" />
-        <TextInput source="active" />
-        <TextInput source="fromEmail" />
-        <TextInput source="replyToEmail" />
-        <TextInput source="effective_id" />
-        <CommonJsonInput source="permissions" />
-        <CommonJsonInput source="additionalData" />
+        {isAdmin && <TextInput source="active" />}
+        {isAdmin && <TextInput source="fromEmail" />}
+        {isAdmin && <TextInput source="replyToEmail" />}
+        {isAdmin && <TextInput source="effective_id" />}
+        {isAdmin && <CommonJsonInput source="permissions" />}
+        {isAdmin && <CommonJsonInput source="additionalData" />}
         <CommonJsonInput source="userInfo" />
         {!isCreate && <DateTimeInput source="createdAt" disabled />}
         {!isCreate && <DateTimeInput source="updatedAt" disabled />}

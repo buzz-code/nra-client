@@ -8,3 +8,12 @@ export const useIsAdmin = () => {
 export function isAdmin(permissions) {
     return !!permissions?.admin;
 }
+
+export const useIsShowUsersData = () => {
+    const { permissions } = usePermissions();
+    return isAccessToUsersData(permissions);
+}
+
+export function isShowUsersData(permissions) {
+    return isAdmin(permissions) || !!permissions?.showUsersData;
+}
