@@ -1,3 +1,4 @@
+import { useIsAdmin } from "@shared/utils/permissionsUtil";
 import { JsonField, JsonInput } from "react-admin-json-view";
 
 const reactJsonEditOptions = {
@@ -14,9 +15,20 @@ const reactJsonViewOptions = {
     enableClipboard: false,
 };
 
-export const CommonJsonField = ({ source }) => (
-    <JsonField source={source} reactJsonOptions={reactJsonViewOptions} />
-);
+const nonAdminViewOptions = {
+    ...reactJsonViewOptions,
+    displayObjectSize: false,
+    displayDataTypes: false,
+}
+
+export const CommonJsonField = ({ source }) => {
+    const isAdmin = useIsAdmin();
+    const options = isAdmin ? reactJsonViewOptions : nonAdminViewOptions;
+
+    return (
+        <JsonField source={source} reactJsonOptions={options} />
+    )
+};
 
 export const CommonJsonInput = ({ source }) => (
     <JsonInput source={source} reactJsonOptions={reactJsonEditOptions} />
