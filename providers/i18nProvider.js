@@ -31,6 +31,7 @@ const extendedTranslation = {
             exportPdf: 'pdf',
             hangup: 'נתק שיחה',
             show_matching_records: 'הצג רשומות קשורות',
+            save_and_add: 'שמור והוסף',
         },
         auth: {
             sign_in_invitation: 'כבר יש לך חשבון? התחברות',
