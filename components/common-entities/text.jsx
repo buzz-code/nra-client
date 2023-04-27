@@ -28,8 +28,8 @@ const Inputs = ({ isCreate, isAdmin }) => {
     return <>
         {!isCreate && isAdmin && <TextInput source="id" disabled />}
         {isAdmin && <ReferenceInput source="userId" reference="user" />}
-        <TextInput source="name" />
-        <TextInput source="description" />
+        <TextInput source="name" disabled={!isCreate} />
+        <TextInput source="description" disabled={!isCreate} />
         <TextInput source="value" />
         {!isCreate && isAdmin && <DateTimeInput source="createdAt" disabled />}
         {!isCreate && isAdmin && <DateTimeInput source="updatedAt" disabled />}
