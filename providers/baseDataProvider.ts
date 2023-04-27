@@ -258,10 +258,15 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
     const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter);
 
-    const url = `${apiUrl}/${resource}/export/${format}?${query}`;
+    const url = `${apiUrl}/${resource}/export?extra.format=${format}&${query}`;
 
     const timestamp = new Date().toISOString();
-    const extension = format === 'excel' ? 'xlsx' : 'pdf';
+    const extensionMap = {
+      excel: 'xlsx',
+      pdf: 'pdf',
+      json: 'json',
+    }
+    const extension = extensionMap[format];
     const filename = `${resourceLabel}-${timestamp}.${extension}`;
 
     return httpClient(url)

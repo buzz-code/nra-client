@@ -16,6 +16,7 @@ import {
 import { Button, ButtonProps } from 'react-admin';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { useIsAdmin } from '@shared/utils/permissionsUtil';
 
 export const ExportButton = (props: ExportButtonProps) => {
     const {
@@ -39,6 +40,7 @@ export const ExportButton = (props: ExportButtonProps) => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [isLoading, setIsLoading] = React.useState<Boolean>(false);
     const open = Boolean(anchorEl);
+    const isAdmin = useIsAdmin();
     const handleExport = useCallback(
         format => {
             setIsLoading(true);
@@ -79,6 +81,7 @@ export const ExportButton = (props: ExportButtonProps) => {
     const handleClose = useCallback(() => setAnchorEl(null), [setAnchorEl]);
     const handleExportExcel = useCallback(() => (handleClose(), handleExport('excel')), [handleClose, handleExport]);
     const handleExportPdf = useCallback(() => (handleClose(), handleExport('pdf')), [handleClose, handleExport]);
+    const handleExportJson = useCallback(() => (handleClose(), handleExport('json')), [handleClose, handleExport]);
 
     return <>
         <Button
@@ -96,6 +99,7 @@ export const ExportButton = (props: ExportButtonProps) => {
         >
             <MenuItem onClick={handleExportExcel}>{translate('ra.action.exportExcel')}</MenuItem>
             <MenuItem onClick={handleExportPdf}>{translate('ra.action.exportPdf')}</MenuItem>
+            {isAdmin && <MenuItem onClick={handleExportJson}>{translate('ra.action.exportJson')}</MenuItem>}
         </Menu>
     </>;
 };

@@ -29,6 +29,7 @@ const extendedTranslation = {
             import: 'ייבא',
             exportExcel: 'אקסל',
             exportPdf: 'pdf',
+            exportJson: 'json',
             hangup: 'נתק שיחה',
             show_matching_records: 'הצג רשומות קשורות',
             save_and_add: 'שמור והוסף',
