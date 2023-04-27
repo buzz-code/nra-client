@@ -1,13 +1,17 @@
-import { List, Datagrid, BulkDeleteWithConfirmButton } from 'react-admin';
+import { List, Datagrid, BulkDeleteWithConfirmButton, useResourceDefinition } from 'react-admin';
 import { CommonListActions } from '@shared/components/crudContainers/CommonListActions';
 
-const BulkActionButtons = ({ additionalBulkButtons }) => (
-    <>
-        {additionalBulkButtons}
-        {/* <BulkExportButton /> */}
-        <BulkDeleteWithConfirmButton />
-    </>
-);
+const BulkActionButtons = ({ additionalBulkButtons, ...props }) => {
+    const { hasCreate } = useResourceDefinition(props);
+
+    return (
+        <>
+            {additionalBulkButtons}
+            {/* <BulkExportButton /> */}
+            {hasCreate && <BulkDeleteWithConfirmButton />}
+        </>
+    );
+}
 
 
 export const CommonList = ({ children, importer, exporter, ...props }) => (
@@ -17,7 +21,7 @@ export const CommonList = ({ children, importer, exporter, ...props }) => (
 )
 
 export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, ...props }) => {
-    const bulkActionButtons = <BulkActionButtons additionalBulkButtons={additionalBulkButtons} />;
+    const bulkActionButtons = <BulkActionButtons additionalBulkButtons={additionalBulkButtons} {...props} />;
 
     return (
         <Datagrid rowClick={!readonly && 'edit'} bulkActionButtons={!readonly && bulkActionButtons} {...props}>
