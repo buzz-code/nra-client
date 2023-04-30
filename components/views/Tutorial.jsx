@@ -17,10 +17,10 @@ export default ({ }) => {
                             חיבור למערכת טלפונית של ימות המשיח
                         </Typography>
                         <Typography variant='body1'>
-                            הכנסו לאתר של ימות המשיח &nbsp;
-                            <Link to='https://www.call2all.co.il/yemot-admin-g1/#/IVR?filter={%22path%22:%22/%22}'>
+                            הכנסו לאתר של ימות המשיח&nbsp;
+                            <a href='https://www.call2all.co.il/yemot-admin-g1/#/IVR?filter={%22path%22:%22/%22}' target='_blank'>
                                 כאן
-                            </Link>
+                            </a>
                             .
                             <br />
                             השתמשו במספר הטלפון והסיסמא של המערכת הטלפונית שתרצו לחבר.
