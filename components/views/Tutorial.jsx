@@ -13,7 +13,7 @@ export default ({ }) => {
             <Paper>
                 <Stack>
                     <Box padding={2}>
-                        <Typography variant='h3'>
+                        <Typography variant='h5'>
                             חיבור למערכת טלפונית של ימות המשיח
                         </Typography>
                         <Typography variant='body1'>
