@@ -11,9 +11,18 @@ export function isAdmin(permissions) {
 
 export const useIsShowUsersData = () => {
     const { permissions } = usePermissions();
-    return isAccessToUsersData(permissions);
+    return isShowUsersData(permissions);
 }
 
 export function isShowUsersData(permissions) {
     return isAdmin(permissions) || !!permissions?.showUsersData;
+}
+
+export const useIsEditPagesData = () => {
+    const { permissions } = usePermissions();
+    return isEditPagesData(permissions);
+}
+
+export function isEditPagesData(permissions) {
+    return isAdmin(permissions) || !!permissions?.editPagesData;
 }
