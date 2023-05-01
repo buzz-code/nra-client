@@ -30,7 +30,7 @@ const Inputs = ({ isCreate, isAdmin }) => {
         {!isCreate && isAdmin && <TextInput source="id" disabled />}
         {isAdmin && <ReferenceInput source="userId" reference="user" />}
         <TextInput source="alias" />
-        <CommonEntityNameInput source="entity" disabled={!isCreate} />
+        <CommonEntityNameInput source="entity" disabled={!isCreate} allowedEntities={['att_report','grade']} />
         {!isCreate && isAdmin && <DateTimeInput source="createdAt" disabled />}
         {!isCreate && isAdmin && <DateTimeInput source="updatedAt" disabled />}
     </>
