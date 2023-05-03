@@ -1,4 +1,4 @@
-import { DateField, DateTimeInput, TextField, TextInput, RichTextField } from 'react-admin';
+import { DateField, DateTimeInput, TextField, TextInput, RichTextField, required } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
@@ -26,9 +26,9 @@ const Datagrid = ({ isAdmin, ...props }) => {
 const Inputs = ({ isCreate, isAdmin }) => {
     return <>
         {!isCreate && isAdmin && <TextInput source="id" disabled />}
-        <TextInput source="path" disabled={!isCreate} />
-        <TextInput source="description" disabled={!isCreate} />
-        <RichTextInput source="value" />
+        <TextInput source="path" disabled={!isCreate} validate={required()} />
+        <TextInput source="description" disabled={!isCreate} validate={required()} />
+        <RichTextInput source="value" validate={required()} />
         {!isCreate && isAdmin && <DateTimeInput source="createdAt" disabled />}
         {!isCreate && isAdmin && <DateTimeInput source="updatedAt" disabled />}
     </>
