@@ -1,6 +1,6 @@
 import { AutocompleteInput, useGetResourceLabel, useResourceDefinitions } from 'react-admin';
 
-export const CommonEntityNameInput = ({ source, disabled, allowedEntities = [] }) => {
+export const CommonEntityNameInput = ({ source, disabled, allowedEntities = [], ...props }) => {
     const resources = useResourceDefinitions();
     const getResourceLabel = useGetResourceLabel();
     const resourceChoices = Object.keys(resources)
@@ -8,6 +8,6 @@ export const CommonEntityNameInput = ({ source, disabled, allowedEntities = [] }
         .map(key => ({ id: key, name: getResourceLabel(key) }))
 
     return (
-        <AutocompleteInput source={source} choices={resourceChoices} disabled={disabled} />
+        <AutocompleteInput source={source} choices={resourceChoices} disabled={disabled} {...props} />
     )
 }
