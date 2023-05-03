@@ -9,7 +9,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export default (props) => {
     return (
-        <List resource="page?sort=order&order=ASC" emptyWhileLoading hasCreate={false} exporter={false} {...props}>
+        <List resource="page"  sort={{ field: 'order', order: 'ASC' }} emptyWhileLoading hasCreate={false} exporter={false} {...props}>
             <PagesData />
         </List>
     );
