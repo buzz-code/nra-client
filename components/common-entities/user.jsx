@@ -1,4 +1,4 @@
-import { DateField, DateTimeInput, EmailField, required, TextField, TextInput } from 'react-admin';
+import { DateField, DateTimeInput, EmailField, maxLength, required, TextField, TextInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { QuickFilter } from '@shared/components/QuickFilter';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
@@ -33,10 +33,10 @@ const Datagrid = ({ isAdmin, ...props }) => {
 const Inputs = ({ isCreate, isAdmin }) => {
     return <>
         {!isCreate && isAdmin && <TextInput source="id" disabled />}
-        <TextInput source="name" validate={required()} />
-        <TextInput source="email" validate={required()} />
+        <TextInput source="name" validate={[required(), maxLength(500)]} />
+        <TextInput source="email" validate={[required(), maxLength(500)]} />
         {isAdmin && <TextInput source="password" />}
-        <TextInput source="phoneNumber" />
+        <TextInput source="phoneNumber" validate={maxLength(11)} />
         {isAdmin && <TextInput source="active" />}
         {isAdmin && <TextInput source="fromEmail" />}
         {isAdmin && <TextInput source="replyToEmail" />}
