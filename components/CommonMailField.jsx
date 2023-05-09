@@ -1,7 +1,7 @@
 import { EmailField, useRecordContext } from "react-admin"
 import get from 'lodash/get';
 
-export const CommonMailField = ({source, domain = 'yoman.online'}) =>{
+export const CommonMailField = ({source, domain = 'mail.yoman.online'}) =>{
     const record = useRecordContext();
 
     if(!record || !get(record, source)){
