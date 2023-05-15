@@ -1,3 +1,5 @@
-export const CommonRepresentation = (record) => (
-    record.name
-)
+export const CommonRepresentation = 'name'
+
+// export const CommonRepresentation = (record) => (
+//     record.name
+// )
