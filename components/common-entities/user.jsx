@@ -1,9 +1,30 @@
-import { DateField, DateTimeInput, EmailField, maxLength, required, TextField, TextInput } from 'react-admin';
+import { Button, DateField, DateTimeInput, EmailField, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, useRecordContext } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { QuickFilter } from '@shared/components/QuickFilter';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonJsonField, CommonJsonInput } from '../CommonJsonItem';
+import PersonIcon from '@mui/icons-material/Person';
+import { useNavigate } from 'react-router-dom';
+
+const ImpersonateButton = ({ ...props }) => {
+    const record = useRecordContext();
+    const dataProvider = useDataProvider();
+    const authProvider = useAuthProvider();
+    const navigate = useNavigate();
+
+    const impersonate = async (e) => {
+        e.stopPropagation();
+        await dataProvider.impersonate(record.id);
+        await authProvider.getIdentity(true);
+        navigate('/');
+        window.location.reload();
+    }
+
+    return (
+        <Button label='ra.action.impersonate' startIcon={<PersonIcon />} onClick={impersonate} />
+    );
+}
 
 const filters = [
     <TextInput source="name" alwaysOn />,
@@ -26,6 +47,7 @@ const Datagrid = ({ isAdmin, ...props }) => {
             <CommonJsonField source="userInfo" />
             <DateField showDate showTime source="createdAt" />
             <DateField showDate showTime source="updatedAt" />
+            {isAdmin && <ImpersonateButton />}
         </CommonDatagrid>
     );
 }

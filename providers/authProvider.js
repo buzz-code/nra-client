@@ -37,6 +37,14 @@ const authProvider = {
         }
     },
     logout: async () => {
+        try {
+            const identity = await authProvider.getIdentity();
+            if (identity.impersonated) {
+                await fetchJson(apiUrl + '/auth/unimpersonate', { method: 'POST' });
+                await authProvider.getIdentity(true);
+                return;
+            }
+        } catch { }
         await fetchJson(apiUrl + '/auth/logout', { method: 'POST' });
         localStorage.removeItem('auth');
     },
@@ -64,8 +72,8 @@ const authProvider = {
         }
 
         const response = await fetchJson(apiUrl + '/profile', { method: 'GET' });
-        const { name, permissions } = response.json;
-        const identity = ({ fullName: name, permissions });
+        const { name: fullName, ...rest } = response.json;
+        const identity = ({ fullName, ...rest });
         localStorage.setItem('auth', JSON.stringify(identity))
         return identity;
     },

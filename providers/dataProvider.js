@@ -28,3 +28,10 @@ dataProvider.importFile = async (resource, bulk, fileName) =>
             })
         );
 
+dataProvider.impersonate = async (userId) =>
+    dataProvider.exec('auth', 'impersonate', {
+        method: 'POST',
+        body: JSON.stringify({ userId })
+    });
+
+
