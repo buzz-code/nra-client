@@ -56,6 +56,7 @@ const extendedTranslation = {
             import_title: 'ייבוא רשומות',
             import_success: 'הייבוא הסתיים בהצלחה',
             report_generation_success: 'הקובץ הופק בהצלחה',
+            action_success: 'בוצע בהצלחה',
         },
         navigation: {
             partial_page_range_info: '%{offsetBegin}-%{offsetEnd} מתוך יותר מ %{offsetEnd}',
