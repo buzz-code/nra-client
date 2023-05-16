@@ -12,7 +12,7 @@ export const BulkActionButton = ({ label, icon, name }) => {
         'extra.ids': selectedIds
     });
     const { mutate, isLoading } = useMutation(
-        () => dataProvider.exec(resource, 'action?' + params, {}, filename)
+        () => dataProvider.exec(resource, 'action?' + params, {})
             .then(() => {
                 notify('ra.message.action_success');
                 onUnselectItems();
