@@ -1,10 +1,11 @@
 import { useCallback, useState } from 'react';
-import { Button, useTranslate } from 'react-admin';
+import { Button, Form, useTranslate, SaveButton } from 'react-admin';
 import DownloadingIcon from '@mui/icons-material/Downloading';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import Stack from '@mui/material/Stack';
 
 export const BulkRequestButton = ({ label, mutate, isLoading, icon, children }) => {
     const [showDialog, setShowDialog] = useState(false);
@@ -12,18 +13,19 @@ export const BulkRequestButton = ({ label, mutate, isLoading, icon, children }) 
 
     const handleButtonClick = useCallback(() => {
         if (!children) {
-            mutate();
+            mutate({});
         } else {
             setShowDialog(true);
         }
-    });
+    }, [children, mutate, setShowDialog]);
     const handleDialogClose = useCallback(() => {
         setShowDialog(false);
-    });
-    const handleDialogCloseWithConfirm = useCallback(() => {
+    }, [setShowDialog]);
+    const handleSubmit = useCallback((formValues) => {
         handleDialogClose();
-        mutate();
-    })
+        const dataToSend = Object.fromEntries(Object.entries(formValues).map(([key, value]) => (['extra.' + key, value])));
+        mutate(dataToSend);
+    }, [handleDialogClose, mutate]);
 
     return <>
         <Button label={label} onClick={handleButtonClick} disabled={isLoading}>
@@ -34,17 +36,17 @@ export const BulkRequestButton = ({ label, mutate, isLoading, icon, children }) 
             <DialogTitle>
                 {translate('ra.bulk_request.params_dialog_title')}
             </DialogTitle>
-            <DialogContent>
-                {children}
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={handleDialogClose}>
-                    {translate('ra.action.cancel')}
-                </Button>
-                <Button onClick={handleDialogCloseWithConfirm} autoFocus>
-                    {translate('ra.action.confirm')}
-                </Button>
-            </DialogActions>
+            <Form onSubmit={handleSubmit}>
+                <DialogContent>
+                    <Stack>
+                        {children}
+                    </Stack>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDialogClose} label={translate('ra.action.cancel')} />
+                    <SaveButton alwaysEnable autoFocus variant='text' icon={false} label={translate('ra.action.confirm')} />
+                </DialogActions>
+            </Form>
         </Dialog>
     </>
 }
