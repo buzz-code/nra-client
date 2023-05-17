@@ -1,10 +1,10 @@
 import { DateField, ReferenceField, TextField, Button, useRecordContext, useCreatePath, Link, TextInput, ReferenceInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
-import { CommonEntityNameField } from '../CommonEntityNameField';
-import { CommonCountField } from '../CommonCountField';
+import { CommonEntityNameField } from '@shared/components/fields/CommonEntityNameField';
+import { CommonCountField } from '@shared/components/fields/CommonCountField';
 import ListIcon from '@mui/icons-material/List';
-import { CommonEntityNameInput } from '../CommonEntityNameInput';
+import { CommonEntityNameInput } from '@shared/components/fields/CommonEntityNameInput';
 
 const filters = [
     ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,

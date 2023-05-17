@@ -1,9 +1,9 @@
 import { DateField, ReferenceField, ReferenceInput, TextField } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
-import { CommonJsonField } from '../CommonJsonItem';
-import { CommonEntityNameInput } from '../CommonEntityNameInput';
-import { CommonEntityNameField } from '../CommonEntityNameField';
+import { CommonJsonField } from '@shared/components/fields/CommonJsonItem';
+import { CommonEntityNameInput } from '@shared/components/fields/CommonEntityNameInput';
+import { CommonEntityNameField } from '@shared/components/fields/CommonEntityNameField';
 
 const filters = [
     ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,

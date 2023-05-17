@@ -2,10 +2,10 @@ import { DateField, DateTimeInput, maxLength, ReferenceField, ReferenceInput, re
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
-import { CommonEntityNameField } from '../CommonEntityNameField';
-import { CommonEntityNameInput } from '../CommonEntityNameInput';
-import { CommonMailField } from '../CommonMailField';
-import CommonReferenceInput from '../CommonReferenceInput';
+import { CommonEntityNameField } from '@shared/components/fields/CommonEntityNameField';
+import { CommonEntityNameInput } from '@shared/components/fields/CommonEntityNameInput';
+import { CommonMailField } from '@shared/components/fields/CommonMailField';
+import CommonReferenceInput from '@shared/components/fields/CommonReferenceInput';
 
 const filters = [
     ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,

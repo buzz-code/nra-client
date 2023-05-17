@@ -1,9 +1,9 @@
 import { Button, DateField, DateTimeInput, EmailField, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, useRecordContext } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
-import { QuickFilter } from '@shared/components/QuickFilter';
+import { QuickFilter } from '@shared/components/fields/QuickFilter';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
-import { CommonJsonField, CommonJsonInput } from '../CommonJsonItem';
+import { CommonJsonField, CommonJsonInput } from '@shared/components/fields/CommonJsonItem';
 import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from 'react-router-dom';
 
