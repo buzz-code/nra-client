@@ -102,6 +102,9 @@ const extendedTranslation = {
         validation: {
             valueConfirm: 'ערך לא תואם',
         },
+        bulk_request: {
+            params_dialog_title: 'פרמטרים נוספים',
+        }
     }
 }
 

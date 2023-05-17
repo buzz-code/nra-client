@@ -1,9 +1,8 @@
 import { useDataProvider, useListContext, useNotify } from 'react-admin';
 import { useMutation } from 'react-query';
-import DownloadingIcon from '@mui/icons-material/Downloading';
 import { BulkRequestButton } from './BulkRequestButton';
 
-export const BulkActionButton = ({ label, icon, name }) => {
+export const BulkActionButton = ({ label, icon, name, children }) => {
     const dataProvider = useDataProvider();
     const { selectedIds, onUnselectItems, resource } = useListContext();
     const notify = useNotify();
@@ -38,7 +37,5 @@ export const BulkActionButton = ({ label, icon, name }) => {
             })
     );
 
-    return <BulkRequestButton label={label} mutate={mutate} isLoading={isLoading} icon={icon} />
+    return <BulkRequestButton label={label} mutate={mutate} isLoading={isLoading} icon={icon} children={children} />
 }
-
-const loader = <DownloadingIcon />;
