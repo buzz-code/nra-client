@@ -1,4 +1,4 @@
-import { Button, DateField, DateTimeInput, EmailField, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, useRecordContext } from 'react-admin';
+import { BooleanField, BooleanInput, Button, DateField, DateTimeInput, EmailField, FormDataConsumer, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, useRecordContext } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { QuickFilter } from '@shared/components/fields/QuickFilter';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
@@ -45,6 +45,7 @@ const Datagrid = ({ isAdmin, ...props }) => {
             {isAdmin && <CommonJsonField source="permissions" />}
             {isAdmin && <CommonJsonField source="additionalData" />}
             <CommonJsonField source="userInfo" />
+            <BooleanField source="isPaid" />
             <DateField showDate showTime source="createdAt" />
             <DateField showDate showTime source="updatedAt" />
             {isAdmin && <ImpersonateButton />}
@@ -66,6 +67,12 @@ const Inputs = ({ isCreate, isAdmin }) => {
         {isAdmin && <CommonJsonInput source="permissions" />}
         {isAdmin && <CommonJsonInput source="additionalData" />}
         <CommonJsonInput source="userInfo" />
+        <BooleanInput source="isPaid" />
+        <FormDataConsumer>
+            {({ formData, ...rest }) => formData.isPaid &&
+                <TextInput source="paymentMethod" validate={required()} {...rest} />
+            }
+        </FormDataConsumer>
         {!isCreate && <DateTimeInput source="createdAt" disabled />}
         {!isCreate && <DateTimeInput source="updatedAt" disabled />}
     </>
