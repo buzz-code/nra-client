@@ -20,8 +20,22 @@ export const BulkReportButton = ({ label, icon, name, filename, children }) => {
                     notify('ra.message.report_generation_success');
                     onUnselectItems();
                 })
-                .catch(() => {
-                    notify('ra.notification.http_error', { type: 'error' });
+                .catch((error) => {
+                    notify(
+                        typeof error === 'string'
+                            ? error
+                            : error.message || 'ra.notification.http_error',
+                        {
+                            type: 'error',
+                            messageArgs: {
+                                _: typeof error === 'string'
+                                    ? error
+                                    : error && error.message
+                                        ? error.message
+                                        : undefined
+                            }
+                        }
+                    );
                 });
         }
     );
