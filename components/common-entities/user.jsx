@@ -73,6 +73,8 @@ const Inputs = ({ isCreate, isAdmin }) => {
                 <TextInput source="paymentMethod" validate={required()} {...rest} />
             }
         </FormDataConsumer>
+        <TextInput source="mailAddressAlias" validate={maxLength(255)} />
+        <TextInput source="mailAddressTitle" validate={maxLength(255)} />
         {!isCreate && <DateTimeInput source="createdAt" disabled />}
         {!isCreate && <DateTimeInput source="updatedAt" disabled />}
     </>
