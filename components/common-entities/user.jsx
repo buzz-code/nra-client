@@ -40,7 +40,7 @@ const Datagrid = ({ isAdmin, ...props }) => {
             <TextField source="name" />
             <EmailField source="email" />
             <TextField source="phoneNumber" />
-            {isAdmin && <TextField source="active" />}
+            {/* {isAdmin && <TextField source="active" />} */}
             {isAdmin && <TextField source="effective_id" />}
             {isAdmin && <CommonJsonField source="permissions" />}
             {isAdmin && <CommonJsonField source="additionalData" />}
@@ -56,8 +56,8 @@ const Datagrid = ({ isAdmin, ...props }) => {
 const Inputs = ({ isCreate, isAdmin }) => {
     return <>
         {!isCreate && isAdmin && <TextInput source="id" disabled />}
-        <TextInput source="name" validate={[required(), maxLength(500)]} />
-        <TextInput source="email" validate={[required(), maxLength(500)]} />
+        <TextInput source="name" validate={[required(), maxLength(500)]} disabled={!isAdmin} />
+        <TextInput source="email" validate={[required(), maxLength(500)]} disabled={!isAdmin} />
         {isAdmin && <TextInput source="password" />}
         <TextInput source="phoneNumber" validate={maxLength(11)} />
         {isAdmin && <TextInput source="active" />}
@@ -66,7 +66,7 @@ const Inputs = ({ isCreate, isAdmin }) => {
         {isAdmin && <TextInput source="effective_id" />}
         {isAdmin && <CommonJsonInput source="permissions" />}
         {isAdmin && <CommonJsonInput source="additionalData" />}
-        <CommonJsonInput source="userInfo" />
+        {isAdmin && <CommonJsonInput source="userInfo" />}
         <BooleanInput source="isPaid" />
         <FormDataConsumer>
             {({ formData, ...rest }) => formData.isPaid &&
