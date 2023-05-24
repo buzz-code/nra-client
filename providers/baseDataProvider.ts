@@ -98,7 +98,7 @@ const saveResponseFile = async ({ json }, filename) => {
 export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedDataProvider => ({
   getList: (resource, params) => {
     const { page, perPage } = params.pagination;
-    const { q: queryParams, $OR: orFilter, ...filter } = params.filter || {};
+    const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
 
     const encodedQueryParams = composeQueryParams(queryParams)
     const encodedQueryFilter = RequestQueryBuilder.create({
@@ -112,7 +112,9 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
       .setJoin(getQueryJoin(params.sort as QuerySort))
       .query();
 
-    const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter);
+    const encodedQueryExtra = composeQueryParams({ extra });
+
+    const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter, encodedQueryExtra);
 
     const url = `${apiUrl}/${resource}?${query}`;
 
@@ -128,13 +130,17 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
     })),
 
   getMany: (resource, params) => {
-    const query = RequestQueryBuilder.create()
+    const encodedQueryParams = RequestQueryBuilder.create()
       .setFilter({
         field: 'id',
         operator: CondOperator.IN,
         value: `${params.ids}`,
       })
       .query();
+
+    const encodedMetaParams = composeQueryParams(params.meta);
+
+    const query = mergeEncodedQueries(encodedQueryParams, encodedMetaParams);
 
     const url = `${apiUrl}/${resource}?${query}`;
 
@@ -143,7 +149,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
   getManyReference: (resource, params) => {
     const { page, perPage } = params.pagination;
-    const { q: queryParams, ...otherFilters } = params.filter || {}
+    const { q: queryParams, extra, ...otherFilters } = params.filter || {}
     const filter: QueryFilter[] = composeFilter(otherFilters);
 
     filter.push({
@@ -162,7 +168,9 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
       .setJoin(getQueryJoin(params.sort as QuerySort))
       .query();
 
-    const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter);
+    const encodedQueryExtra = composeQueryParams({ extra });
+
+    const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter, encodedQueryExtra);
 
     const url = `${apiUrl}/${resource}?${query}`;
 
@@ -222,7 +230,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
     ).then((responses) => ({ data: responses.map(({ json }) => json) })),
 
   getCount: (resource, params) => {
-    const { q: queryParams, $OR: orFilter, ...filter } = params.filter || {};
+    const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
 
     const encodedQueryParams = composeQueryParams(queryParams)
     const encodedQueryFilter = RequestQueryBuilder.create({
@@ -233,7 +241,9 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
       .setJoin(getQueryJoin(params.sort as QuerySort))
       .query();
 
-    const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter);
+    const encodedQueryExtra = composeQueryParams({ extra });
+
+    const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter, encodedQueryExtra);
 
     const url = `${apiUrl}/${resource}/get-count?${query}`;
 
@@ -242,7 +252,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
   export: (resource, params, format, resourceLabel) => {
     const { page, perPage } = params.pagination;
-    const { q: queryParams, $OR: orFilter, ...filter } = params.filter || {};
+    const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
 
     const encodedQueryParams = composeQueryParams(queryParams)
     const encodedQueryFilter = RequestQueryBuilder.create({
@@ -256,7 +266,9 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
       .setJoin(getQueryJoin(params.sort as QuerySort))
       .query();
 
-    const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter);
+    const encodedQueryExtra = composeQueryParams({ extra });
+
+    const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter, encodedQueryExtra);
 
     const url = `${apiUrl}/${resource}/export?extra.format=${format}&${query}`;
 
