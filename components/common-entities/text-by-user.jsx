@@ -116,7 +116,7 @@ const EditTextButton = ({ label, icon, loader }) => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDialogClose} label={translate('ra.action.cancel')} />
-                    <SaveButton alwaysEnable autoFocus variant='text' icon={false} />
+                    <SaveButton alwaysEnable autoFocus variant='text' icon={null} />
                 </DialogActions>
             </Form>
         </Dialog>

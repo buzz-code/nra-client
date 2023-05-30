@@ -44,7 +44,7 @@ export const BulkRequestButton = ({ label, mutate, isLoading, icon, children }) 
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDialogClose} label={translate('ra.action.cancel')} />
-                    <SaveButton alwaysEnable autoFocus variant='text' icon={false} label={translate('ra.action.confirm')} />
+                    <SaveButton alwaysEnable autoFocus variant='text' icon={null} label={translate('ra.action.confirm')} />
                 </DialogActions>
             </Form>
         </Dialog>

@@ -135,12 +135,8 @@ const PreviewListDialog = ({ isAdmin, data, isLoading, datagrid, onDialogClose }
                 </ListContextProvider>
             </DialogContent>
             <DialogActions>
-                <Button onClick={closeDialog} autoFocus disabled={isLoading}>
-                    {translate('ra.action.cancel')}
-                </Button>
-                <Button onClick={importAndCloseDialog} disabled={isLoading}>
-                    {translate('ra.action.import')}
-                </Button>
+                <Button onClick={closeDialog} autoFocus disabled={isLoading} label={translate('ra.action.cancel')} />
+                <Button onClick={importAndCloseDialog} disabled={isLoading} label={translate('ra.action.import')} />
             </DialogActions>
         </Dialog>
     )

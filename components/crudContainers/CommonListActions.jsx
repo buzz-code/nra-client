@@ -14,10 +14,11 @@ export const CommonListActions = ({ importer, ...props }) => {
     const resource = useResourceContext(props);
     const { hasCreate } = useResourceDefinition(props);
     const filters = useContext(FilterContext);
+    const {hasCreate: _, ...restProps} = props;
 
     return useMemo(
         () => (
-            <TopToolbar {...props}>
+            <TopToolbar {...restProps}>
                 {filters && <FilterButton />}
                 {hasCreate && <CreateButton />}
                 {exporter !== false && (
