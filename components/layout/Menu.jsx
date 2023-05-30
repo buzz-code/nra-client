@@ -7,7 +7,11 @@ const CustomMenu = ({ hasDashboard, menuGroups, children }) => {
 
     const [menuGroupsArr, otherResources] = useMemo(() => {
         const groupsDict = Object.fromEntries(menuGroups.map(item => (
-            [item.name, { ...item, resources: [] }]
+            [item.name, {
+                ...item,
+                label: 'menu_groups.' + item.name,
+                resources: []
+            }]
         )));
         const otherResources = [];
 
