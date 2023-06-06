@@ -110,9 +110,9 @@ export const ExportButton = (props: ExportButtonProps) => {
             open={open}
             onClose={handleClose}
         >
-            <MenuItem onClick={handleExportExcel}>{translate('ra.action.exportExcel')}</MenuItem>
-            <MenuItem onClick={handleExportPdf}>{translate('ra.action.exportPdf')}</MenuItem>
-            {isAdmin && <MenuItem onClick={handleExportJson}>{translate('ra.action.exportJson')}</MenuItem>}
+            <MenuItem onClick={handleExportExcel}>{translate('ra.action.export_excel')}</MenuItem>
+            <MenuItem onClick={handleExportPdf}>{translate('ra.action.export_pdf')}</MenuItem>
+            {isAdmin && <MenuItem onClick={handleExportJson}>{translate('ra.action.export_json')}</MenuItem>}
         </Menu>
     </>;
 };

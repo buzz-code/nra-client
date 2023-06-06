@@ -44,10 +44,10 @@ const YemotSimulator = () => {
             if (parsedData.param)
                 setParams(prevData => ([...prevData, parsedData.param]));
 
-            notify("התקבל בהצלחה, אפשר להמשיך בתהליך", { type: 'info' });
+            notify('ra.yemot_simulator.step_success', { type: 'info' });
         },
         onError: () => {
-            notify("ארעה שגיאה, כדאי לנסות שוב מאוחר יותר", { type: 'warning' });
+            notify('ra.message.error', { type: 'error' });
         }
     });
 

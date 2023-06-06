@@ -88,7 +88,7 @@ export const RegisterForm = (props: RegisterFormProps) => {
                     fullWidth
                 />
 
-                <Typography>{translate('ra.auth.userInfoHeader')}</Typography>
+                <Typography>{translate('ra.auth.user_info_header')}</Typography>
                 <Grid container columnSpacing={2}>
                     <Grid item xs={6}>
                         <TextInput
@@ -124,12 +124,12 @@ export const RegisterForm = (props: RegisterFormProps) => {
                     </Grid>
                 </Grid>
 
-                <Typography>{translate('ra.auth.userOrganizationInfoHeader')}</Typography>
+                <Typography>{translate('ra.auth.user_organization_info_header')}</Typography>
                 <Grid container columnSpacing={2}>
                     <Grid item xs={6}>
                         <TextInput
                             source="userInfo.organizationName"
-                            label={translate('ra.auth.organizationName')}
+                            label={translate('ra.auth.organization_name')}
                             validate={[required()]}
                             fullWidth
                         />
@@ -137,7 +137,7 @@ export const RegisterForm = (props: RegisterFormProps) => {
                     <Grid item xs={6}>
                         <TextInput
                             source="userInfo.organizationAddress"
-                            label={translate('ra.auth.organizationAddress')}
+                            label={translate('ra.auth.organization_address')}
                             validate={[required()]}
                             fullWidth
                         />
@@ -145,7 +145,7 @@ export const RegisterForm = (props: RegisterFormProps) => {
                     <Grid item xs={6}>
                         <TextInput
                             source="userInfo.organizationPhone"
-                            label={translate('ra.auth.organizationPhone')}
+                            label={translate('ra.auth.organization_phone')}
                             validate={[]}
                             fullWidth
                         />

@@ -27,9 +27,9 @@ const extendedTranslation = {
             toggle_theme: 'החלפת ערכת נושא',
             select_columns: 'עמודות',
             import: 'ייבא',
-            exportExcel: 'אקסל',
-            exportPdf: 'pdf',
-            exportJson: 'json',
+            export_excel: 'אקסל',
+            export_pdf: 'pdf',
+            export_json: 'json',
             hangup: 'נתק שיחה',
             show_matching_records: 'הצג רשומות קשורות',
             save_and_add: 'שמור והוסף',
@@ -40,15 +40,15 @@ const extendedTranslation = {
             sign_up_invitation: 'עדיין אין לך חשבון? הרשמה',
             sign_up: 'רישום',
             password_confirm: 'אימות סיסמא',
-            userInfoHeader: 'מידע עליך',
+            user_info_header: 'מידע עליך',
             name: 'שם',
             role: 'תפקידך במוסד',
             phone: 'טלפון',
             email: 'כתובת מייל',
-            organizationName: 'שם המוסד',
-            organizationAddress: 'כתובת המוסד',
-            organizationPhone: 'טלפון',
-            userOrganizationInfoHeader: 'מידע על המוסד שלך',
+            organization_name: 'שם המוסד',
+            organization_address: 'כתובת המוסד',
+            organization_phone: 'טלפון',
+            user_organization_info_header: 'מידע על המוסד שלך',
         },
         message: {
             bulk_update_content: 'האם אתה בטוח שברצונך לעדכן %{name}? |||| האם אתה בטוח שברצונך לעדכן רשומות %{smart_count}?',
@@ -104,6 +104,9 @@ const extendedTranslation = {
         },
         bulk_request: {
             params_dialog_title: 'פרמטרים נוספים',
+        },
+        yemot_simulator: {
+            step_success: 'התקבל בהצלחה, אפשר להמשיך בתהליך',
         }
     }
 }
