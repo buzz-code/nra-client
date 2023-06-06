@@ -42,7 +42,7 @@ const YemotSimulator = () => {
 
             setHistory(prevData => ([...prevData, parsedData.lines]));
             if (parsedData.param)
-                setParams(prevData => ([...prevData, parsedData.param]));
+                setParams(prevData => ([parsedData.param]));
 
             notify('ra.yemot_simulator.step_success', { type: 'info' });
         },
@@ -61,9 +61,9 @@ const YemotSimulator = () => {
 
     const toolbar = (
         <Toolbar>
-            <SaveButton disabled={isHangup} />
+            <SaveButton disabled={isHangup} alwaysEnable={true} />
             <RefreshButton onClick={handleReload} sx={{ marginInline: '1rem' }} size='medium' />
-            <HangupButton params={params} isHangup={isHangup} handleSubmit={handleSubmit} />
+            <HangupButton params={params} isHangup={isHangup} handleSubmit={handleSubmit} alwaysEnable={true} formNoValidate />
         </Toolbar>
     )
 
@@ -77,7 +77,7 @@ const YemotSimulator = () => {
                     <TextInput source="ApiDID" label="resources.yemot.ApiDID" validate={required()} />
                     <TextInput source="ApiPhone" label="resources.yemot.ApiPhone" validate={required()} />
                     {params.map(param => (
-                        <TextInput source={param} validate={required()} disabled={isHangup} />
+                        <TextInput source={param} key={param} validate={required()} disabled={isHangup} />
                     ))}
                 </SimpleForm>
                 {history.map(item => <HistoryStep key={item} lines={item} />)}
@@ -97,7 +97,7 @@ const HistoryStep = ({ lines }) => {
     )
 }
 
-const HangupButton = ({ params, isHangup, handleSubmit }) => {
+const HangupButton = ({ params, isHangup, handleSubmit, ...props }) => {
     const form = useFormContext();
 
     const handleClick = useCallback(() => {
@@ -115,6 +115,6 @@ const HangupButton = ({ params, isHangup, handleSubmit }) => {
         return null;
     }
 
-    return <SaveButton onClick={handleClick} label={'ra.action.hangup'} icon={<CallEndIcon />} disabled={!params.length} />
+    return <SaveButton onClick={handleClick} label={'ra.action.hangup'} icon={<CallEndIcon />} disabled={!params.length} {...props} />
 }
 export default YemotSimulator;
