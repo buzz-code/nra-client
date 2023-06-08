@@ -26,7 +26,9 @@ export const CommonJsonField = ({ source }) => {
     const options = isAdmin ? reactJsonViewOptions : nonAdminViewOptions;
 
     return (
-        <JsonField source={source} reactJsonOptions={options} />
+        <div onClick={e => e.stopPropagation()}>
+            <JsonField source={source} reactJsonOptions={options} />
+        </div>
     )
 };
 
