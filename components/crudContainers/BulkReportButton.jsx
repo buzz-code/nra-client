@@ -1,3 +1,4 @@
+import { handleError } from '@shared/utils/notifyUtil';
 import { useDataProvider, useListContext, useNotify } from 'react-admin';
 import { useMutation } from 'react-query';
 import { BulkRequestButton } from './BulkRequestButton';
@@ -20,23 +21,7 @@ export const BulkReportButton = ({ label, icon, name, filename, children }) => {
                     notify('ra.message.report_generation_success');
                     onUnselectItems();
                 })
-                .catch((error) => {
-                    notify(
-                        typeof error === 'string'
-                            ? error
-                            : error.message || 'ra.notification.http_error',
-                        {
-                            type: 'error',
-                            messageArgs: {
-                                _: typeof error === 'string'
-                                    ? error
-                                    : error && error.message
-                                        ? error.message
-                                        : undefined
-                            }
-                        }
-                    );
-                });
+                .catch(handleError(notify));
         }
     );
 

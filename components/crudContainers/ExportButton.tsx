@@ -17,6 +17,7 @@ import { Button, ButtonProps } from 'react-admin';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useIsAdmin } from '@shared/utils/permissionsUtil';
+import { handleError } from '@shared/utils/notifyUtil';
 
 export const ExportButton = (props: ExportButtonProps) => {
     const {
@@ -55,23 +56,7 @@ export const ExportButton = (props: ExportButtonProps) => {
                     },
                     format,
                     getResourceLabel(resource))
-                .catch((error) => {
-                    notify(
-                        typeof error === 'string'
-                            ? error
-                            : error.message || 'ra.notification.http_error',
-                        {
-                            type: 'error',
-                            messageArgs: {
-                                _: typeof error === 'string'
-                                    ? error
-                                    : error && error.message
-                                        ? error.message
-                                        : undefined
-                            }
-                        }
-                    );
-                })
+                .catch(handleError(notify))
                 .finally(() => {
                     setIsLoading(false);
                 });

@@ -9,6 +9,7 @@ import DialogActions from '@mui/material/DialogActions';
 import LinearProgress from '@mui/material/LinearProgress';
 import { useMutation } from 'react-query';
 import { useIsAdmin } from '@shared/utils/permissionsUtil';
+import { handleError } from '@shared/utils/notifyUtil';
 
 export const ImportButton = ({ resource, refetch, fields, datagrid, ...props }) => {
     const [uploadedData, setUploadedData] = useState(null);
@@ -27,9 +28,7 @@ export const ImportButton = ({ resource, refetch, fields, datagrid, ...props }) 
             notify('ra.message.import_success', { type: 'info' });
             refetch();
         },
-        onError: (err) => {
-            notify('ra.message.error', { type: 'error' });
-        }
+        onError: handleError(notify)
     });
 
     const handleFileSelect = useCallback((e) => {

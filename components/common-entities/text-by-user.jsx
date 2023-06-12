@@ -8,6 +8,7 @@ import DialogContent from '@mui/material/DialogContent';
 import Stack from '@mui/material/Stack';
 import EditIcon from '@mui/icons-material/Edit';
 import CircularProgress from '@mui/material/CircularProgress';
+import { handleError } from '@shared/utils/notifyUtil';
 
 const filters = [
     ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,
@@ -44,30 +45,13 @@ const EditTextButton = ({ label, icon, loader }) => {
         });
         refresh();
     };
-    const handleError = (error) => {
-        notify(
-            typeof error === 'string'
-                ? error
-                : error.message || 'ra.notification.http_error',
-            {
-                type: 'error',
-                messageArgs: {
-                    _: typeof error === 'string'
-                        ? error
-                        : error && error.message
-                            ? error.message
-                            : undefined
-                }
-            }
-        );
-    }
     const [create, createResponse] = useCreate(undefined, undefined, {
         onSuccess: handleSuccess,
-        onError: handleError,
+        onError: handleError(notify),
     });
     const [update, updateResponse] = useUpdate(undefined, undefined, {
         onSuccess: handleSuccess,
-        onError: handleError,
+        onError: handleError(notify),
     });
     const handleSave = (value) => {
         if (record.overrideTextId) {
