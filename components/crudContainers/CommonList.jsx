@@ -14,8 +14,9 @@ const BulkActionButtons = ({ additionalBulkButtons, ...props }) => {
 }
 
 
-export const CommonList = ({ children, importer, exporter, ...props }) => (
-    <List actions={<CommonListActions importer={importer} />} exporter={exporter} {...props}>
+export const CommonList = ({ children, importer, exporter, filterDefaultValues, ...props }) => (
+    <List actions={<CommonListActions importer={importer} />} exporter={exporter}
+        filterDefaultValues={filterDefaultValues} {...props}>
         {children}
     </List>
 )

@@ -4,7 +4,15 @@ import { CommonEdit } from '@shared/components/crudContainers/CommonEdit';
 import { CommonCreate } from '@shared/components/crudContainers/CommonCreate';
 import { EmptyPage } from './EmptyPage';
 
-export function getResourceComponents({ Datagrid, Inputs, Representation = 'id', filters = [], importer = null, exporter = true }) {
+export function getResourceComponents({
+    Datagrid,
+    Inputs,
+    Representation = 'id',
+    filters = [],
+    filterDefaultValues = {},
+    importer = null,
+    exporter = true
+}) {
     const importerDef = importer
         ? {
             ...importer,
@@ -15,12 +23,13 @@ export function getResourceComponents({ Datagrid, Inputs, Representation = 'id',
     const List = () => {
         const isAdmin = useIsAdmin();
 
-        const filtersArr= filters
+        const filtersArr = filters
             .map(item => typeof item === 'function' ? item({ isAdmin }) : item)
             .filter(item => item);
 
         return (
-            <CommonList filters={filtersArr} importer={importerDef} exporter={exporter} empty={<EmptyPage importer={importerDef} />}>
+            <CommonList filters={filtersArr} filterDefaultValues={filterDefaultValues}
+                importer={importerDef} exporter={exporter} empty={<EmptyPage importer={importerDef} />}>
                 <Datagrid isAdmin={isAdmin} />
             </CommonList>
         );
