@@ -1,12 +1,11 @@
 import { Layout } from 'react-admin';
 import CustomMenu from '@shared/components/layout/Menu';
 import { useIsAdmin } from '@shared/utils/permissionsUtil';
+import { filterArrayByParams } from '@shared/utils/filtersUtil';
 
 const CustomLayout = ({ customMenuItems, menuGroups, ...props }) => {
     const isAdmin = useIsAdmin();
-    const customMenuItemsArr = customMenuItems
-        .map(item => typeof item === 'function' ? item({ isAdmin }) : item)
-        .filter(item => item);
+    const customMenuItemsArr = filterArrayByParams(customMenuItems, { isAdmin });
 
     const Menu = (props) => (
         <CustomMenu {...props} menuGroups={menuGroups}>

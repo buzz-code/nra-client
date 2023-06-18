@@ -3,6 +3,7 @@ import { CommonList } from '@shared/components/crudContainers/CommonList';
 import { CommonEdit } from '@shared/components/crudContainers/CommonEdit';
 import { CommonCreate } from '@shared/components/crudContainers/CommonCreate';
 import { EmptyPage } from './EmptyPage';
+import { filterArrayByParams } from '@shared/utils/filtersUtil';
 
 export function getResourceComponents({
     Datagrid,
@@ -22,10 +23,7 @@ export function getResourceComponents({
 
     const List = () => {
         const isAdmin = useIsAdmin();
-
-        const filtersArr = filters
-            .map(item => typeof item === 'function' ? item({ isAdmin }) : item)
-            .filter(item => item);
+        const filtersArr = filterArrayByParams(filters, {isAdmin});
 
         return (
             <CommonList filters={filtersArr} filterDefaultValues={filterDefaultValues}
