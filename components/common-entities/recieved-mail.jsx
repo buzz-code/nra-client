@@ -1,7 +1,7 @@
-import { Button, DateField, Link, ReferenceArrayField, ReferenceField, ReferenceInput, TextField, TextInput, useCreatePath, useRecordContext } from 'react-admin';
+import { DateField, ReferenceArrayField, ReferenceField, ReferenceInput, TextField, TextInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
-import ListIcon from '@mui/icons-material/List';
+import { ShowMatchingRecordsButton } from '../fields/ShowMatchingRecordsButton';
 
 const filters = [
     ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,
@@ -21,23 +21,8 @@ const Datagrid = ({ isAdmin, ...props }) => {
             <TextField source="entityName" />
             <ReferenceArrayField source="importFileIds" reference="import_file" />
             {isAdmin && <DateField showDate showTime source="createdAt" />}
-            <ShowMatchingFilesButton />
+            <ShowMatchingRecordsButton source="importFileIds" resource="import_file" />
         </CommonDatagrid>
-    );
-}
-
-const ShowMatchingFilesButton = ({ ...props }) => {
-    const record = useRecordContext();
-    const createPath = useCreatePath();
-
-    return (
-        <Button label='ra.action.show_matching_records' startIcon={<ListIcon />}
-            component={Link}
-            to={{
-                pathname: createPath({ resource: 'import_file', type: 'list' }),
-                search: `filter=${JSON.stringify({ 'id:$in': record.importFileIds })}`
-            }}
-            onClick={e => e.stopPropagation()} />
     );
 }
 

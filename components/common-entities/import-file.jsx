@@ -1,10 +1,10 @@
-import { DateField, ReferenceField, TextField, Button, useRecordContext, useCreatePath, Link, TextInput, ReferenceInput } from 'react-admin';
+import { DateField, ReferenceField, TextField, TextInput, ReferenceInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonEntityNameField } from '@shared/components/fields/CommonEntityNameField';
 import { CommonCountField } from '@shared/components/fields/CommonCountField';
-import ListIcon from '@mui/icons-material/List';
 import { CommonEntityNameInput } from '@shared/components/fields/CommonEntityNameInput';
+import { ShowMatchingRecordsButton } from '@shared/components/fields/ShowMatchingRecordsButton';
 
 const filters = [
     ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,
@@ -23,23 +23,8 @@ const Datagrid = ({ isAdmin, ...props }) => {
             <CommonEntityNameField source="entityName" />
             <TextField source="response" />
             <DateField showDate showTime source="createdAt" />
-            <ShowMatchingRecordsButton />
+            <ShowMatchingRecordsButton source="entityIds" resourceField="entityName" />
         </CommonDatagrid>
-    );
-}
-
-const ShowMatchingRecordsButton = ({ ...props }) => {
-    const record = useRecordContext();
-    const createPath = useCreatePath();
-
-    return (
-        <Button label='ra.action.show_matching_records' startIcon={<ListIcon />}
-            component={Link}
-            to={{
-                pathname: createPath({ resource: record.entityName, type: 'list' }),
-                search: `filter=${JSON.stringify({ 'id:$in': record.entityIds })}`
-            }}
-            onClick={e => e.stopPropagation()} />
     );
 }
 
