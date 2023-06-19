@@ -8,7 +8,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from 'react-router-dom';
 
 const ImpersonateButton = ({ ...props }) => {
-    const record = useRecordContext();
+    const record = useRecordContext(props);
     const dataProvider = useDataProvider();
     const authProvider = useAuthProvider();
     const navigate = useNavigate();
@@ -55,6 +55,7 @@ const Datagrid = ({ isAdmin, ...props }) => {
 
 const Inputs = ({ isCreate, isAdmin }) => {
     return <>
+        {isAdmin && <FormDataConsumer>{({ formData }) => <ImpersonateButton record={formData} />}</FormDataConsumer>}
         {!isCreate && isAdmin && <TextInput source="id" disabled />}
         <TextInput source="name" validate={[required(), maxLength(500)]} disabled={!isAdmin} />
         <TextInput source="email" validate={[required(), maxLength(500)]} disabled={!isAdmin} />
