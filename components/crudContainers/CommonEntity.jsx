@@ -6,6 +6,7 @@ import { EmptyPage } from './EmptyPage';
 import { filterArrayByParams } from '@shared/utils/filtersUtil';
 
 export function getResourceComponents({
+    resource,
     Datagrid,
     Inputs,
     Representation = 'id',
@@ -23,11 +24,13 @@ export function getResourceComponents({
 
     const List = () => {
         const isAdmin = useIsAdmin();
-        const filtersArr = filterArrayByParams(filters, {isAdmin});
+        const filtersArr = filterArrayByParams(filters, { isAdmin });
 
         return (
-            <CommonList filters={filtersArr} filterDefaultValues={filterDefaultValues}
-                importer={importerDef} exporter={exporter} empty={<EmptyPage importer={importerDef} />}>
+            <CommonList resource={resource}
+                filters={filtersArr} filterDefaultValues={filterDefaultValues}
+                importer={importerDef} exporter={exporter}
+                empty={<EmptyPage importer={importerDef} />}>
                 <Datagrid isAdmin={isAdmin} />
             </CommonList>
         );
