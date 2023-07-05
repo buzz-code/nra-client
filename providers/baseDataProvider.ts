@@ -62,7 +62,9 @@ const composeFilter = (paramsFilter: any): QueryFilter[] => {
     let field = splitKey[0];
     let ops = splitKey[1];
     if (!ops) {
-      if (typeof flatFilter[key] === 'boolean' || typeof flatFilter[key] === 'number' || (typeof flatFilter[key] === 'string' && (flatFilter[key].match(/^\d+$/)) || flatFilter[key].match(uuidRegex))) {
+      if (flatFilter[key] === null) {
+        ops = CondOperator.IS_NULL;
+      } else if (typeof flatFilter[key] === 'boolean' || typeof flatFilter[key] === 'number' || (typeof flatFilter[key] === 'string' && (flatFilter[key].match(/^\d+$/)) || flatFilter[key].match(uuidRegex))) {
         ops = CondOperator.EQUALS;
       } else {
         ops = CondOperator.CONTAINS_LOW;
