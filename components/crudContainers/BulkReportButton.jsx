@@ -3,7 +3,7 @@ import { useDataProvider, useListContext, useNotify } from 'react-admin';
 import { useMutation } from 'react-query';
 import { BulkRequestButton } from './BulkRequestButton';
 
-export const BulkReportButton = ({ label, icon, name, filename, children }) => {
+export const BulkReportButton = ({ label, icon, name, filename, defaultRequestValues, children }) => {
     const dataProvider = useDataProvider();
     const { selectedIds, onUnselectItems, resource } = useListContext();
     const notify = useNotify();
@@ -25,5 +25,5 @@ export const BulkReportButton = ({ label, icon, name, filename, children }) => {
         }
     );
 
-    return <BulkRequestButton label={label} mutate={mutate} isLoading={isLoading} icon={icon} children={children} />
+    return <BulkRequestButton label={label} mutate={mutate} isLoading={isLoading} icon={icon} defaultRequestValues={defaultRequestValues} children={children} />
 }

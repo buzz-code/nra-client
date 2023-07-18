@@ -7,7 +7,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Stack from '@mui/material/Stack';
 
-export const BulkRequestButton = ({ label, mutate, isLoading, icon, children }) => {
+export const BulkRequestButton = ({ label, mutate, isLoading, icon, defaultRequestValues, children }) => {
     const [showDialog, setShowDialog] = useState(false);
     const translate = useTranslate();
 
@@ -36,7 +36,7 @@ export const BulkRequestButton = ({ label, mutate, isLoading, icon, children }) 
             <DialogTitle>
                 {translate('ra.bulk_request.params_dialog_title')}
             </DialogTitle>
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit} defaultValues={defaultRequestValues}>
                 <DialogContent>
                     <Stack>
                         {children}
