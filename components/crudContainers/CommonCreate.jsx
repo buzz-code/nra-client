@@ -33,7 +33,7 @@ const CreateToolbar = (props) => {
 }
 
 export const CommonCreate = ({ children, ...props }) => (
-    <Create actions={<CreateActions />} {...props}>
+    <Create actions={<CreateActions />} redirect='list' {...props}>
         <SimpleForm toolbar={<CreateToolbar />}>
             {children}
         </SimpleForm>
