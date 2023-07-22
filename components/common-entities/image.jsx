@@ -24,7 +24,7 @@ const Datagrid = ({ isAdmin, ...props }) => {
     );
 }
 
-const imageTargetEnum = ['לוגו לתעודה'];
+const imageTargetEnum = ['לוגו לתעודה', 'לוגו לתחתית התעודה'];
 
 const Inputs = ({ isCreate, isAdmin }) => {
     const unique = useUnique();
