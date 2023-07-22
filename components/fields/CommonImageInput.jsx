@@ -2,7 +2,7 @@ import { ImageInput, ImageField } from "react-admin";
 import { useFormContext } from 'react-hook-form';
 import { useEffect } from 'react';
 
-export const CommonImageInput = ({ source, accept = 'image/*', maxSize = 16000000, ...props }) => {
+export const CommonImageInput = ({ source, accept = 'image/*', maxSize = 16_000_000, ...props }) => {
     const { watch, setValue, setError } = useFormContext();
     const value = watch(source);
 
