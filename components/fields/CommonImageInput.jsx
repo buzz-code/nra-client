@@ -7,7 +7,7 @@ export const CommonImageInput = ({ source, accept = 'image/*', maxSize = 16_000_
     const value = watch(source);
 
     useEffect(() => {
-        if (value?.src?.includes('blob')) {
+        if (value?.src?.includes('blob') && value.rawFile) {
             const reader = new FileReader();
             reader.onload = () => {
                 setValue(source, { ...value, src: reader.result });
