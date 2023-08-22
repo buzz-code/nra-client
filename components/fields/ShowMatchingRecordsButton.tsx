@@ -7,7 +7,7 @@ export const ShowMatchingRecordsButton = ({ source, resource, resourceField, fil
     const record = useRecordContext();
     const createPath = useCreatePath();
 
-    if (!record || (!!source && !!get(record, source))) return null;
+    if (!record || (!!source && !get(record, source))) return null;
 
     const resourceValue = resource ?? record?.[resourceField];
     const filterValue = filter ?? { 'id:$in': !get(record, source) };
