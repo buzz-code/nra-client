@@ -3,7 +3,7 @@ function getDefaultApiUrl() {
 
   const ipAddressRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
   if (hostname === 'localhost' || ipAddressRegex.test(hostname)) {
-    const nextPort = port ? 8080 : (+port + 1);
+    const nextPort = port ? (+port + 1) : 8080;
     return `${protocol}//${hostname}:${nextPort}`;
   }
 
