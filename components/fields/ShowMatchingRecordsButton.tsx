@@ -10,7 +10,7 @@ export const ShowMatchingRecordsButton = ({ source, resource, resourceField, fil
     if (!record || (!!source && !get(record, source))) return null;
 
     const resourceValue = resource ?? record?.[resourceField];
-    const filterValue = filter ?? { 'id:$in': !get(record, source) };
+    const filterValue = filter ?? { 'id:$in': get(record, source) };
 
     return (
         <Button label='ra.action.show_matching_records' startIcon={<ListIcon />}
