@@ -17,7 +17,9 @@ const CustomMenu = ({ hasDashboard, menuGroups, children }) => {
 
         for (const resource of Object.values(resources)) {
             const arr = groupsDict[resource.options?.menuGroup].resources ?? otherResources;
-            arr.push(resource.name);
+            if (resource.hasList) {
+                arr.push(resource.name);
+            }
         }
 
         for (const group of Object.values(groupsDict)) {
