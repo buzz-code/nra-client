@@ -1,10 +1,11 @@
-import { AutocompleteInput, DateField, DateTimeInput, ImageField, ImageInput, maxLength, ReferenceField, ReferenceInput, required, TextField, TextInput, useInput, useUnique } from 'react-admin';
+import { DateField, DateTimeInput, ImageField, maxLength, ReferenceField, ReferenceInput, required, TextField, TextInput, useUnique } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import CommonReferenceInput from '@shared/components/fields/CommonReferenceInput';
 import { CommonJsonField, CommonJsonInput } from '@shared/components/fields/CommonJsonItem';
 import { CommonImageInput } from '@shared/components/fields/CommonImageInput';
+import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
 
 const filters = [
     ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,
@@ -34,7 +35,7 @@ const Inputs = ({ isCreate, isAdmin }) => {
         {isAdmin && <CommonReferenceInput source="userId" reference="user" validate={required()} />}
         {/* <CommonJsonInput source="fileData" /> */}
         <CommonImageInput source="fileData" validate={required()} />
-        <AutocompleteInput source="imageTarget" choices={imageTargetEnum.map(item => ({ id: item, name: item }))} validate={[required(), maxLength(255), isCreate && unique()]} />
+        <CommonAutocompleteInput source="imageTarget" choices={imageTargetEnum.map(item => ({ id: item, name: item }))} validate={[required(), maxLength(255), isCreate && unique()]} />
         {!isCreate && isAdmin && <DateTimeInput source="createdAt" disabled />}
         {!isCreate && isAdmin && <DateTimeInput source="updatedAt" disabled />}
     </>;

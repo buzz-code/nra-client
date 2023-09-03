@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { AutocompleteInput, AutocompleteInputProps, ReferenceInput, ReferenceInputProps, FormDataConsumer } from 'react-admin';
+import { AutocompleteInputProps, ReferenceInput, ReferenceInputProps, FormDataConsumer } from 'react-admin';
+import CommonAutocompleteInput from './CommonAutocompleteInput';
 
 type CommonReferenceInputProps = ReferenceInputProps & AutocompleteInputProps & {
     dynamicFilter: Record<string, string>;
@@ -26,7 +27,7 @@ export default (props: CommonReferenceInputProps) => {
         <FormDataConsumer>
             {({ formData, ...rest }) => (
                 <ReferenceInput {...props} filter={getFilterByFormData(formData)}>
-                    <AutocompleteInput {...props} />
+                    <CommonAutocompleteInput {...props} />
                 </ReferenceInput>
             )}</FormDataConsumer>
     );

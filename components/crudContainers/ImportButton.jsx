@@ -1,6 +1,6 @@
 import { useState, useRef, forwardRef, useCallback } from 'react';
 import * as XLSX from 'xlsx';
-import { Button, ListContextProvider, useDataProvider, useList, useTranslate, useNotify, ReferenceInput, Form, AutocompleteInput } from 'react-admin';
+import { Button, ListContextProvider, useDataProvider, useList, useTranslate, useNotify, ReferenceInput, Form } from 'react-admin';
 import Upload from '@mui/icons-material/FileUpload';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -10,6 +10,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { useMutation } from 'react-query';
 import { useIsAdmin } from '@shared/utils/permissionsUtil';
 import { handleError } from '@shared/utils/notifyUtil';
+import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
 
 export const ImportButton = ({ resource, refetch, fields, datagrid, ...props }) => {
     const [uploadedData, setUploadedData] = useState(null);
@@ -125,7 +126,7 @@ const PreviewListDialog = ({ isAdmin, data, isLoading, datagrid, onDialogClose }
                 {isAdmin && (
                     <Form toolbar={false}>
                         <ReferenceInput source="userId" reference="user" >
-                            <AutocompleteInput onChange={setUserId} />
+                            <CommonAutocompleteInput onChange={setUserId} />
                         </ReferenceInput>
                     </Form>
                 )}

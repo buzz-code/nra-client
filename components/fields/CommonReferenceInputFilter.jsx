@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { ReferenceInput, AutocompleteInput, useListContext } from 'react-admin';
+import { ReferenceInput, useListContext } from 'react-admin';
+import CommonAutocompleteInput from './CommonAutocompleteInput';
 
 const filterToQuery = searchText => ({ 'name:$contL': searchText });
 
@@ -20,7 +21,7 @@ export const CommonReferenceInputFilter = ({ label, source, reference, alwaysOn,
 
     return (
         <ReferenceInput label={label} source={source} reference={reference} alwaysOn={alwaysOn} filter={filter}>
-            <AutocompleteInput label={label} filterToQuery={filterToQuery} />
+            <CommonAutocompleteInput label={label} filterToQuery={filterToQuery} />
         </ReferenceInput>
     );
 };
