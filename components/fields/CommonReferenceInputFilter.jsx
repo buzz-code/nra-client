@@ -24,3 +24,12 @@ export const CommonReferenceInputFilter = ({ label, source, reference, alwaysOn,
         </ReferenceInput>
     );
 };
+
+export const filterByUserId = {
+    userId: 'userId',
+};
+
+export const filterByUserIdAndYear = {
+    ...filterByUserId,
+    year: 'year',
+}
