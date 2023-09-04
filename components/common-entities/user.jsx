@@ -1,4 +1,4 @@
-import { BooleanField, BooleanInput, Button, DateField, DateTimeInput, EmailField, FormDataConsumer, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, useRecordContext } from 'react-admin';
+import { BooleanField, BooleanInput, Button, DateField, DateTimeInput, EmailField, FormDataConsumer, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, useRecordContext, ReferenceField, Labeled } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { QuickFilter } from '@shared/components/fields/QuickFilter';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
@@ -6,6 +6,7 @@ import { getResourceComponents } from '@shared/components/crudContainers/CommonE
 import { CommonJsonField, CommonJsonInput } from '@shared/components/fields/CommonJsonItem';
 import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from 'react-router-dom';
+import CommonReferenceInput from '@shared/components/fields/CommonReferenceInput';
 
 const ImpersonateButton = ({ ...props }) => {
     const record = useRecordContext(props);
@@ -46,6 +47,7 @@ const Datagrid = ({ isAdmin, ...props }) => {
             {isAdmin && <CommonJsonField source="additionalData" />}
             <CommonJsonField source="userInfo" />
             <BooleanField source="isPaid" />
+            <ReferenceField source="paymentTrackId" reference="payment_track" />
             <DateField showDate showTime source="createdAt" />
             <DateField showDate showTime source="updatedAt" />
             {isAdmin && <ImpersonateButton />}
@@ -74,6 +76,11 @@ const Inputs = ({ isCreate, isAdmin }) => {
                 <TextInput source="paymentMethod" validate={required()} {...rest} />
             }
         </FormDataConsumer>
+        <CommonReferenceInput source="paymentTrackId" reference="payment_track" />
+        <ReferenceField source="paymentTrackId" reference="payment_track" link={false} emptyText="">
+            <Labeled label="מחיר לחודש"><TextField source="monthlyPrice" /></Labeled>
+            <Labeled label="מחיר לשנה"><TextField source="annualPrice" /></Labeled>
+        </ReferenceField>
         <TextInput source="mailAddressAlias" validate={maxLength(255)} />
         <TextInput source="mailAddressTitle" validate={maxLength(255)} />
         {!isCreate && <DateTimeInput source="createdAt" disabled />}
