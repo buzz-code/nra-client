@@ -26,3 +26,12 @@ export const useIsEditPagesData = () => {
 export function isEditPagesData(permissions) {
     return isAdmin(permissions) || !!permissions?.editPagesData;
 }
+
+export const useIseditPaymentTracksData = () => {
+    const { permissions } = usePermissions();
+    return isEditPaymentTracksData(permissions);
+}
+
+export function isEditPaymentTracksData(permissions) {
+    return isAdmin(permissions) || !!permissions?.editPaymentTracksData;
+}
