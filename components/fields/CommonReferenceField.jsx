@@ -37,7 +37,11 @@ export const MultiReferenceArrayField = ({ source, reference, optionalSource, op
         )
     }
 
-    const optionalValue = get(record, optionalSource)
+    let optionalValue = get(record, optionalSource)
+    if (typeof optionalValue === 'string' && optionalValue.includes(',')) {
+        optionalValue = optionalValue.split(',')
+    }
+
     if (optionalValue) {
         return (
             <ListBase resource={reference} filter={{ [optionalTarget]: optionalValue }}>

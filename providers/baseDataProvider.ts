@@ -64,6 +64,8 @@ const composeFilter = (paramsFilter: any): QueryFilter[] => {
     if (!ops) {
       if (flatFilter[key] === null) {
         ops = CondOperator.IS_NULL;
+      } else if (Array.isArray(flatFilter[key])) {
+        ops = CondOperator.IN;
       } else if (typeof flatFilter[key] === 'boolean' || typeof flatFilter[key] === 'number' || (typeof flatFilter[key] === 'string' && (flatFilter[key].match(/^\d+$/)) || flatFilter[key].match(uuidRegex))) {
         ops = CondOperator.EQUALS;
       } else {
