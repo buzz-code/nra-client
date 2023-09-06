@@ -22,7 +22,7 @@ export default ({ items }) => {
     </Grid>
 }
 
-const DashboardItem = ({ resource, icon, title }) => {
+const DashboardItem = ({ resource, icon, title, filter = {} }) => {
     // todo: add query options here
     // todo: add default title here
     // todo: add table for dashboard items
@@ -30,7 +30,7 @@ const DashboardItem = ({ resource, icon, title }) => {
     const dataProvider = useDataProvider();
     const { mutate, isLoading, data } = useMutation(
         [resource, 'getCount', {}],
-        () => dataProvider.getCount(resource, {})
+        () => dataProvider.getCount(resource, { filter })
     );
 
     useEffect(() => {
