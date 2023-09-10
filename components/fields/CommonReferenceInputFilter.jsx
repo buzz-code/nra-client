@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { ReferenceInput, useListContext } from 'react-admin';
 import CommonAutocompleteInput from './CommonAutocompleteInput';
 
+const defaultOrder = { field: 'name', order: 'ASC' };
+
 export const CommonReferenceInputFilter = ({ label, source, reference, alwaysOn, dynamicFilter }) => {
     const { filterValues } = useListContext();
     const filter = useMemo(() => {
@@ -18,7 +20,7 @@ export const CommonReferenceInputFilter = ({ label, source, reference, alwaysOn,
     }, [dynamicFilter, filterValues]);
 
     return (
-        <ReferenceInput label={label} source={source} reference={reference} alwaysOn={alwaysOn} filter={filter}>
+        <ReferenceInput label={label} source={source} reference={reference} alwaysOn={alwaysOn} filter={filter} sort={defaultOrder}>
             <CommonAutocompleteInput label={label} />
         </ReferenceInput>
     );

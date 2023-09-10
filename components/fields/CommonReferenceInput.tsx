@@ -6,6 +6,8 @@ type CommonReferenceInputProps = ReferenceInputProps & AutocompleteInputProps & 
     dynamicFilter: Record<string, string>;
 };
 
+const defaultOrder = { field: 'name', order: 'ASC' };
+
 export default (props: CommonReferenceInputProps) => {
     const getFilterByFormData = React.useCallback((formData) => {
         const res = {};
@@ -23,10 +25,12 @@ export default (props: CommonReferenceInputProps) => {
         };;
     }, [props.dynamicFilter, props.filter]);
 
+    console.log({props})
+
     return (
         <FormDataConsumer>
             {({ formData, ...rest }) => (
-                <ReferenceInput {...props} filter={getFilterByFormData(formData)}>
+                <ReferenceInput sort={defaultOrder} {...props} filter={getFilterByFormData(formData)}>
                     <CommonAutocompleteInput {...props} />
                 </ReferenceInput>
             )}</FormDataConsumer>
