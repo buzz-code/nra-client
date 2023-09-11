@@ -73,7 +73,7 @@ const ExcelImportInput = forwardRef(({ fields, onDataParsed }, ref) => {
         reader.onload = (evt) => { // evt = on_file_select event
             /* Parse data */
             const bstr = evt.target.result;
-            const wb = XLSX.read(bstr, { type: 'binary' });
+            const wb = XLSX.read(bstr, { type: 'binary', cellText: false, cellDates: true });
             /* Get first worksheet */
             const wsname = wb.SheetNames[0];
             const ws = wb.Sheets[wsname];
