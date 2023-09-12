@@ -1,16 +1,11 @@
-import { useState, useRef, forwardRef, useCallback } from 'react';
-import * as XLSX from 'xlsx';
-import { Button, ListContextProvider, useDataProvider, useList, useTranslate, useNotify, ReferenceInput, Form, TextField } from 'react-admin';
+import { useState, useRef, useCallback } from 'react';
+import { Button, useDataProvider, useNotify } from 'react-admin';
 import Upload from '@mui/icons-material/FileUpload';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import LinearProgress from '@mui/material/LinearProgress';
 import { useMutation } from 'react-query';
 import { useIsAdmin } from '@shared/utils/permissionsUtil';
 import { handleError } from '@shared/utils/notifyUtil';
-import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
+import { ExcelImportInput } from '../import/ExcelImportInput';
+import { PreviewListDialog } from '../import/PreviewListDialog';
 
 export const ImportButton = ({ resource, refetch, fields, datagrid, ...props }) => {
     const [uploadedData, setUploadedData] = useState(null);
@@ -64,80 +59,4 @@ export const ImportButton = ({ resource, refetch, fields, datagrid, ...props }) 
             data={uploadedData} isLoading={isLoading}
             datagrid={datagrid} onDialogClose={handlePreviewClose} />
     </>
-}
-
-const ExcelImportInput = forwardRef(({ fields, onDataParsed }, ref) => {
-    const processFile = useCallback(file => {
-        var name = file.name;
-        const reader = new FileReader();
-        reader.onload = (evt) => { // evt = on_file_select event
-            /* Parse data */
-            const bstr = evt.target.result;
-            const wb = XLSX.read(bstr, { type: 'binary', cellText: false, cellDates: true });
-            /* Get first worksheet */
-            const wsname = wb.SheetNames[0];
-            const ws = wb.Sheets[wsname];
-            /* Convert array of arrays */
-            const data = XLSX.utils.sheet_to_json(ws, { header: fields, range: 1 });
-            /* Update state */
-            onDataParsed({ name, data });
-        };
-        reader.readAsBinaryString(file);
-    }, [fields, onDataParsed]);
-
-    const handleFileUpload = useCallback(e => {
-        const { files } = e.target;
-        if (files && files.length) {
-            processFile(files[0]);
-        }
-        e.target.value = null;
-    }, [processFile]);
-
-    return (
-        <input
-            type='file' accept='.csv, .xls, .xlsx' style={{ display: 'none' }}
-            ref={ref} onChange={handleFileUpload} />
-    )
-});
-
-const PreviewListDialog = ({ isAdmin, data, isLoading, datagrid, onDialogClose }) => {
-    const listContext = useList({ data });
-    const translate = useTranslate();
-    const [userId, setUserId] = useState(null);
-    const Datagrid = datagrid;
-
-    const closeDialog = useCallback(() => {
-        onDialogClose(false);
-    }, [onDialogClose]);
-
-    const importAndCloseDialog = useCallback(() => {
-        onDialogClose(true, userId);
-    }, [onDialogClose, userId]);
-
-    return (
-        <Dialog
-            open={!!data} onClose={closeDialog}
-            scroll='paper' dir='rtl' fullWidth>
-            <DialogTitle>
-                {translate('ra.message.import_title')}
-            </DialogTitle>
-            <DialogContent>
-                {isLoading && <LinearProgress />}
-                {isAdmin && (
-                    <Form toolbar={false}>
-                        <ReferenceInput source="userId" reference="user" >
-                            <CommonAutocompleteInput onChange={setUserId} />
-                        </ReferenceInput>
-                    </Form>
-                )}
-                <ListContextProvider value={listContext}>
-                    <Datagrid readonly />
-                </ListContextProvider>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={closeDialog} autoFocus disabled={isLoading} label={translate('ra.action.cancel')} />
-                <Button onClick={importAndCloseDialog} disabled={isLoading} label={translate('ra.action.import')} />
-            </DialogActions>
-        </Dialog>
-    )
 }
