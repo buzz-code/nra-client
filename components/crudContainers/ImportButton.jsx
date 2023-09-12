@@ -1,6 +1,6 @@
 import { useState, useRef, forwardRef, useCallback } from 'react';
 import * as XLSX from 'xlsx';
-import { Button, ListContextProvider, useDataProvider, useList, useTranslate, useNotify, ReferenceInput, Form } from 'react-admin';
+import { Button, ListContextProvider, useDataProvider, useList, useTranslate, useNotify, ReferenceInput, Form, TextField } from 'react-admin';
 import Upload from '@mui/icons-material/FileUpload';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -131,7 +131,7 @@ const PreviewListDialog = ({ isAdmin, data, isLoading, datagrid, onDialogClose }
                     </Form>
                 )}
                 <ListContextProvider value={listContext}>
-                    <Datagrid rowClick={null} bulkActionButtons={null} />
+                    <Datagrid readonly />
                 </ListContextProvider>
             </DialogContent>
             <DialogActions>
