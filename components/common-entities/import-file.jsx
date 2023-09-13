@@ -12,9 +12,10 @@ const filters = [
     <TextInput source="fileName" />
 ];
 
-const Datagrid = ({ isAdmin, ...props }) => {
+const Datagrid = ({ isAdmin, children, ...props }) => {
     return (
         <CommonDatagrid {...props} readonly>
+            {children}
             <TextField source="id" />
             {isAdmin && <ReferenceField source="userId" reference="user" />}
             <TextField source="fileName" />

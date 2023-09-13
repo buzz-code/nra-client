@@ -10,9 +10,10 @@ const filters = [
     <CommonEntityNameInput source="entityName" />,
 ];
 
-const Datagrid = ({ isAdmin, ...props }) => {
+const Datagrid = ({ isAdmin, children, ...props }) => {
     return (
         <CommonDatagrid {...props} readonly>
+            {children}
             <TextField source="id" />
             <ReferenceField source="userId" reference="user" />
             <TextField source="entityId" />

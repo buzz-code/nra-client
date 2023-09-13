@@ -10,9 +10,10 @@ const filters = [
     <TextInput source="value:$cont" label="ערך" alwaysOn />,
 ];
 
-const Datagrid = ({ isAdmin, ...props }) => {
+const Datagrid = ({ isAdmin, children, ...props }) => {
     return (
         <CommonDatagrid {...props}>
+            {children}
             {isAdmin && <TextField source="id" />}
             <TextField source="description" />
             <RichTextField source="value" maxHeight={120} overflow='hidden' display='inline-block' />

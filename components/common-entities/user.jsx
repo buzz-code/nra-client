@@ -34,9 +34,10 @@ const filters = [
     <QuickFilter source="fromEmail" defaultValue="gmail" />
 ];
 
-const Datagrid = ({ isAdmin, ...props }) => {
+const Datagrid = ({ isAdmin, children, ...props }) => {
     return (
         <CommonDatagrid {...props}>
+            {children}
             {isAdmin && <TextField source="id" />}
             <TextField source="name" />
             <EmailField source="email" />

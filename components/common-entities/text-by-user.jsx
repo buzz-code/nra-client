@@ -17,9 +17,10 @@ const filters = [
     <TextInput source="value:$cont" label="ערך" alwaysOn />,
 ];
 
-const Datagrid = ({ isAdmin, ...props }) => {
+const Datagrid = ({ isAdmin, children, ...props }) => {
     return (
         <CommonDatagrid {...props}>
+            {children}
             {isAdmin && <TextField source="id" />}
             {isAdmin && <ReferenceField source="userId" reference="user" emptyText='system' />}
             <TextField source="name" />

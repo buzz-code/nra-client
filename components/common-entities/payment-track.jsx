@@ -8,9 +8,10 @@ const filters = [
     <TextInput source="description:$cont" label="תיאור" />,
 ];
 
-const Datagrid = ({ isAdmin, ...props }) => {
+const Datagrid = ({ isAdmin, children, ...props }) => {
     return (
         <CommonDatagrid {...props}>
+            {children}
             {isAdmin && <TextField source="id" />}
             <TextField source="name" />
             <TextField source="description" />
