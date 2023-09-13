@@ -7,7 +7,7 @@ import DialogActions from '@mui/material/DialogActions';
 import LinearProgress from '@mui/material/LinearProgress';
 import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
 
-export const PreviewListDialog = ({ isAdmin, data, isLoading, datagrid, onDialogClose }) => {
+export const PreviewListDialog = ({ isAdmin, data, isLoading, tryAgain, datagrid, onDialogClose }) => {
     const listContext = useList({ data });
     const translate = useTranslate();
     const [userId, setUserId] = useState(null);
@@ -43,7 +43,7 @@ export const PreviewListDialog = ({ isAdmin, data, isLoading, datagrid, onDialog
             </DialogContent>
             <DialogActions>
                 <Button onClick={closeDialog} autoFocus disabled={isLoading} label={translate('ra.action.cancel')} />
-                <Button onClick={importAndCloseDialog} disabled={isLoading} label={translate('ra.action.import')} />
+                <Button onClick={importAndCloseDialog} disabled={isLoading} label={tryAgain ? translate('ra.action.import_again') : translate('ra.action.import')} />
             </DialogActions>
         </Dialog>
     )

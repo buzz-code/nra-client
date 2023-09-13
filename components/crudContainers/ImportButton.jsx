@@ -1,28 +1,38 @@
 import { useState, useRef, useCallback } from 'react';
-import { Button, useDataProvider, useNotify } from 'react-admin';
+import { Button, useNotify } from 'react-admin';
 import Upload from '@mui/icons-material/FileUpload';
 import { useMutation } from 'react-query';
 import { useIsAdmin } from '@shared/utils/permissionsUtil';
 import { handleError } from '@shared/utils/notifyUtil';
 import { ExcelImportInput } from '../import/ExcelImportInput';
 import { PreviewListDialog } from '../import/PreviewListDialog';
+import { useSavableData } from '../import/util';
 
 export const ImportButton = ({ resource, refetch, fields, datagrid, ...props }) => {
     const [uploadedData, setUploadedData] = useState(null);
     const [fileName, setFileName] = useState(null);
+    const [tryAgain, setTryAgain] = useState(false);
     const fileSelector = useRef();
-    const dataProvider = useDataProvider();
+    const { data, saveData } = useSavableData(fileName, uploadedData);
     const notify = useNotify();
     const isAdmin = useIsAdmin();
 
     const { mutate, isLoading } = useMutation({
-        mutationFn: (data) => dataProvider.importFile(resource, data, fileName),
-        onSuccess: (res) => {
-            setUploadedData(null);
-            setFileName(null);
+        mutationFn: () => saveData(),
+        onSuccess: ({ successCount, errorCount }) => {
+            if (errorCount === 0 && successCount > 0) {
+                setUploadedData(null);
+                setFileName(null);
 
-            notify('ra.message.import_success', { type: 'info' });
-            refetch();
+                notify('ra.message.import_success', { type: 'info' });
+                refetch();
+            } else if (successCount > 0) {
+                notify('ra.message.import_partial_error', { type: 'warning' });
+                refetch();
+                setTryAgain(true);
+            } else {
+                notify('ra.message.import_error', { type: 'error' });
+            }
         },
         onError: handleError(notify)
     });
@@ -44,7 +54,7 @@ export const ImportButton = ({ resource, refetch, fields, datagrid, ...props }) 
                     item.userId = userId;
                 });
             }
-            mutate(uploadedData);
+            mutate();
         } else {
             setUploadedData(null);
             setFileName(null);
@@ -56,7 +66,7 @@ export const ImportButton = ({ resource, refetch, fields, datagrid, ...props }) 
         <ExcelImportInput ref={fileSelector} fields={fields} onDataParsed={handleDataParse} />
         <PreviewListDialog
             isAdmin={isAdmin}
-            data={uploadedData} isLoading={isLoading}
+            data={data} isLoading={isLoading} tryAgain={tryAgain}
             datagrid={datagrid} onDialogClose={handlePreviewClose} />
     </>
 }
