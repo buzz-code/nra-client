@@ -62,6 +62,7 @@ const extendedTranslation = {
             report_generation_success: 'הקובץ הופק בהצלחה',
             action_success: 'בוצע בהצלחה',
             no_options: 'לא נמצאו פריטים',
+            pending: 'בתהליך',
         },
         navigation: {
             partial_page_range_info: '%{offsetBegin}-%{offsetEnd} מתוך יותר מ %{offsetEnd}',

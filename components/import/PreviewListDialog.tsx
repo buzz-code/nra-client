@@ -6,6 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import LinearProgress from '@mui/material/LinearProgress';
 import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
+import { ImportStatusField } from "./ImportStatusField";
 
 export const PreviewListDialog = ({ isAdmin, data, isLoading, tryAgain, datagrid, onDialogClose }) => {
     const listContext = useList({ data });
@@ -24,7 +25,7 @@ export const PreviewListDialog = ({ isAdmin, data, isLoading, tryAgain, datagrid
     return (
         <Dialog
             open={!!data} onClose={closeDialog}
-            scroll='paper' dir='rtl' fullWidth>
+            scroll='paper' dir='rtl' fullWidth maxWidth='lg'>
             <DialogTitle>
                 {translate('ra.message.import_title')}
             </DialogTitle>
@@ -38,7 +39,9 @@ export const PreviewListDialog = ({ isAdmin, data, isLoading, tryAgain, datagrid
                     </Form>
                 )}
                 <ListContextProvider value={listContext}>
-                    <Datagrid readonly isAdmin={isAdmin}/>
+                    <Datagrid readonly isAdmin={isAdmin}>
+                        <ImportStatusField />
+                    </Datagrid>
                 </ListContextProvider>
             </DialogContent>
             <DialogActions>
