@@ -38,7 +38,7 @@ export const PreviewListDialog = ({ isAdmin, data, isLoading, tryAgain, datagrid
                     </Form>
                 )}
                 <ListContextProvider value={listContext}>
-                    <Datagrid readonly />
+                    <Datagrid readonly isAdmin={isAdmin}/>
                 </ListContextProvider>
             </DialogContent>
             <DialogActions>
