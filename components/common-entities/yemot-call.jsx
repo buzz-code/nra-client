@@ -17,7 +17,7 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
             <TextField source="phone" />
             <ArrayField source="history">
                 <SingleFieldList>
-                    <ChipField source="params.ApiCallId" />
+                    <ChipField source="response" />
                 </SingleFieldList>
             </ArrayField>
             <CommonJsonField source="history" />
