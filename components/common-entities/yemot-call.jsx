@@ -22,7 +22,7 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
             </ArrayField>
             <CommonJsonField source="history" />
             <TextField source="currentStep" />
-            <TextField source="data" />
+            <CommonJsonField source="data" />
             <BooleanField source="isOpen" />
             <BooleanField source="hasError" />
             <TextField source="errorMessage" />
