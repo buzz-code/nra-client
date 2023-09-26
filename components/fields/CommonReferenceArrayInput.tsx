@@ -21,7 +21,7 @@ export default (props: CommonReferenceArrayInputProps) => {
         <FormDataConsumer>
             {({ formData, ...rest }) => (
                 <ReferenceArrayInput sort={defaultSortBy} {...props} filter={getFilterByFormData(formData)}>
-                    <CommonAutocompleteInput {...props} />
+                    <CommonAutocompleteInput multiple {...props} />
                 </ReferenceArrayInput>
             )}</FormDataConsumer>
     );
