@@ -33,7 +33,7 @@ export const MultiReferenceArrayField = ({ source, reference, optionalSource, op
 
     if (get(record, source)) {
         return (
-            <ReferenceArrayField source="klassReferenceIds" reference="klass" {...props} />
+            <ReferenceArrayField source={source} reference={reference} {...props} />
         )
     }
 
