@@ -5,6 +5,7 @@ import { handleError } from '@shared/utils/notifyUtil';
 import { PreviewListDialog } from '../import/PreviewListDialog';
 import { useSavableData } from '../import/util';
 import { ImportButton } from '../import/ImportButton';
+import { useIsAdmin } from "@shared/utils/permissionsUtil";
 
 export const ResourceImportButton = ({ resource, refetch, fields, datagrid, ...props }) => {
     const [uploadedData, setUploadedData] = useState(null);
@@ -12,6 +13,7 @@ export const ResourceImportButton = ({ resource, refetch, fields, datagrid, ...p
     const [tryAgain, setTryAgain] = useState(false);
     const { data, saveData } = useSavableData(fileName, uploadedData);
     const notify = useNotify();
+    const isAdmin = useIsAdmin();
 
     const { mutate, isLoading } = useMutation({
         mutationFn: () => saveData(),
