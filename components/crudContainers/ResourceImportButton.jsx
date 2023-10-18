@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNotify } from 'react-admin';
 import { useMutation } from 'react-query';
-import { useIsAdmin } from '@shared/utils/permissionsUtil';
 import { handleError } from '@shared/utils/notifyUtil';
 import { PreviewListDialog } from '../import/PreviewListDialog';
 import { useSavableData } from '../import/util';
@@ -13,7 +12,6 @@ export const ResourceImportButton = ({ resource, refetch, fields, datagrid, ...p
     const [tryAgain, setTryAgain] = useState(false);
     const { data, saveData } = useSavableData(fileName, uploadedData);
     const notify = useNotify();
-    const isAdmin = useIsAdmin();
 
     const { mutate, isLoading } = useMutation({
         mutationFn: () => saveData(),
@@ -57,7 +55,6 @@ export const ResourceImportButton = ({ resource, refetch, fields, datagrid, ...p
     return <>
         <ImportButton fields={fields} handleDataParse={handleDataParse} {...props} />
         <PreviewListDialog
-            isAdmin={isAdmin}
             data={data} isLoading={isLoading} tryAgain={tryAgain}
             datagrid={datagrid} onDialogClose={handlePreviewClose} />
     </>

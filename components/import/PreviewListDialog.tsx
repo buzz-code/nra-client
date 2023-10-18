@@ -7,8 +7,10 @@ import DialogActions from '@mui/material/DialogActions';
 import LinearProgress from '@mui/material/LinearProgress';
 import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
 import { ImportStatusField } from "./ImportStatusField";
+import { useIsAdmin } from "@shared/utils/permissionsUtil";
 
-export const PreviewListDialog = ({ isAdmin, data, isLoading, tryAgain, datagrid, onDialogClose }) => {
+export const PreviewListDialog = ({ data, isLoading, tryAgain, datagrid, onDialogClose }) => {
+    const isAdmin = useIsAdmin();
     const listContext = useList({ data });
     const translate = useTranslate();
     const [userId, setUserId] = useState(null);
