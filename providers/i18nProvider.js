@@ -63,6 +63,7 @@ const extendedTranslation = {
             action_success: 'בוצע בהצלחה',
             no_options: 'לא נמצאו פריטים',
             pending: 'בתהליך',
+            lesson_not_found: 'השיעור לא נמצא',
         },
         navigation: {
             partial_page_range_info: '%{offsetBegin}-%{offsetEnd} מתוך יותר מ %{offsetEnd}',
