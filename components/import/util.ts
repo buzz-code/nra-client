@@ -7,7 +7,7 @@ export const STATUSES = {
     error: 'error',
 };
 
-export const useSavableData = (fileName: string, baseData: any[]) => {
+export const useSavableData = (resource: string, fileName: string, baseData: any[]) => {
     const [data, setData] = useState<any[]>(baseData);
     const [fileId, setFileId] = useState<number>();
     const updateItem = useCallback((index: string, item: any) => {
@@ -17,16 +17,16 @@ export const useSavableData = (fileName: string, baseData: any[]) => {
             return newData;
         });
     }, [setData]);
-    const saveData = useSaveData(data, fileName, fileId, updateItem, setFileId);
+    const saveData = useSaveData(resource, data, fileName, fileId, updateItem, setFileId);
 
     useEffect(() => { setData(baseData) }, [baseData]);
 
     return { data, saveData };
 }
 
-const useSaveData = (data: any[], fileName: string, fileId: number, updateDataItem: (index: string, item: any) => void, setFileId: (fileId: number) => void) => {
-    const resource = useResourceContext();
-    const { createItem, updateItem } = useCreateItem(resource);
+const useSaveData = (resource: string, data: any[], fileName: string, fileId: number, updateDataItem: (index: string, item: any) => void, setFileId: (fileId: number) => void) => {
+    const resourceValue = useResourceContext({ resource });
+    const { createItem, updateItem } = useCreateItem(resourceValue);
 
     const saveData = useCallback(async () => {
         let successCount = 0, errorCount = 0;
@@ -55,7 +55,7 @@ const useSaveData = (data: any[], fileName: string, fileId: number, updateDataIt
                 const fileData = {
                     fileName,
                     fileSource: 'קובץ שהועלה',
-                    entityName: resource,
+                    entityName: resourceValue,
                     entityIds,
                     response: 'נשמר',
                 };
@@ -65,7 +65,7 @@ const useSaveData = (data: any[], fileName: string, fileId: number, updateDataIt
         }
 
         return { successCount, errorCount };
-    }, [data, fileId, fileName, resource, createItem, updateItem, updateDataItem, setFileId]);
+    }, [data, fileId, fileName, resourceValue, createItem, updateItem, updateDataItem, setFileId]);
 
     return saveData;
 }

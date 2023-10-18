@@ -7,11 +7,11 @@ import { useSavableData } from '../import/util';
 import { ImportButton } from '../import/ImportButton';
 import { useIsAdmin } from "@shared/utils/permissionsUtil";
 
-export const ResourceImportButton = ({ resource, refetch, fields, xlsxOptions, datagrid, ...props }) => {
+export const ResourceImportButton = ({ resource, refetch = null, fields, handleDataBeforePreview = null, xlsxOptions, datagrid, ...props }) => {
     const [uploadedData, setUploadedData] = useState(null);
     const [fileName, setFileName] = useState(null);
     const [tryAgain, setTryAgain] = useState(false);
-    const { data, saveData } = useSavableData(fileName, uploadedData);
+    const { data, saveData } = useSavableData(resource, fileName, uploadedData);
     const notify = useNotify();
     const isAdmin = useIsAdmin();
 
@@ -23,10 +23,10 @@ export const ResourceImportButton = ({ resource, refetch, fields, xlsxOptions, d
                 setFileName(null);
 
                 notify('ra.message.import_success', { type: 'info' });
-                refetch();
+                refetch?.();
             } else if (successCount > 0) {
                 notify('ra.message.import_partial_error', { type: 'warning' });
-                refetch();
+                refetch?.();
                 setTryAgain(true);
             } else {
                 notify('ra.message.import_error', { type: 'error' });
@@ -35,8 +35,9 @@ export const ResourceImportButton = ({ resource, refetch, fields, xlsxOptions, d
         onError: handleError(notify)
     });
 
-    const handleDataParse = useCallback(({ name, data }) => {
-        setUploadedData(data);
+    const handleDataParse = useCallback(async ({ name, data }) => {
+        const dataToSave = handleDataBeforePreview ? await handleDataBeforePreview(data) : data;
+        setUploadedData(dataToSave);
         setFileName(name);
     }, [setUploadedData, setFileName]);
 
