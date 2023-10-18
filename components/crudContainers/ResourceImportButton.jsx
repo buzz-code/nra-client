@@ -7,7 +7,7 @@ import { useSavableData } from '../import/util';
 import { ImportButton } from '../import/ImportButton';
 import { useIsAdmin } from "@shared/utils/permissionsUtil";
 
-export const ResourceImportButton = ({ resource, refetch = null, fields, handleDataBeforePreview = null, xlsxOptions, datagrid, ...props }) => {
+export const ResourceImportButton = ({ resource, refetch = null, fields, handleDataBeforePreview = null, xlsxOptions, datagrid, handleSuccess = null, ...props }) => {
     const [uploadedData, setUploadedData] = useState(null);
     const [fileName, setFileName] = useState(null);
     const [tryAgain, setTryAgain] = useState(false);
@@ -24,6 +24,7 @@ export const ResourceImportButton = ({ resource, refetch = null, fields, handleD
 
                 notify('ra.message.import_success', { type: 'info' });
                 refetch?.();
+                handleSuccess?.();
             } else if (successCount > 0) {
                 notify('ra.message.import_partial_error', { type: 'warning' });
                 refetch?.();

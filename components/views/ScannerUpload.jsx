@@ -7,11 +7,12 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import { ResourceImportButton } from '../crudContainers/ResourceImportButton';
 import { Datagrid } from 'src/entities/att-report';
-import { useDataProvider, useNotify } from 'react-admin';
+import { useDataProvider, useNotify, useRedirect } from 'react-admin';
 
 export default () => {
     const dataProvider = useDataProvider();
     const notify = useNotify();
+    const redirect = useRedirect();
 
     const handleDataBeforePreview = useCallback(async (data) => {
         const [lessonKey, reportDate, ...rest] = data.map(item => item.data);
@@ -57,6 +58,10 @@ export default () => {
         return attendingStudents.concat(absentStudents);
     }, [dataProvider]);
 
+    const handleSuccess = useCallback(() => {
+        redirect('/att_report');
+    }, []);
+
     return (
         <Container maxWidth="sm" mt={4}>
             <Paper>
@@ -72,7 +77,7 @@ export default () => {
                     <Divider />
                     <Box padding={2}>
                         <ResourceImportButton resource='att_report' fields={['data']} datagrid={Datagrid}
-                            xlsxOptions={{ range: 0 }} handleDataBeforePreview={handleDataBeforePreview} />
+                            xlsxOptions={{ range: 0 }} handleDataBeforePreview={handleDataBeforePreview} handleSuccess={handleSuccess} />
                     </Box>
                 </Stack>
             </Paper>
