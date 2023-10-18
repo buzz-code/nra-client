@@ -19,7 +19,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useIsAdmin } from '@shared/utils/permissionsUtil';
 import { handleError } from '@shared/utils/notifyUtil';
 
-export const ExportButton = (props: ExportButtonProps) => {
+export const ResourceExportButton = (props: ExportButtonProps) => {
     const {
         maxResults = 1000,
         onClick,
@@ -124,7 +124,7 @@ interface Props {
 
 export type ExportButtonProps = Props & ButtonProps;
 
-ExportButton.propTypes = {
+ResourceExportButton.propTypes = {
     filterValues: PropTypes.object,
     label: PropTypes.string,
     maxResults: PropTypes.number,

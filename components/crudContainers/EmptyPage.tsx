@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import { Typography } from '@mui/material';
 import Inbox from '@mui/icons-material/Inbox';
 import { useTranslate, useResourceDefinition, useResourceContext, useGetResourceLabel, CreateButton, useListContext } from 'react-admin';
-import { ImportButton } from './ImportButton';
+import { ResourceImportButton } from './ResourceImportButton';
 
 export const EmptyPage = (props: EmptyProps) => {
     const { className } = props;
@@ -44,7 +44,7 @@ export const EmptyPage = (props: EmptyProps) => {
                     <CreateButton variant="contained" />
 
                     {props.importer && (
-                        <ImportButton
+                        <ResourceImportButton
                             variant="contained"
                             resource={resource}
                             refetch={refetch}

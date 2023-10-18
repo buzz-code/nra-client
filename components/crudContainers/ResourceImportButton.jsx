@@ -8,7 +8,7 @@ import { ExcelImportInput } from '../import/ExcelImportInput';
 import { PreviewListDialog } from '../import/PreviewListDialog';
 import { useSavableData } from '../import/util';
 
-export const ImportButton = ({ resource, refetch, fields, datagrid, ...props }) => {
+export const ResourceImportButton = ({ resource, refetch, fields, datagrid, ...props }) => {
     const [uploadedData, setUploadedData] = useState(null);
     const [fileName, setFileName] = useState(null);
     const [tryAgain, setTryAgain] = useState(false);
