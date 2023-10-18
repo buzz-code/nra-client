@@ -1,7 +1,7 @@
 import React, { forwardRef, useCallback } from "react";
 import * as XLSX from 'xlsx';
 
-export const ExcelImportInput = forwardRef<HTMLInputElement, any>(({ fields, onDataParsed }, ref) => {
+export const ExcelImportInput = forwardRef<HTMLInputElement, any>(({ fields, onDataParsed, xlsxOptions = {} }, ref) => {
     const processFile = useCallback(file => {
         var name = file.name;
         const reader = new FileReader();
@@ -13,7 +13,7 @@ export const ExcelImportInput = forwardRef<HTMLInputElement, any>(({ fields, onD
             const wsname = wb.SheetNames[0];
             const ws = wb.Sheets[wsname];
             /* Convert array of arrays */
-            const data = XLSX.utils.sheet_to_json(ws, { header: fields, range: 1 });
+            const data = XLSX.utils.sheet_to_json(ws, { header: fields, range: 1, ...xlsxOptions });
             /* Update state */
             onDataParsed({ name, data });
         };

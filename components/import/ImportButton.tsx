@@ -3,7 +3,7 @@ import { Button } from 'react-admin';
 import UploadIcon from '@mui/icons-material/FileUpload';
 import { ExcelImportInput } from './ExcelImportInput';
 
-export const ImportButton = ({ fields, handleDataParse, ...props }) => {
+export const ImportButton = ({ fields, handleDataParse, xlsxOptions, ...props }) => {
     const fileSelector = useRef();
 
     const handleFileSelect = useCallback((e) => {
@@ -13,6 +13,6 @@ export const ImportButton = ({ fields, handleDataParse, ...props }) => {
 
     return <>
         <Button onClick={handleFileSelect} label={'ra.action.import'} startIcon={<UploadIcon />} {...props} />
-        <ExcelImportInput ref={fileSelector} fields={fields} onDataParsed={handleDataParse} />
+        <ExcelImportInput ref={fileSelector} fields={fields} onDataParsed={handleDataParse} xlsxOptions={xlsxOptions} />
     </>
 }

@@ -7,7 +7,7 @@ import { useSavableData } from '../import/util';
 import { ImportButton } from '../import/ImportButton';
 import { useIsAdmin } from "@shared/utils/permissionsUtil";
 
-export const ResourceImportButton = ({ resource, refetch, fields, datagrid, ...props }) => {
+export const ResourceImportButton = ({ resource, refetch, fields, xlsxOptions, datagrid, ...props }) => {
     const [uploadedData, setUploadedData] = useState(null);
     const [fileName, setFileName] = useState(null);
     const [tryAgain, setTryAgain] = useState(false);
@@ -55,7 +55,7 @@ export const ResourceImportButton = ({ resource, refetch, fields, datagrid, ...p
     }, [uploadedData, mutate, setUploadedData, setFileName]);
 
     return <>
-        <ImportButton fields={fields} handleDataParse={handleDataParse} {...props} />
+        <ImportButton fields={fields} handleDataParse={handleDataParse} xlsxOptions={xlsxOptions} {...props} />
         <PreviewListDialog
             data={data} isLoading={isLoading} tryAgain={tryAgain}
             datagrid={datagrid} onDialogClose={handlePreviewClose} />
