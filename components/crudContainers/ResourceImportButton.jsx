@@ -1,18 +1,16 @@
-import { useState, useRef, useCallback } from 'react';
-import { Button, useNotify } from 'react-admin';
-import Upload from '@mui/icons-material/FileUpload';
+import { useState, useCallback } from 'react';
+import { useNotify } from 'react-admin';
 import { useMutation } from 'react-query';
 import { useIsAdmin } from '@shared/utils/permissionsUtil';
 import { handleError } from '@shared/utils/notifyUtil';
-import { ExcelImportInput } from '../import/ExcelImportInput';
 import { PreviewListDialog } from '../import/PreviewListDialog';
 import { useSavableData } from '../import/util';
+import { ImportButton } from '../import/ImportButton';
 
 export const ResourceImportButton = ({ resource, refetch, fields, datagrid, ...props }) => {
     const [uploadedData, setUploadedData] = useState(null);
     const [fileName, setFileName] = useState(null);
     const [tryAgain, setTryAgain] = useState(false);
-    const fileSelector = useRef();
     const { data, saveData } = useSavableData(fileName, uploadedData);
     const notify = useNotify();
     const isAdmin = useIsAdmin();
@@ -37,11 +35,6 @@ export const ResourceImportButton = ({ resource, refetch, fields, datagrid, ...p
         onError: handleError(notify)
     });
 
-    const handleFileSelect = useCallback((e) => {
-        e.preventDefault();
-        fileSelector.current.click();
-    }, []);
-
     const handleDataParse = useCallback(({ name, data }) => {
         setUploadedData(data);
         setFileName(name);
@@ -62,8 +55,7 @@ export const ResourceImportButton = ({ resource, refetch, fields, datagrid, ...p
     }, [uploadedData, mutate, setUploadedData, setFileName]);
 
     return <>
-        <Button onClick={handleFileSelect} label={'ra.action.import'} startIcon={<Upload />} {...props} />
-        <ExcelImportInput ref={fileSelector} fields={fields} onDataParsed={handleDataParse} />
+        <ImportButton fields={fields} handleDataParse={handleDataParse} {...props} />
         <PreviewListDialog
             isAdmin={isAdmin}
             data={data} isLoading={isLoading} tryAgain={tryAgain}
