@@ -12,6 +12,7 @@ export const useSavableData = (resource: string, fileName: string, baseData: any
     const [fileId, setFileId] = useState<number>();
     const updateItem = useCallback((index: string, item: any) => {
         data[index] = { ...data[index], ...item };
+        setData([...data]);
     }, [data]);
     const saveData = useSaveData(resource, data, fileName, fileId, updateItem, setFileId);
 
