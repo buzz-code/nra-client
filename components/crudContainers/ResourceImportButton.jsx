@@ -57,8 +57,7 @@ export const ResourceImportButton = ({ resource, refetch = null, fields, handleD
 
     return <>
         <ImportButton fields={fields} handleDataParse={handleDataParse} xlsxOptions={xlsxOptions} {...props} />
-        <PreviewListDialog
-            data={data} isLoading={isLoading} tryAgain={tryAgain}
-            datagrid={datagrid} onDialogClose={handlePreviewClose} />
+        <PreviewListDialog resource={resource} data={data} isLoading={isLoading}
+            tryAgain={tryAgain} datagrid={datagrid} onDialogClose={handlePreviewClose} />
     </>
 }

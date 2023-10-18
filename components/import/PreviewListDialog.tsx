@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Button, Form, ListContextProvider, ReferenceInput, useList, useTranslate } from "react-admin";
+import { Button, Form, ListContextProvider, ReferenceInput, useList, useResourceContext, useTranslate } from "react-admin";
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -9,7 +9,8 @@ import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
 import { ImportStatusField } from "./ImportStatusField";
 import { useIsAdmin } from "@shared/utils/permissionsUtil";
 
-export const PreviewListDialog = ({ data, isLoading, tryAgain, datagrid, onDialogClose }) => {
+export const PreviewListDialog = ({ resource, data, isLoading, tryAgain, datagrid, onDialogClose }) => {
+    const dataResource = useResourceContext({ resource });
     const isAdmin = useIsAdmin();
     const listContext = useList({ data });
     const translate = useTranslate();
@@ -41,7 +42,7 @@ export const PreviewListDialog = ({ data, isLoading, tryAgain, datagrid, onDialo
                     </Form>
                 )}
                 <ListContextProvider value={listContext}>
-                    <Datagrid readonly isAdmin={isAdmin}>
+                    <Datagrid readonly isAdmin={isAdmin} resource={dataResource}>
                         <ImportStatusField />
                     </Datagrid>
                 </ListContextProvider>
