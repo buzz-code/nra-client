@@ -35,3 +35,12 @@ export const useIseditPaymentTracksData = () => {
 export function isEditPaymentTracksData(permissions) {
     return isAdmin(permissions) || !!permissions?.editPaymentTracksData;
 }
+
+export const useIsScannerUpload = () => {
+    const { permissions } = usePermissions();
+    return isScannerUpload(permissions);
+}
+
+export function isScannerUpload(permissions) {
+    return isAdmin(permissions) || !!permissions?.scannerUpload;
+}
