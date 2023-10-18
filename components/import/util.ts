@@ -11,12 +11,8 @@ export const useSavableData = (resource: string, fileName: string, baseData: any
     const [data, setData] = useState<any[]>(baseData);
     const [fileId, setFileId] = useState<number>();
     const updateItem = useCallback((index: string, item: any) => {
-        setData(prevData => {
-            const newData = [...prevData];
-            newData[index] = { ...newData[index], ...item };
-            return newData;
-        });
-    }, [setData]);
+        data[index] = { ...data[index], ...item };
+    }, [data]);
     const saveData = useSaveData(resource, data, fileName, fileId, updateItem, setFileId);
 
     useEffect(() => { setData(baseData) }, [baseData]);
@@ -53,6 +49,7 @@ const useSaveData = (resource: string, data: any[], fileName: string, fileId: nu
                 await updateItem({ id: fileId, entityIds }, 'import_file');
             } else {
                 const fileData = {
+                    userId: data[0].userId,
                     fileName,
                     fileSource: 'קובץ שהועלה',
                     entityName: resourceValue,
