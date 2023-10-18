@@ -119,7 +119,15 @@ const extendedTranslation = {
     }
 }
 
-export const getI18nProvider = (domainTranslations) => {
+export const getI18nProvider = (domainTranslations, isDummy = false) => {
+    if (isDummy) {
+        return {
+            translate: key => key,
+            changeLocale: locale => Promise.resolve(),
+            getLocale: () => 'en',
+        };
+    }
+
     const translations = { en, he: deepMerge(he, deepMerge(extendedTranslation, domainTranslations)) };
 
     const i18nProvider = polyglotI18nProvider(
