@@ -34,6 +34,7 @@ export default () => {
             sort: { field: 'student.name', order: 'ASC' }
         });
 
+        reportDate.setMinutes(reportDate.getMinutes() - reportDate.getTimezoneOffset() + 1);
         const baseReport = {
             reportDate: reportDate.toISOString().split('T')[0],
             teacherReferenceId: lessons[0].teacherReferenceId,
