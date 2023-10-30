@@ -12,7 +12,7 @@ import {
 } from 'ra-core';
 import { TextInput } from 'react-admin';
 
-import useRegister from './useRegister';
+import useRegister from '../../utils/useRegister';
 
 const confirmValue = (field) => (value, allValues) =>
     value === allValues[field]
