@@ -1,4 +1,4 @@
-import { DateField, DateTimeInput, ImageField, maxLength, ReferenceField, ReferenceInput, required, TextField, TextInput, useUnique } from 'react-admin';
+import { DateField, DateTimeInput, ImageField, maxLength, ReferenceField, ReferenceInput, required, TextField, TextInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
@@ -6,6 +6,7 @@ import CommonReferenceInput from '@shared/components/fields/CommonReferenceInput
 import { CommonJsonField, CommonJsonInput } from '@shared/components/fields/CommonJsonItem';
 import { CommonImageInput } from '@shared/components/fields/CommonImageInput';
 import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
+import { useUnique } from '@shared/utils/useUnique';
 
 const filters = [
     ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,
