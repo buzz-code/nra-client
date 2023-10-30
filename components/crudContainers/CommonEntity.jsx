@@ -13,7 +13,8 @@ export function getResourceComponents({
     filters = [],
     filterDefaultValues = {},
     importer = null,
-    exporter = true
+    exporter = true,
+    editResource,
 }) {
     const importerDef = importer
         ? {
@@ -40,7 +41,7 @@ export function getResourceComponents({
         const isAdmin = useIsAdmin();
 
         return (
-            <CommonEdit>
+            <CommonEdit resource={editResource}>
                 <Inputs isAdmin={isAdmin} isCreate={false} />
             </CommonEdit>
         );
@@ -50,7 +51,7 @@ export function getResourceComponents({
         const isAdmin = useIsAdmin();
 
         return (
-            <CommonCreate>
+            <CommonCreate resource={editResource}>
                 <Inputs isAdmin={isAdmin} isCreate={true} />
             </CommonCreate>
         );
