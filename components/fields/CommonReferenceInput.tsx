@@ -15,8 +15,6 @@ export default (props: CommonReferenceInputProps) => {
         };;
     }, [props.dynamicFilter, props.filter]);
 
-    console.log({ props })
-
     return (
         <FormDataConsumer>
             {({ formData, ...rest }) => (
