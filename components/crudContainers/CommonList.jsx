@@ -8,7 +8,7 @@ const BulkActionButtons = ({ additionalBulkButtons, ...props }) => {
         <>
             {additionalBulkButtons}
             {/* <BulkExportButton /> */}
-            {hasCreate && <BulkDeleteWithConfirmButton />}
+            {hasCreate && <BulkDeleteWithConfirmButton resource={props.deleteResource} />}
         </>
     );
 }
