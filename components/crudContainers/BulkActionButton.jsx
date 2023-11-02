@@ -1,4 +1,4 @@
-import { handleError } from '@shared/utils/notifyUtil';
+import { handleActionSuccess, handleError } from '@shared/utils/notifyUtil';
 import { useDataProvider, useListContext, useNotify } from 'react-admin';
 import { useMutation } from 'react-query';
 import { BulkRequestButton } from './BulkRequestButton';
@@ -17,8 +17,8 @@ export const BulkActionButton = ({ label, icon, name, defaultRequestValues, chil
             });
 
             return dataProvider.exec(resource, 'action?' + params, {})
+                .then(handleActionSuccess(notify))
                 .then(() => {
-                    notify('ra.message.action_success');
                     onUnselectItems();
                 })
                 .catch(handleError(notify));

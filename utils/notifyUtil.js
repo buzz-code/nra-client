@@ -15,3 +15,22 @@ export const handleError = (notify) => (error) => {
         }
     );
 };
+
+export const handleActionSuccess = (notify) => (response) => {
+    console.log('handleActionSuccess', response);
+    notify(
+        typeof response.body === 'string'
+            ? response.body
+            : response.body?.message ?? 'ra.message.action_success',
+        {
+            type: 'info',
+            messageArgs: {
+                _: typeof response === 'string'
+                    ? response
+                    : response && response.message
+                        ? response.message
+                        : undefined
+            }
+        }
+    );
+}
