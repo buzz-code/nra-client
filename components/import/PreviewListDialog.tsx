@@ -5,7 +5,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import LinearProgress from '@mui/material/LinearProgress';
-import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
+import CommonAutocompleteInput from '@shared/components/fields/CommonAutocompleteInput';
 import { ImportStatusField } from "./ImportStatusField";
 import { useIsAdmin } from "@shared/utils/permissionsUtil";
 import CommonReferenceInput from "@shared/components/fields/CommonReferenceInput";

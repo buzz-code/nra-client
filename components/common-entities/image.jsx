@@ -5,7 +5,7 @@ import { getResourceComponents } from '@shared/components/crudContainers/CommonE
 import CommonReferenceInput from '@shared/components/fields/CommonReferenceInput';
 import { CommonJsonField, CommonJsonInput } from '@shared/components/fields/CommonJsonItem';
 import { CommonImageInput } from '@shared/components/fields/CommonImageInput';
-import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
+import CommonAutocompleteInput from '@shared/components/fields/CommonAutocompleteInput';
 import { useUnique } from '@shared/utils/useUnique';
 import { CommonReferenceInputFilter } from '@shared/components/fields/CommonReferenceInputFilter';
 
@@ -38,7 +38,7 @@ const Inputs = ({ isCreate, isAdmin }) => {
         {isAdmin && <CommonReferenceInput source="userId" reference="user" validate={required()} />}
         {/* <CommonJsonInput source="fileData" /> */}
         <CommonImageInput source="fileData" validate={required()} />
-        <CommonAutocompleteInput source="imageTarget" choices={imageTargetEnum.map(item => ({ id: item, name: item }))} validate={[required(), maxLength(255), unique()]} />
+        <CommonAutocompleteInpuא source="imageTarget" choices={imageTargetEnum.map(item => ({ id: item, name: item }))} validate={[required(), maxLength(255), unique()]} />
         {!isCreate && isAdmin && <DateTimeInput source="createdAt" disabled />}
         {!isCreate && isAdmin && <DateTimeInput source="updatedAt" disabled />}
     </>;
