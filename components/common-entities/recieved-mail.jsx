@@ -1,10 +1,11 @@
-import { DateField, ReferenceArrayField, ReferenceField, ReferenceInput, TextField, TextInput } from 'react-admin';
+import { DateField, ReferenceArrayField, ReferenceField, TextField, TextInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { ShowMatchingRecordsButton } from '../fields/ShowMatchingRecordsButton';
+import { CommonReferenceInputFilter } from '@shared/components/fields/CommonReferenceInputFilter';
 
 const filters = [
-    ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,
+    ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" />,
     <TextInput source="from:$cont" label="מאת" />,
     <TextInput source="subject:$cont" label="נושא" />,
 ];

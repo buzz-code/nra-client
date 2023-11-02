@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Button, Form, ListContextProvider, ReferenceInput, useList, useResourceContext, useTranslate } from "react-admin";
+import { Button, Form, ListContextProvider, useList, useResourceContext, useTranslate } from "react-admin";
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -8,6 +8,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
 import { ImportStatusField } from "./ImportStatusField";
 import { useIsAdmin } from "@shared/utils/permissionsUtil";
+import CommonReferenceInput from "@shared/components/fields/CommonReferenceInput";
 
 export const PreviewListDialog = ({ resource, data, isLoading, tryAgain, datagrid, onDialogClose }) => {
     const dataResource = useResourceContext({ resource });
@@ -36,9 +37,9 @@ export const PreviewListDialog = ({ resource, data, isLoading, tryAgain, datagri
                 {isLoading && <LinearProgress />}
                 {isAdmin && (
                     <Form>
-                        <ReferenceInput source="userId" reference="user" >
+                        <CommonReferenceInput source="userId" reference="user" >
                             <CommonAutocompleteInput onChange={setUserId} />
-                        </ReferenceInput>
+                        </CommonReferenceInput>
                     </Form>
                 )}
                 <ListContextProvider value={listContext}>

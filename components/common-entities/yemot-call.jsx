@@ -1,10 +1,11 @@
-import { ArrayField, BooleanField, ChipField, DateField, ReferenceField, ReferenceInput, SingleFieldList, TextField } from 'react-admin';
+import { ArrayField, BooleanField, ChipField, DateField, ReferenceField, SingleFieldList, TextField } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonJsonField } from '@shared/components/fields/CommonJsonItem';
+import { CommonReferenceInputFilter } from '@shared/components/fields/CommonReferenceInputFilter';
 
 const filters = [
-    ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,
+    ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" />,
 ];
 
 const Datagrid = ({ isAdmin, children, ...props }) => {

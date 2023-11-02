@@ -1,13 +1,14 @@
-import { DateField, ReferenceField, TextField, TextInput, ReferenceInput } from 'react-admin';
+import { DateField, ReferenceField, TextField, TextInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonEntityNameField } from '@shared/components/fields/CommonEntityNameField';
 import { CommonCountField } from '@shared/components/fields/CommonCountField';
 import { CommonEntityNameInput } from '@shared/components/fields/CommonEntityNameInput';
 import { ShowMatchingRecordsButton } from '@shared/components/fields/ShowMatchingRecordsButton';
+import { CommonReferenceInputFilter } from '@shared/components/fields/CommonReferenceInputFilter';
 
 const filters = [
-    ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,
+    ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" />,
     <CommonEntityNameInput source="entityName" />,
     <TextInput source="fileName" />
 ];

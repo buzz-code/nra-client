@@ -1,4 +1,4 @@
-import { Button, Form, maxLength, ReferenceField, ReferenceInput, required, SaveButton, TextField, TextInput, useCreate, useNotify, useRecordContext, useRefresh, useTranslate, useUpdate } from 'react-admin';
+import { Button, Form, maxLength, ReferenceField, required, SaveButton, TextField, TextInput, useCreate, useNotify, useRecordContext, useRefresh, useTranslate, useUpdate } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { useState, useCallback } from 'react';
@@ -9,9 +9,10 @@ import Stack from '@mui/material/Stack';
 import EditIcon from '@mui/icons-material/Edit';
 import CircularProgress from '@mui/material/CircularProgress';
 import { handleError } from '@shared/utils/notifyUtil';
+import { CommonReferenceInputFilter } from '@shared/components/fields/CommonReferenceInputFilter';
 
 const filters = [
-    ({ isAdmin }) => isAdmin && <ReferenceInput source="userId" reference="user" />,
+    ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" />,
     <TextInput source="name:$cont" alwaysOn />,
     <TextInput source="description:$cont" label="תיאור" />,
     <TextInput source="value:$cont" label="ערך" alwaysOn />,
