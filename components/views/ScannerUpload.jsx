@@ -43,20 +43,20 @@ export default () => {
             howManyLessons: 1,
         };
 
-        const attendingStudents = rest
+        const absentStudents = rest
             .map((item) => ({
                 ...baseReport,
                 studentTz: item,
-                absCount: 0,
+                absCount: 1,
             }));
-        const absentStudents = students
+        const attendingStudents = students
             .filter((student) => !rest.includes(student.student?.tz))
             .map((student) => ({
                 ...baseReport,
                 studentReferenceId: student.studentReferenceId,
-                absCount: 1,
+                absCount: 0,
             }));
-        return attendingStudents.concat(absentStudents);
+        return absentStudents.concat(attendingStudents);
     }, [dataProvider]);
 
     const handleSuccess = useCallback(() => {
