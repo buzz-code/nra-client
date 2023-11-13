@@ -13,6 +13,7 @@ const CustomMenu = ({ hasDashboard, menuGroups, children }) => {
                 resources: []
             }]
         )));
+        const groupsArr = Object.values(groupsDict);
         const otherResources = [];
 
         for (const resource of Object.values(resources)) {
@@ -22,15 +23,15 @@ const CustomMenu = ({ hasDashboard, menuGroups, children }) => {
             }
         }
 
-        for (const group of Object.values(groupsDict)) {
+        for (const group of groupsArr) {
             group.children = [...group.routes ?? []];
-            group.children.splice(0, 0, ...group.resources.map(name => (
+            group.children.unshift(...group.resources.map(name => (
                 <Menu.ResourceItem key={name} name={name} />
             )));
         }
 
         return [
-            Object.values(groupsDict),
+            groupsArr,
             otherResources,
         ];
     }, [resources, menuGroups]);
