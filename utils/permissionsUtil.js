@@ -44,3 +44,12 @@ export const useIsScannerUpload = () => {
 export function isScannerUpload(permissions) {
     return isAdmin(permissions) || !!permissions?.scannerUpload;
 }
+
+export function useIsInLessonReport() {
+    const { permissions } = usePermissions();
+    return isInLessonReport(permissions);
+}
+
+export function isInLessonReport(permissions) {
+    return isAdmin(permissions) || !!permissions?.inLessonReport;
+}
