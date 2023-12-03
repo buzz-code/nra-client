@@ -5,7 +5,8 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import { BooleanInput, Button, SaveButton, SimpleForm, TextInput, useDataProvider, useNotify } from 'react-admin';
+import Grid from '@mui/material/Grid';
+import { BooleanInput, Button, DateInput, NumberInput, SaveButton, SimpleForm, TextInput, useDataProvider, useNotify } from 'react-admin';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 export default () => {
@@ -71,6 +72,15 @@ export default () => {
                         </Box>
                         <Divider />
                         <SimpleForm toolbar={null} onSubmit={() => { }}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={6}>
+                                    <DateInput source="reportDate" label="תאריך דוח" defaultValue={new Date()} fullWidth />
+                                </Grid>
+                                <Grid item xs={6} >
+                                    <NumberInput source="howManyLessons" label="מספר שיעורים" defaultValue={1} fullWidth />
+                                </Grid>
+                            </Grid>
+                            <Divider />
                             <Box padding={2}>
                                 {students.filter(student => student.student).map(student => (
                                     <Box key={student.student.id}>
