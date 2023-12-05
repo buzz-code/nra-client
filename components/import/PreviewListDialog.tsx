@@ -37,9 +37,7 @@ export const PreviewListDialog = ({ resource, data, isLoading, tryAgain, datagri
                 {isLoading && <LinearProgress />}
                 {isAdmin && (
                     <Form>
-                        <CommonReferenceInput source="userId" reference="user" >
-                            <CommonAutocompleteInput onChange={setUserId} />
-                        </CommonReferenceInput>
+                        <CommonReferenceInput source="userId" reference="user" onChange={setUserId} />
                     </Form>
                 )}
                 <ListContextProvider value={listContext}>
@@ -52,6 +50,6 @@ export const PreviewListDialog = ({ resource, data, isLoading, tryAgain, datagri
                 <Button onClick={closeDialog} autoFocus disabled={isLoading} label={translate('ra.action.cancel')} />
                 <Button onClick={importAndCloseDialog} disabled={isLoading} label={tryAgain ? translate('ra.action.import_again') : translate('ra.action.import')} />
             </DialogActions>
-        </Dialog>
+        </Dialog >
     )
 }
