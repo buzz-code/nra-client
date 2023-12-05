@@ -60,8 +60,8 @@ export default () => {
     }, [dataProvider]);
 
     const handleSuccess = useCallback(() => {
-        redirect('/att_report');
-    }, []);
+        redirect('/att_report_with_report_month');
+    }, [redirect]);
 
     return (
         <Container maxWidth="sm" mt={4}>
