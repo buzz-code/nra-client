@@ -6,11 +6,12 @@ import Paper from '@mui/material/Paper';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import { BooleanInput, Button, DateInput, NumberInput, SaveButton, SimpleForm, TextInput, useDataProvider, useNotify, useRedirect } from 'react-admin';
+import { Button, DateInput, FormDataConsumer, NumberInput, SaveButton, SimpleForm, TextInput, useDataProvider, useNotify, useRedirect } from 'react-admin';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { useSavableData } from '../import/util';
 import { Datagrid } from 'src/entities/att-report';
 import { PreviewListWithSavingDialog } from '../import/PreviewListWithSavingDialog';
+import { CommonSliderInput } from '../fields/CommonSliderInput';
 
 const resource = 'att_report';
 
@@ -56,14 +57,14 @@ export default () => {
 
     const handleSave = useCallback((formData) => {
         const { reportDate, howManyLessons, ...rest } = formData;
-        const dataToSave = Object.entries(rest).map(([studentId, isAbsent]) => ({
+        const dataToSave = Object.keys(rest).map((studentId) => ({
             reportDate: reportDate.toISOString().split('T')[0],
             teacherReferenceId: lesson.teacherReferenceId,
             klassReferenceId: lesson.klassReferenceIds[0],
             lessonReferenceId: lesson.id,
             studentReferenceId: studentId,
             howManyLessons: howManyLessons,
-            absCount: isAbsent ? howManyLessons : 0,
+            absCount: rest[studentId] ?? 0,
         }));
         setDataToSave(dataToSave);
     }, [data, lesson, students, setDataToSave]);
@@ -113,17 +114,21 @@ export default () => {
                                 </Grid>
                             </Grid>
                             <Divider />
-                            <Box padding={2}>
+                            <Grid container spacing={2}>
                                 {students.filter(student => student.student).map(student => (
-                                    <Box key={student.student.id}>
-                                        <BooleanInput label={student.student.name} source={String(student.student.id)} />
-                                    </Box>
+                                    <Grid item xs={12}>
+                                        <FormDataConsumer>
+                                            {({ formData, ...rest }) => (
+                                                <CommonSliderInput label={student.student.name} source={String(student.student.id)} max={formData.howManyLessons} {...rest} />
+                                            )}
+                                        </FormDataConsumer>
+                                    </Grid>
                                 ))}
-                            </Box>
+                            </Grid>
                             <Divider />
                             <Box padding={2}>
                                 <Button onClick={handleCancel}><>ביטול</></Button>
-                                <SaveButton />
+                                <SaveButton alwaysEnable />
                             </Box>
                             <PreviewListWithSavingDialog resource={resource} datagrid={Datagrid}
                                 data={data} saveData={saveData}
