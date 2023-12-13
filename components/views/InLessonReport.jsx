@@ -58,7 +58,7 @@ export default () => {
     const handleSave = useCallback((formData) => {
         const { reportDate, howManyLessons, ...rest } = formData;
         const dataToSave = Object.keys(rest).map((studentId) => ({
-            reportDate: reportDate.toISOString().split('T')[0],
+            reportDate: reportDate,
             teacherReferenceId: lesson.teacherReferenceId,
             klassReferenceId: lesson.klassReferenceIds[0],
             lessonReferenceId: lesson.id,
@@ -107,7 +107,7 @@ export default () => {
                         <SimpleForm toolbar={null} onSubmit={handleSave}>
                             <Grid container spacing={2}>
                                 <Grid item xs={6}>
-                                    <DateInput source="reportDate" label="תאריך דוח" defaultValue={new Date()} fullWidth />
+                                    <DateInput source="reportDate" label="תאריך דוח" defaultValue={new Date().toISOString().split('T')[0]} fullWidth />
                                 </Grid>
                                 <Grid item xs={6} >
                                     <NumberInput source="howManyLessons" label="מספר שיעורים" defaultValue={1} fullWidth />
