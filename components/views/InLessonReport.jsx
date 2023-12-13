@@ -12,6 +12,7 @@ import { useSavableData } from '../import/util';
 import { Datagrid } from 'src/entities/att-report';
 import { PreviewListWithSavingDialog } from '../import/PreviewListWithSavingDialog';
 import { CommonSliderInput } from '../fields/CommonSliderInput';
+import { useIsInLessonReportWithLate } from '@shared/utils/permissionsUtil';
 
 const resource = 'att_report';
 
@@ -20,6 +21,8 @@ export default () => {
     const dataProvider = useDataProvider();
     const notify = useNotify();
     const redirect = useRedirect();
+    const isShowLate = useIsInLessonReportWithLate();
+    const columnWidth = useMemo(() => isShowLate ? 4 : 6, [isShowLate]);
     const [lessonKey, setLessonKey] = useState(null);
     const [lesson, setLesson] = useState(null);
     const [students, setStudents] = useState(null);
@@ -64,7 +67,7 @@ export default () => {
             lessonReferenceId: lesson.id,
             studentReferenceId: studentId,
             howManyLessons: howManyLessons,
-            absCount: rest[studentId] ?? 0,
+            absCount: (rest[studentId]?.absence ?? 0) + (rest[studentId]?.late ?? 0) * 0.3,
         }));
         setDataToSave(dataToSave);
     }, [data, lesson, students, setDataToSave]);
@@ -115,16 +118,33 @@ export default () => {
                             </Grid>
                             <Divider />
                             <Grid container spacing={2}>
-                                {students.filter(student => student.student).map(student => (
-                                    <Grid item xs={12}>
-                                        <FormDataConsumer>
-                                            {({ formData, ...rest }) => (
-                                                <CommonSliderInput label={student.student.name} source={String(student.student.id)} max={formData.howManyLessons} {...rest} />
-                                            )}
-                                        </FormDataConsumer>
-                                    </Grid>
-                                ))}
+                                <Grid item xs={columnWidth}>
+                                    <Text>שם התלמידה</Text>
+                                </Grid>
+                                <Grid item xs={columnWidth}>
+                                    <Text>חיסורים</Text>
+                                </Grid>
+                                {isShowLate && <Grid item xs={columnWidth}>
+                                    <Text>איחורים</Text>
+                                </Grid>}
                             </Grid>
+                            <FormDataConsumer>
+                                {({ formData, ...rest }) => (
+                                    students.filter(student => student.student).map(student => (
+                                        <Grid container spacing={2} key={student.student.id}>
+                                            <Grid item xs={columnWidth}>
+                                                <Text>{student.student.name}</Text>
+                                            </Grid>
+                                            <Grid item xs={columnWidth}>
+                                                <CommonSliderInput source={String(student.student.id) + '.absence'} max={formData.howManyLessons} {...rest} />
+                                            </Grid>
+                                            {isShowLate && <Grid item xs={columnWidth}>
+                                                <CommonSliderInput source={String(student.student.id) + '.late'} max={formData.howManyLessons} {...rest} />
+                                            </Grid>}
+                                        </Grid>
+                                    ))
+                                )}
+                            </FormDataConsumer>
                             <Divider />
                             <Box padding={2}>
                                 <Button onClick={handleCancel}><>ביטול</></Button>
@@ -140,3 +160,9 @@ export default () => {
         </Container>
     );
 }
+
+const Text = ({ children }) => (
+    <Typography variant="body1" component="div">
+        {children}
+    </Typography>
+);

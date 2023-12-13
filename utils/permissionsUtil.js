@@ -53,3 +53,12 @@ export function useIsInLessonReport() {
 export function isInLessonReport(permissions) {
     return isAdmin(permissions) || !!permissions?.inLessonReport;
 }
+
+export function useIsInLessonReportWithLate() {
+    const { permissions } = usePermissions();
+    return isInLessonReportWithLate(permissions);
+}
+
+export function isInLessonReportWithLate(permissions) {
+    return isAdmin(permissions) || !!permissions?.inLessonReport?.withLate;
+}
