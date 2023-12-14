@@ -14,6 +14,7 @@ export const ExcelImportInput = forwardRef<HTMLInputElement, any>(({ fields, onD
             const ws = wb.Sheets[wsname];
             /* Convert array of arrays */
             const data = XLSX.utils.sheet_to_json(ws, { header: fields, range: 1, ...xlsxOptions });
+            fixDates(data);
             /* Update state */
             onDataParsed({ name, data });
         };
@@ -34,3 +35,14 @@ export const ExcelImportInput = forwardRef<HTMLInputElement, any>(({ fields, onD
             ref={ref} onChange={handleFileUpload} />
     )
 });
+
+function fixDates(data: any[]) {
+    data.forEach(row => {
+        Object.keys(row).forEach(key => {
+            if (row[key] instanceof Date) {
+                const date = new Date(row[key].getTime() - row[key].getTimezoneOffset() * 60000 + 60000);
+                row[key] = date.toISOString().slice(0, 10);
+            }
+        });
+    });
+}
