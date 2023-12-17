@@ -1,16 +1,19 @@
 import { List, Datagrid, BulkDeleteWithConfirmButton, useResourceDefinition, Pagination } from 'react-admin';
 import { CommonListActions } from '@shared/components/crudContainers/CommonListActions';
 
-const BulkActionButtons = ({ additionalBulkButtons, ...props }) => {
+const useBulkActionButtons = (readonly, additionalBulkButtons = [], props) => {
     const { hasCreate } = useResourceDefinition(props);
 
-    return (
-        <>
-            {additionalBulkButtons}
-            {/* <BulkExportButton /> */}
-            {hasCreate && <BulkDeleteWithConfirmButton resource={props.deleteResource} />}
-        </>
-    );
+    const actionButtons = additionalBulkButtons.concat([
+        // <BulkExportButton />,
+        !readonly && hasCreate && <BulkDeleteWithConfirmButton resource={props.deleteResource} />,
+    ]).filter(Boolean);
+
+    if (!actionButtons.length) {
+        return false;
+    }
+
+    return <>{actionButtons}</>;
 }
 
 const CommonPagination = () => <Pagination rowsPerPageOptions={[10, 25, 50, 100, 200]} />;
@@ -23,10 +26,10 @@ export const CommonList = ({ children, importer, exporter, filterDefaultValues, 
 )
 
 export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, ...props }) => {
-    const bulkActionButtons = <BulkActionButtons additionalBulkButtons={additionalBulkButtons} {...props} />;
+    const bulkActionButtons = useBulkActionButtons(readonly, additionalBulkButtons, props);
 
     return (
-        <Datagrid rowClick={!readonly && 'edit'} bulkActionButtons={!readonly && bulkActionButtons} {...props}>
+        <Datagrid rowClick={!readonly && 'edit'} bulkActionButtons={bulkActionButtons} {...props}>
             {children}
         </Datagrid>
     )
