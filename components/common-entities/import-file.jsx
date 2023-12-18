@@ -36,7 +36,6 @@ const entity = {
     Datagrid,
     filters,
     Representation,
-    exporter: false,
 };
 
 export default getResourceComponents(entity);
