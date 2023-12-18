@@ -60,7 +60,7 @@ const Inputs = ({ isCreate, isAdmin }) => {
     return <>
         {isAdmin && <FormDataConsumer>{({ formData }) => <ImpersonateButton record={formData} />}</FormDataConsumer>}
         {!isCreate && isAdmin && <TextInput source="id" disabled />}
-        <TextInput source="name" validate={[required(), maxLength(500)]} disabled={!isAdmin} />
+        <TextInput source="name" validate={[required(), maxLength(500)]} />
         <TextInput source="email" validate={[required(), maxLength(500)]} disabled={!isAdmin} />
         {isAdmin && <TextInput source="password" />}
         <TextInput source="phoneNumber" validate={maxLength(11)} />
