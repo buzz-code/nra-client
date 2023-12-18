@@ -10,14 +10,16 @@ import { CommonReferenceInputFilter } from '@shared/components/fields/CommonRefe
 const filters = [
     ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" />,
     <CommonEntityNameInput source="entityName" />,
-    <TextInput source="fileName" />
+    <TextInput source="fileName" />,
+    <DateInput source="createdAt:$gte" label="תאריך אחרי" alwaysOn />,
+    <DateInput source="createdAt:$lte" label="תאריך לפני" alwaysOn />,
 ];
 
 const Datagrid = ({ isAdmin, children, ...props }) => {
     return (
         <CommonDatagrid {...props} readonly>
             {children}
-            <TextField source="id" />
+            {isAdmin && <TextField source="id" />}
             {isAdmin && <ReferenceField source="userId" reference="user" />}
             <TextField source="fileName" />
             <TextField source="fileSource" />
