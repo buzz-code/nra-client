@@ -1,4 +1,4 @@
-import { List, Datagrid, BulkDeleteWithConfirmButton, useResourceDefinition, Pagination } from 'react-admin';
+import { List, Datagrid, BulkDeleteWithConfirmButton, useResourceDefinition, Pagination, TextField } from 'react-admin';
 import { CommonListActions } from '@shared/components/crudContainers/CommonListActions';
 
 const useBulkActionButtons = (readonly, additionalBulkButtons = [], props) => {
@@ -33,4 +33,10 @@ export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, ...p
             {children}
         </Datagrid>
     )
+}
+
+export const getPivotColumns = (data) => {
+    return data?.[0]?.headers ? data[0].headers.map(item => (
+        <TextField key={item.value} source={item.value} label={item.label} sortable={false} />
+    )) : [];
 }
