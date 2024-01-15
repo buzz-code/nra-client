@@ -7,8 +7,11 @@ import { CommonEntityNameField } from '@shared/components/fields/CommonEntityNam
 import { CommonReferenceInputFilter } from '@shared/components/fields/CommonReferenceInputFilter';
 
 const filters = [
-    ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" />,
-    <CommonEntityNameInput source="entityName" />,
+    ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" alwaysOn />,
+    <CommonEntityNameInput source="entityName" alwaysOn />,
+    <DateInput source="createdAt:$gte" label="נוצר אחרי" alwaysOn />,
+    <DateInput source="createdAt:$lte" label="נוצר לפני" alwaysOn />,
+
 ];
 
 const Datagrid = ({ isAdmin, children, ...props }) => {
