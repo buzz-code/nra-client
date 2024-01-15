@@ -32,7 +32,6 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
 const entity = {
     Datagrid,
     filters,
-    exporter: false,
 };
 
 export default getResourceComponents(entity);
