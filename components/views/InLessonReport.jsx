@@ -9,24 +9,29 @@ import Grid from '@mui/material/Grid';
 import { Button, DateInput, FormDataConsumer, NumberInput, SaveButton, SimpleForm, TextInput, useDataProvider, useNotify, useRedirect } from 'react-admin';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { useSavableData } from '../import/util';
-import { Datagrid } from 'src/entities/att-report';
+import { Datagrid as AttDatagrid } from 'src/entities/att-report';
+import { Datagrid as GradeDatagrid } from 'src/entities/grade';
 import { PreviewListWithSavingDialog } from '../import/PreviewListWithSavingDialog';
 import { CommonSliderInput } from '../fields/CommonSliderInput';
 import { useIsInLessonReportWithLate } from '@shared/utils/permissionsUtil';
 
-const resource = 'att_report';
+const attResource = 'att_report';
+const gradeResource = 'grade';
 
-export default () => {
-    const fileName = useMemo(() => 'דיווח שיעור ' + new Date().toISOString().split('T')[0], []);
+export default ({ gradeMode = false }) => {
+    const fileContext = gradeMode ? 'ציון' : 'נוכחות';
+    const fileName = useMemo(() => 'דיווח ' + fileContext + ' ' + new Date().toISOString().split('T')[0], []);
     const dataProvider = useDataProvider();
     const notify = useNotify();
     const redirect = useRedirect();
     const isShowLate = useIsInLessonReportWithLate();
-    const columnWidth = useMemo(() => isShowLate ? 4 : 6, [isShowLate]);
+    const columnWidth = useMemo(() => !gradeMode && isShowLate ? 4 : 6, [isShowLate]);
     const [lessonKey, setLessonKey] = useState(null);
     const [lesson, setLesson] = useState(null);
     const [students, setStudents] = useState(null);
     const [dataToSave, setDataToSave] = useState(null);
+    const resource = gradeMode ? gradeResource : attResource;
+    const Datagrid = gradeMode ? GradeDatagrid : AttDatagrid;
     const { data, saveData } = useSavableData(resource, fileName, dataToSave);
 
     const handleGetLesson = useCallback(async (lessonKey) => {
@@ -60,20 +65,28 @@ export default () => {
 
     const handleSave = useCallback((formData) => {
         const { reportDate, howManyLessons, ...rest } = formData;
-        const dataToSave = Object.keys(rest).map((studentId) => ({
-            reportDate: reportDate,
-            teacherReferenceId: lesson.teacherReferenceId,
-            klassReferenceId: lesson.klassReferenceIds[0],
-            lessonReferenceId: lesson.id,
-            studentReferenceId: studentId,
-            howManyLessons: howManyLessons,
-            absCount: (rest[studentId]?.absence ?? 0) + (rest[studentId]?.late ?? 0) * 0.3,
-        }));
+        const dataToSave = Object.keys(rest).map((studentId) => {
+            const additonalData = gradeMode ? {
+                grade: rest[studentId]?.grade ?? 0,
+            } : {
+                howManyLessons: howManyLessons,
+                absCount: (rest[studentId]?.absence ?? 0) + (rest[studentId]?.late ?? 0) * 0.3,
+            };
+            return ({
+                reportDate: reportDate,
+                teacherReferenceId: lesson.teacherReferenceId,
+                klassReferenceId: lesson.klassReferenceIds[0],
+                lessonReferenceId: lesson.id,
+                studentReferenceId: studentId,
+                ...additonalData,
+            });
+        });
         setDataToSave(dataToSave);
     }, [data, lesson, students, setDataToSave]);
 
     const handleSuccess = useCallback(() => {
-        redirect('/att_report_with_report_month');
+        const redirectUrl = gradeMode ? '/grade' : '/att_report_with_report_month';
+        redirect(redirectUrl);
     }, [redirect]);
 
     return (
@@ -112,21 +125,29 @@ export default () => {
                                 <Grid item xs={6}>
                                     <DateInput source="reportDate" label="תאריך דוח" defaultValue={new Date().toISOString().split('T')[0]} fullWidth />
                                 </Grid>
-                                <Grid item xs={6} >
-                                    <NumberInput source="howManyLessons" label="מספר שיעורים" defaultValue={1} fullWidth />
-                                </Grid>
+                                {!gradeMode && (
+                                    <Grid item xs={6} >
+                                        <NumberInput source="howManyLessons" label="מספר שיעורים" defaultValue={1} fullWidth />
+                                    </Grid>
+                                )}
                             </Grid>
                             <Divider />
                             <Grid container spacing={2}>
                                 <Grid item xs={columnWidth}>
                                     <Text>שם התלמידה</Text>
                                 </Grid>
-                                <Grid item xs={columnWidth}>
-                                    <Text>חיסורים</Text>
-                                </Grid>
-                                {isShowLate && <Grid item xs={columnWidth}>
-                                    <Text>איחורים</Text>
-                                </Grid>}
+                                {gradeMode ? (
+                                    <Grid item xs={columnWidth}>
+                                        <Text>ציון</Text>
+                                    </Grid>
+                                ) : <>
+                                    <Grid item xs={columnWidth}>
+                                        <Text>חיסורים</Text>
+                                    </Grid>
+                                    {isShowLate && <Grid item xs={columnWidth}>
+                                        <Text>איחורים</Text>
+                                    </Grid>}
+                                </>}
                             </Grid>
                             <FormDataConsumer>
                                 {({ formData, ...rest }) => (
@@ -135,12 +156,18 @@ export default () => {
                                             <Grid item xs={columnWidth}>
                                                 <Text>{student.student.name}</Text>
                                             </Grid>
-                                            <Grid item xs={columnWidth}>
-                                                <CommonSliderInput source={String(student.student.id) + '.absence'} max={formData.howManyLessons} {...rest} />
-                                            </Grid>
-                                            {isShowLate && <Grid item xs={columnWidth}>
-                                                <CommonSliderInput source={String(student.student.id) + '.late'} max={formData.howManyLessons} {...rest} />
-                                            </Grid>}
+                                            {gradeMode ? (
+                                                <Grid item xs={columnWidth}>
+                                                    <NumberInput source={String(student.student.id) + '.grade'} label='ציון' {...rest} max={100} />
+                                                </Grid>
+                                            ) : <>
+                                                <Grid item xs={columnWidth}>
+                                                    <CommonSliderInput source={String(student.student.id) + '.absence'} max={formData.howManyLessons} {...rest} />
+                                                </Grid>
+                                                {isShowLate && <Grid item xs={columnWidth}>
+                                                    <CommonSliderInput source={String(student.student.id) + '.late'} max={formData.howManyLessons} {...rest} />
+                                                </Grid>}
+                                            </>}
                                         </Grid>
                                     ))
                                 )}
