@@ -86,12 +86,38 @@ const composeQueryParams = (queryParams: any = {}): string => {
 
 const mergeEncodedQueries = (...encodedQueries) => encodedQueries.map((query) => query).join('&')
 
-const getQueryJoin = (sort: QuerySort): QueryJoin => {
-  if (sort?.field?.includes('.')) {
-    const field = sort.field.split('.')[0];
-    return { field };
+const getQueryJoin = (sort: QuerySort, filter: QueryFilter[]): QueryJoin[] => {
+  const sortJoin = getSortJoin(sort);
+  const filterJoin = getFilterJoin(filter);
+  return [...sortJoin, ...filterJoin];
+}
+
+const getSortJoin = (sort: QuerySort): QueryJoin[] => {
+  if (!sort) {
+    return [];
   }
-  return null;
+
+  const sortJoin: QueryJoin[] = [];
+  if (sort?.field.includes('.')) {
+    const [relation] = sort.field.split('.');
+    sortJoin.push({ field: relation });
+  }
+  return sortJoin;
+}
+
+const getFilterJoin = (filter: QueryFilter[]): QueryJoin[] => {
+  if (!filter) {
+    return [];
+  }
+
+  const filterJoin: QueryJoin[] = [];
+  filter.forEach(({ field }) => {
+    if (field.includes('.')) {
+      const [relation] = field.split('.');
+      filterJoin.push({ field: relation });
+    }
+  });
+  return filterJoin;
 }
 
 const saveResponseFile = async ({ json }, filename) => {
@@ -104,17 +130,18 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
     const { page, perPage } = params.pagination;
     const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
     const sort = params.sort as QuerySort;
+    const queryFilter = composeFilter(filter);
 
     const encodedQueryParams = composeQueryParams(queryParams)
     const encodedQueryFilter = RequestQueryBuilder.create({
-      filter: composeFilter(filter),
+      filter: queryFilter,
       or: composeFilter(orFilter || {})
     })
       .setLimit(perPage)
       .setPage(page)
       .sortBy(sort)
       .setOffset((page - 1) * perPage)
-      .setJoin(getQueryJoin(sort))
+      .setJoin(getQueryJoin(sort, queryFilter))
       .query();
 
     const encodedQueryExtra = composeQueryParams({ extra });
@@ -171,7 +198,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
       .sortBy(sort)
       .setLimit(perPage)
       .setOffset((page - 1) * perPage)
-      .setJoin(getQueryJoin(sort))
+      .setJoin(getQueryJoin(sort, filter))
       .query();
 
     const encodedQueryExtra = composeQueryParams({ extra });
@@ -238,14 +265,15 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
   getCount: (resource, params) => {
     const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
     const sort = params.sort as QuerySort;
+    const queryFilter = composeFilter(filter);
 
     const encodedQueryParams = composeQueryParams(queryParams)
     const encodedQueryFilter = RequestQueryBuilder.create({
-      filter: composeFilter(filter),
+      filter: queryFilter,
       or: composeFilter(orFilter || {})
     })
       .sortBy(sort)
-      .setJoin(getQueryJoin(sort))
+      .setJoin(getQueryJoin(sort, queryFilter))
       .query();
 
     const encodedQueryExtra = composeQueryParams({ extra });
@@ -261,17 +289,18 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
     const { page, perPage } = params.pagination;
     const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
     const sort = params.sort as QuerySort;
+    const queryFilter = composeFilter(filter);
 
     const encodedQueryParams = composeQueryParams(queryParams)
     const encodedQueryFilter = RequestQueryBuilder.create({
-      filter: composeFilter(filter),
+      filter: queryFilter,
       or: composeFilter(orFilter || {})
     })
       .setLimit(perPage)
       .setPage(page)
       .sortBy(sort)
       .setOffset((page - 1) * perPage)
-      .setJoin(getQueryJoin(sort))
+      .setJoin(getQueryJoin(sort, queryFilter))
       .query();
 
     const encodedQueryExtra = composeQueryParams({ extra });
