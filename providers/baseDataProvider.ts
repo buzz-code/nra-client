@@ -212,7 +212,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
       method: 'POST',
       body: JSON.stringify(params.data),
     }).then(({ json }) => ({
-      data: { ...params.data, id: json.id },
+      data: { ...params.data, id: json.id } as any,
     })),
 
   createMany: (resource, bulk) =>
