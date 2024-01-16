@@ -103,6 +103,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
   getList: (resource, params) => {
     const { page, perPage } = params.pagination;
     const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
+    const sort = params.sort as QuerySort;
 
     const encodedQueryParams = composeQueryParams(queryParams)
     const encodedQueryFilter = RequestQueryBuilder.create({
@@ -111,9 +112,9 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
     })
       .setLimit(perPage)
       .setPage(page)
-      .sortBy(params.sort as QuerySort)
+      .sortBy(sort)
       .setOffset((page - 1) * perPage)
-      .setJoin(getQueryJoin(params.sort as QuerySort))
+      .setJoin(getQueryJoin(sort))
       .query();
 
     const encodedQueryExtra = composeQueryParams({ extra });
@@ -155,6 +156,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
     const { page, perPage } = params.pagination;
     const { q: queryParams, extra, ...otherFilters } = params.filter || {}
     const filter: QueryFilter[] = composeFilter(otherFilters);
+    const sort = params.sort as QuerySort;
 
     filter.push({
       field: params.target,
@@ -166,10 +168,10 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
     const encodedQueryFilter = RequestQueryBuilder.create({
       filter
     })
-      .sortBy(params.sort as QuerySort)
+      .sortBy(sort)
       .setLimit(perPage)
       .setOffset((page - 1) * perPage)
-      .setJoin(getQueryJoin(params.sort as QuerySort))
+      .setJoin(getQueryJoin(sort))
       .query();
 
     const encodedQueryExtra = composeQueryParams({ extra });
@@ -235,14 +237,15 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
   getCount: (resource, params) => {
     const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
+    const sort = params.sort as QuerySort;
 
     const encodedQueryParams = composeQueryParams(queryParams)
     const encodedQueryFilter = RequestQueryBuilder.create({
       filter: composeFilter(filter),
       or: composeFilter(orFilter || {})
     })
-      .sortBy(params.sort as QuerySort)
-      .setJoin(getQueryJoin(params.sort as QuerySort))
+      .sortBy(sort)
+      .setJoin(getQueryJoin(sort))
       .query();
 
     const encodedQueryExtra = composeQueryParams({ extra });
@@ -257,6 +260,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
   export: (resource, params, format, resourceLabel) => {
     const { page, perPage } = params.pagination;
     const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
+    const sort = params.sort as QuerySort;
 
     const encodedQueryParams = composeQueryParams(queryParams)
     const encodedQueryFilter = RequestQueryBuilder.create({
@@ -265,9 +269,9 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
     })
       .setLimit(perPage)
       .setPage(page)
-      .sortBy(params.sort as QuerySort)
+      .sortBy(sort)
       .setOffset((page - 1) * perPage)
-      .setJoin(getQueryJoin(params.sort as QuerySort))
+      .setJoin(getQueryJoin(sort))
       .query();
 
     const encodedQueryExtra = composeQueryParams({ extra });
