@@ -62,3 +62,12 @@ export function useIsInLessonReportWithLate() {
 export function isInLessonReportWithLate(permissions) {
     return isAdmin(permissions) || !!permissions?.inLessonReport?.withLate;
 }
+
+export function useIsAbsCountEffect() {
+    const { permissions } = usePermissions();
+    return isAbsCountEffect(permissions);
+}
+
+export function isAbsCountEffect(permissions) {
+    return isAdmin(permissions) || !!permissions?.absCountEffect;
+}
