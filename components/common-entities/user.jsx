@@ -89,6 +89,7 @@ const Inputs = ({ isCreate, isAdmin }) => {
         </ReferenceField>
         <TextInput source="mailAddressAlias" validate={maxLength(255)} />
         <TextInput source="mailAddressTitle" validate={maxLength(255)} />
+        <TextInput source="bccAddress" validate={maxLength(255)} />
         {!isCreate && <DateTimeInput source="createdAt" disabled />}
         {!isCreate && <DateTimeInput source="updatedAt" disabled />}
     </>
