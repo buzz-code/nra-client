@@ -1,4 +1,4 @@
-import { DateField, DateInput, ReferenceField, TextField, TextInput } from 'react-admin';
+import { BooleanField, DateField, DateInput, ReferenceField, TextField, TextInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonEntityNameField } from '@shared/components/fields/CommonEntityNameField';
@@ -25,6 +25,7 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
             <TextField source="fileSource" />
             <CommonCountField source="entityIds" />
             <CommonEntityNameField source="entityName" />
+            <BooleanField source="fullSuccess" />
             <TextField source="response" />
             <DateField showDate showTime source="createdAt" />
             <ShowMatchingRecordsButton source="entityIds" resourceField="entityName" />

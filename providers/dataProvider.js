@@ -23,6 +23,7 @@ dataProvider.importFile = async (resource, bulk, fileName) =>
                     fileSource: 'קובץ שהועלה',
                     entityName: resource,
                     entityIds: data.map(item => item.id),
+                    fullSuccess: true,
                     response: 'נשמר',
                 }
             })

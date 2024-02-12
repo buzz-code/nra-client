@@ -46,8 +46,14 @@ const useSaveData = (resource: string, data: any[], fileName: string, fileId: nu
 
         const entityIds = data.map(item => item.id).filter(id => id);
         if (entityIds.length) {
+            const isFullSuccess = successCount === data.length;
             if (fileId) {
-                await updateItem({ id: fileId, entityIds }, 'import_file');
+                const dataToUpdate = {
+                    id: fileId,
+                    entityIds,
+                    fullSuccess: isFullSuccess,
+                };
+                await updateItem(dataToUpdate, 'import_file');
             } else {
                 const fileData = {
                     userId: data[0].userId,
@@ -55,6 +61,7 @@ const useSaveData = (resource: string, data: any[], fileName: string, fileId: nu
                     fileSource: 'קובץ שהועלה',
                     entityName: resourceValue,
                     entityIds,
+                    fullSuccess: isFullSuccess,
                     response: 'נשמר',
                 };
                 const res = await createItem(fileData, 'import_file');
