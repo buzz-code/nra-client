@@ -25,5 +25,5 @@ export const BulkReportButton = ({ label, icon, name, filename, defaultRequestVa
         }
     );
 
-    return <BulkRequestButton label={label} mutate={mutate} isLoading={isLoading} icon={icon} defaultRequestValues={defaultRequestValues} children={children} />
+    return <BulkRequestButton label={label} name={name} mutate={mutate} isLoading={isLoading} icon={icon} defaultRequestValues={defaultRequestValues} children={children} />
 }
