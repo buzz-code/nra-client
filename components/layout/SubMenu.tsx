@@ -1,23 +1,18 @@
 import * as React from 'react';
-import { useState } from 'react';
-import PropTypes from 'prop-types';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { List, ListItem, ListItemText, Collapse } from '@mui/material';
-import { useTranslate, useSidebarState } from 'react-admin';
+import { useTranslate, useSidebarState, useStore } from 'react-admin';
 
 
 export const SubMenu = (props: SubMenuProps) => {
-    const localStorageKey = 'ra.SubMenu.open.' + props.primaryText;
-    const shouldDropdownOpen = JSON.parse(localStorage.getItem(localStorageKey) ?? 'false');
-    const { isDropdownOpen = shouldDropdownOpen, primaryText, leftIcon, children, ...rest } = props;
+    const { isDropdownOpen, primaryText, leftIcon, children, ...rest } = props;
     const translate = useTranslate();
     const [open] = useSidebarState();
-    const [isOpen, setIsOpen] = useState(isDropdownOpen);
+    const [isOpen, setIsOpen] = useStore('common.SubMenu.open.' + primaryText, isDropdownOpen)
 
     const handleToggle = () => {
         setIsOpen(!isOpen);
-        localStorage.setItem(localStorageKey, JSON.stringify(!isOpen));
     };
 
     return (
