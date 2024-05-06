@@ -10,13 +10,11 @@ export const BulkActionButton = ({ label, icon, name, defaultRequestValues, chil
 
     const { mutate, isLoading } = useMutation(
         (data) => {
-            const params = new URLSearchParams({
+            const params = {
                 ...data,
-                'extra.action': name,
                 'extra.ids': selectedIds
-            });
-
-            return dataProvider.exec(resource, 'action?' + params, {})
+            };
+            return dataProvider.action(resource, name, params)
                 .then(handleActionSuccess(notify))
                 .then(() => {
                     onUnselectItems();

@@ -36,3 +36,27 @@ dataProvider.impersonate = async (userId) =>
     });
 
 
+const createQueryParamsStrWithAction = (queryParams, action) => {
+    return new URLSearchParams({
+        ...queryParams,
+        'extra.action': action,
+    }).toString();
+}
+
+dataProvider.action = (resource, action, queryParams = {}, bodyParams = {}) => {
+    const queryParamsStr = createQueryParamsStrWithAction(queryParams, action);
+
+    return dataProvider.exec(resource, 'action?' + queryParamsStr, {
+        method: 'POST',
+        body: JSON.stringify(bodyParams)
+    });
+}
+
+dataProvider.actionAndDownload = (resource, action, queryParams = {}, bodyParams = {}) => {
+    const queryParamsStr = createQueryParamsStrWithAction(queryParams, action);
+
+    return dataProvider.execAndDownload(resource, 'action?' + queryParamsStr, {
+        method: 'POST',
+        body: JSON.stringify(bodyParams)
+    });
+}
