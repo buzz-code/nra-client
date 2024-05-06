@@ -58,5 +58,5 @@ dataProvider.actionAndDownload = (resource, action, queryParams = {}, bodyParams
     return dataProvider.execAndDownload(resource, 'action?' + queryParamsStr, {
         method: 'POST',
         body: JSON.stringify(bodyParams)
-    });
+    }).then(() => ({data: {}}));
 }
