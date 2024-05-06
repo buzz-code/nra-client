@@ -1,6 +1,7 @@
 import { ImageInput, ImageField } from "react-admin";
 import { useFormContext } from 'react-hook-form';
 import { useEffect } from 'react';
+import { readAsDataURL } from "@shared/utils/fileUtil";
 
 export const CommonImageInput = ({ source, accept = 'image/*', maxSize = 16_000_000, ...props }) => {
     const { watch, setValue, setError } = useFormContext();
@@ -8,15 +9,9 @@ export const CommonImageInput = ({ source, accept = 'image/*', maxSize = 16_000_
 
     useEffect(() => {
         if (value?.src?.includes('blob') && value.rawFile) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                setValue(source, { ...value, src: reader.result });
-            };
-            reader.onerror = (err) => {
-                setError(source, err);
-            };
-
-            reader.readAsDataURL(value.rawFile);
+            readAsDataURL(value.rawFile)
+                .then(src => setValue(source, { ...value, src }))
+                .catch(err => setError(source, err));
         };
     }, [value, setValue]);
 
