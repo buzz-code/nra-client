@@ -23,9 +23,6 @@ export default ({ items }) => {
 }
 
 const DashboardItem = ({ resource, icon, title, filter = {} }) => {
-    // todo: add query options here
-    // todo: add default title here
-    // todo: add table for dashboard items
     const getResourceLabel = useGetResourceLabel();
     const dataProvider = useDataProvider();
     const { mutate, isLoading, data } = useMutation(
