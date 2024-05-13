@@ -120,9 +120,21 @@ const getFilterJoin = (filter: QueryFilter[]): QueryJoin[] => {
   return filterJoin;
 }
 
+const calcFileName = (disposition, filename) => {
+  if (disposition) {
+    const regex = /attachment; filename="(.+)"/;
+    const match = regex.exec(disposition);
+    if (match && match.length > 1) {
+      return match[1];
+    }
+  }
+
+  return filename;
+}
+
 const saveResponseFile = async ({ json }, filename) => {
   const blob = await fetch(`data:${json.type};base64,${json.data}`).then(res => res.blob());
-  return saveAs(blob, filename);
+  return saveAs(blob, calcFileName(json.disposition, filename));
 }
 
 export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedDataProvider => ({
