@@ -10,7 +10,7 @@ import { useDataProvider, useNotify, Button } from 'react-admin';
 import { handleActionSuccess, handleError } from '@shared/utils/notifyUtil';
 import { readAsExcel } from '@shared/utils/fileUtil';
 
-const fromAToI = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+const fromAToI = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];
 const MichlolFileHelper = () => {
     const dataProvider = useDataProvider();
     const fileSelector = useRef();
