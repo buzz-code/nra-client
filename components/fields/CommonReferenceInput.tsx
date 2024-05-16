@@ -18,7 +18,7 @@ export default (props: CommonReferenceInputProps) => {
     return (
         <FormDataConsumer>
             {({ formData, ...rest }) => (
-                <ReferenceInput sort={defaultSortBy} {...props} filter={getFilterByFormData(formData)}>
+                <ReferenceInput sort={defaultSortBy} {...props} validate={undefined} filter={getFilterByFormData(formData)}>
                     <CommonAutocompleteInput {...props} />
                 </ReferenceInput>
             )}</FormDataConsumer>

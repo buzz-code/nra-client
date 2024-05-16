@@ -1,4 +1,6 @@
-export const defaultSortBy = { field: 'name', order: 'ASC' };
+import { SortPayload } from 'react-admin';
+
+export const defaultSortBy: SortPayload = { field: 'name', order: 'ASC' };
 
 export const getDynamicFilter = (dynamicFilter, fullValues) => {
     const res = {};
