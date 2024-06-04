@@ -14,6 +14,7 @@ import { Datagrid as GradeDatagrid } from 'src/entities/grade';
 import { PreviewListWithSavingDialog } from '../import/PreviewListWithSavingDialog';
 import { CommonSliderInput } from '../fields/CommonSliderInput';
 import { useIsInLessonReportWithLate } from '@shared/utils/permissionsUtil';
+import { defaultYearFilter } from '@shared/utils/yearFilter';
 
 const attResource = 'att_report';
 const gradeResource = 'grade';
@@ -36,22 +37,34 @@ export default ({ gradeMode = false }) => {
 
     const handleGetLesson = useCallback(async (lessonKey) => {
         try {
-            const { data: lessons } = await dataProvider.getManyReference('lesson', {
+            const { data: [lesson] } = await dataProvider.getManyReference('lesson', {
                 target: 'key',
                 id: lessonKey,
                 pagination: { page: 1, perPage: 1 }
             });
-            if (lessons.length === 0) {
+            if (!lesson) {
                 throw new Error('Lesson not found');
             }
 
-            const { data: students } = await dataProvider.getManyReference('student_klass', {
-                target: 'klassReferenceId',
-                id: lessons[0].klassReferenceIds[0],
-                pagination: { page: 1, perPage: 1000 },
-                sort: { field: 'student.name', order: 'ASC' }
+            const allStudents = await Promise.all(lesson.klassReferenceIds.map(async (klassId) => {
+                const { data: students } = await dataProvider.getManyReference('student_klass', {
+                    target: 'klassReferenceId',
+                    id: klassId,
+                    pagination: { page: 1, perPage: 1000 },
+                    sort: { field: 'student.name', order: 'ASC' },
+                    filter: { year: defaultYearFilter.year },
+                });
+                return students;
+            }));
+            const students = [], studentIds = new Set();
+            allStudents.flat().forEach(student => {
+                if (!studentIds.has(student.student.id)) {
+                    students.push(student);
+                    studentIds.add(student.student.id);
+                }
             });
-            setLesson(lessons[0]);
+
+            setLesson(lesson);
             setStudents(students);
         } catch (e) {
             notify('ra.message.lesson_not_found', { type: 'error' });
