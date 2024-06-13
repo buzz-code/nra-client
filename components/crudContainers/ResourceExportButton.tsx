@@ -21,7 +21,7 @@ import { handleError } from '@shared/utils/notifyUtil';
 
 export const ResourceExportButton = (props: ExportButtonProps) => {
     const {
-        maxResults = 10000,
+        maxResults = 20000,
         onClick,
         label = 'ra.action.export',
         icon = defaultIcon,
