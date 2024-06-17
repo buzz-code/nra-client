@@ -7,19 +7,19 @@ const theme = {
     palette: {
         type: "light"
     },
-    components: {
-        ...defaultTheme.components,
-        RaLayout: {
-            styleOverrides: {
-                root: {
-                    "& .RaLayout-appFrame": {
-                        maxWidth: '100vw',
-                        overflow: 'auto',
-                    },
-                }
-            }
-        }
-    }
+    // components: {
+    //     ...defaultTheme.components,
+    //     RaLayout: {
+    //         styleOverrides: {
+    //             root: {
+    //                 "& .RaLayout-appFrame": {
+    //                     maxWidth: '100vw',
+    //                     overflow: 'auto',
+    //                 },
+    //             }
+    //         }
+    //     }
+    // }
 };
 
 export default theme;
