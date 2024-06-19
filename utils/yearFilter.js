@@ -1,16 +1,30 @@
 const startOfYear = new Date('2000-08-01');
+const startOfAvailableYear = new Date('2000-06-01');
+const firstAvailableYear = 5783;
 
-const getCurrentGregorianYear = () => {
+const getCurrentGregorianYearByStartDate = (yearStartDate) => {
     const now = new Date();
     const year = now.getFullYear();
-    const isNextYear = now.getMonth() > startOfYear.getMonth() ||
-        now.getMonth() === startOfYear.getMonth() && now.getDate() >= startOfYear.getDate();
+    const isNextYear = now.getMonth() > yearStartDate.getMonth() ||
+        now.getMonth() === yearStartDate.getMonth() && now.getDate() >= yearStartDate.getDate();
     return year + (isNextYear ? 1 : 0);
 }
 
-export const getCurrentHebrewYear = () => {
-    const gregorianYear = getCurrentGregorianYear();
+const getHebrewYearByGregorianYear = (gregorianYear) => {
     return gregorianYear + 3760;
+}
+
+const getCurrentGregorianYear = () => {
+    return getCurrentGregorianYearByStartDate(startOfYear);
+}
+
+const getLastAvailableGregorianYear = () => {
+    return getCurrentGregorianYearByStartDate(startOfAvailableYear);
+}
+
+export const getCurrentHebrewYear = () => {
+    const currentGregorianYear = getCurrentGregorianYear();
+    return getHebrewYearByGregorianYear(currentGregorianYear);
 }
 
 const tensLetterArr = [
@@ -33,11 +47,12 @@ const getYearName = (year) => {
 }
 
 const getYearChoices = () => {
-    const startYear = 5783;
-    const endYear = getCurrentHebrewYear();
+    const firstYear = firstAvailableYear;
+    const lastGregorianYear = getLastAvailableGregorianYear();
+    const lastYear = getHebrewYearByGregorianYear(lastGregorianYear);
 
     const choices = [];
-    for (let year = startYear; year <= endYear; year++) {
+    for (let year = firstYear; year <= lastYear; year++) {
         choices.push({
             id: year,
             name: getYearName(year),
