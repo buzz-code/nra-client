@@ -1,4 +1,4 @@
-const startOfYear = new Date('2000-08-01');
+const startOfYear = new Date('2000-09-01');
 const startOfAvailableYear = new Date('2000-06-01');
 const firstAvailableYear = 5783;
 
