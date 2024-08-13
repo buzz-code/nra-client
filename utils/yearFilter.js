@@ -2,6 +2,8 @@ const startOfYear = new Date('2000-09-01');
 const startOfAvailableYear = new Date('2000-06-01');
 const firstAvailableYear = 5783;
 
+const savedYear = localStorage.getItem('year');
+
 const getCurrentGregorianYearByStartDate = (yearStartDate) => {
     const now = new Date();
     const year = now.getFullYear();
@@ -64,5 +66,10 @@ const getYearChoices = () => {
 export const yearChoices = getYearChoices();
 
 export const defaultYearFilter = {
-    year: getCurrentHebrewYear(),
+    year: savedYear ?? getCurrentHebrewYear(),
 };
+
+export const updateDefaultYear = (year) => {
+    localStorage.setItem('year', year);
+    defaultYearFilter.year = year;
+}
