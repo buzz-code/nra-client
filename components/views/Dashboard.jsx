@@ -4,15 +4,30 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import { createElement, useEffect } from 'react';
-import { Title, useDataProvider, useGetResourceLabel } from 'react-admin';
+import { createElement, useCallback, useEffect } from 'react';
+import { Form, Title, useDataProvider, useGetResourceLabel } from 'react-admin';
 import { Link } from 'react-router-dom';
 import { useMutation } from 'react-query';
+import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
+import { defaultYearFilter, updateDefaultYear, yearChoices } from '@shared/utils/yearFilter';
 
 export default ({ items }) => {
+    const handleYearChange = useCallback((value) => {
+        updateDefaultYear(value);
+        window.location.reload();
+    }, []);
+
     return <Grid container spacing={2} mt={1}>
         <Grid item xs={12}>
             <Title title={"לוח המחוונים"} />
+        </Grid>
+        <Grid item xs={3}>
+            <Form>
+                <CommonAutocompleteInput source="year" label="שנה" choices={yearChoices} defaultValue={defaultYearFilter.year} onChange={handleYearChange} />
+            </Form>
+        </Grid>
+        <Grid item xs={12}>
+            <Divider />
         </Grid>
         {items.map((item, index) => (
             <Grid item xs={6} md={3} key={index}>
