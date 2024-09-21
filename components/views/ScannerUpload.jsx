@@ -20,7 +20,8 @@ export default () => {
         const { data: lessons } = await dataProvider.getManyReference('lesson', {
             target: 'key',
             id: lessonKey,
-            pagination: { page: 1, perPage: 1 }
+            pagination: { page: 1, perPage: 1 },
+            filter: { year: defaultYearFilter.year },
         });
         if (lessons.length === 0) {
             notify('ra.message.lesson_not_found', { type: 'error' });
