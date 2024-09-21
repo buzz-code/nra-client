@@ -1,16 +1,22 @@
 import { InputProps, UseUniqueOptions, useUnique as useUniqueBase } from "react-admin"
 import { useIsAdmin } from "./permissionsUtil";
+import { getDynamicFilter } from '@shared/utils/referenceUtil';
 
-export const useUnique = (options?: UseUniqueOptions) => {
+interface CommonUseUniqueOptions {
+    dynamicFilter?: Record<string, any>;
+}
+
+export const useUnique = (options?: UseUniqueOptions & CommonUseUniqueOptions) => {
     const isAdmin = useIsAdmin();
     const validationFunctionWrapper = useUniqueBase(options);
 
     return (params: UseUniqueOptions = {}) => {
         return async (value: any, allValues: any, props: InputProps) => {
-            if (isAdmin) {
-                params.filter ??= {};
-                params.filter.userId = allValues.userId;
-            }
+            params.filter = {
+                ...params.filter,
+                ...(isAdmin ? { userId: allValues.userId } : {}),
+                ...getDynamicFilter(options?.dynamicFilter, allValues),
+            };
             return validationFunctionWrapper(params)(value, allValues, props)
         }
     };
