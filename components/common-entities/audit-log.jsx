@@ -13,7 +13,7 @@ const filters = [
     <CommonEntityNameInput source="entityName" alwaysOn />,
     <DateInput source="createdAt:$gte" label="נוצר אחרי" alwaysOn />,
     <DateInput source="createdAt:$lte" label="נוצר לפני" alwaysOn />,
-    <BooleanInput source="isReverted" alwaysOn />,
+    <BooleanInput source="isReverted" />,
 ];
 
 const additionalBulkButtons = [
