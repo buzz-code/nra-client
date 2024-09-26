@@ -1,4 +1,4 @@
-import { DateField, DateInput, ReferenceField, TextField } from 'react-admin';
+import { BooleanField, BooleanInput, DateField, DateInput, ReferenceField, TextField } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonJsonField } from '@shared/components/fields/CommonJsonItem';
@@ -11,7 +11,7 @@ const filters = [
     <CommonEntityNameInput source="entityName" alwaysOn />,
     <DateInput source="createdAt:$gte" label="נוצר אחרי" alwaysOn />,
     <DateInput source="createdAt:$lte" label="נוצר לפני" alwaysOn />,
-
+    <BooleanInput source="isReverted" alwaysOn />,
 ];
 
 const Datagrid = ({ isAdmin, children, ...props }) => {
@@ -24,6 +24,7 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
             <CommonEntityNameField source="entityName" />
             <TextField source="operation" />
             <CommonJsonField source="entityData" />
+            <BooleanField source="isReverted" />
             <DateField showDate showTime source="createdAt" />
         </CommonDatagrid>
     );
