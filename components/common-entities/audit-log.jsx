@@ -5,6 +5,8 @@ import { CommonJsonField } from '@shared/components/fields/CommonJsonItem';
 import { CommonEntityNameInput } from '@shared/components/fields/CommonEntityNameInput';
 import { CommonEntityNameField } from '@shared/components/fields/CommonEntityNameField';
 import { CommonReferenceInputFilter } from '@shared/components/fields/CommonReferenceInputFilter';
+import { BulkActionButton } from '../crudContainers/BulkActionButton';
+import UndoIcon from '@mui/icons-material/Undo';
 
 const filters = [
     ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" alwaysOn />,
@@ -14,9 +16,14 @@ const filters = [
     <BooleanInput source="isReverted" alwaysOn />,
 ];
 
+const additionalBulkButtons = [
+    <BulkActionButton label='שחזור מידע' icon={<UndoIcon />} name='revert' />
+];
+
+
 const Datagrid = ({ isAdmin, children, ...props }) => {
     return (
-        <CommonDatagrid {...props} readonly>
+        <CommonDatagrid {...props} readonly additionalBulkButtons={additionalBulkButtons}>
             {children}
             <TextField source="id" />
             <ReferenceField source="userId" reference="user" />
