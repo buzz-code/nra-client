@@ -6,6 +6,8 @@ import { CommonReferenceInputFilter } from '@shared/components/fields/CommonRefe
 
 const filters = [
     ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" />,
+    ({isAdmin}) => isAdmin && <DateInput source="createdAt:$gte" label="נוצר אחרי" />,
+    ({isAdmin}) => isAdmin && <DateInput source="createdAt:$lte" label="נוצר לפני" />,
     <TextInput source="from:$cont" label="מאת" />,
     <TextInput source="subject:$cont" label="נושא" />,
 ];
