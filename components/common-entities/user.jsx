@@ -1,4 +1,4 @@
-import { BooleanField, BooleanInput, Button, DateField, DateTimeInput, EmailField, FormDataConsumer, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, useRecordContext, ReferenceField, Labeled } from 'react-admin';
+import { BooleanField, BooleanInput, Button, DateField, DateTimeInput, EmailField, FormDataConsumer, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, useRecordContext, ReferenceField, Labeled, DateInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { QuickFilter } from '@shared/components/fields/QuickFilter';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
@@ -78,9 +78,12 @@ const Inputs = ({ isCreate, isAdmin }) => {
         {isAdmin && <CommonJsonInput source="userInfo" />}
         <BooleanInput source="isPaid" />
         <FormDataConsumer>
-            {({ formData, ...rest }) => formData.isPaid &&
-                <TextInput source="paymentMethod" validate={required()} {...rest} />
-            }
+            {({ formData, ...rest }) => <>
+                {formData.isPaid && <TextInput source="paymentMethod" validate={required()} {...rest} />}
+                {!formData.isPaid && <DateInput source="additionalData.trialEndDate" {...rest} />}
+                {!formData.isPaid && <TextInput source="additionalData.customTrialMessage" {...rest} />}
+                {!formData.isPaid && <TextInput source="additionalData.customTrialEndedMessage" {...rest} />}
+            </>}
         </FormDataConsumer>
         <CommonReferenceInput source="paymentTrackId" reference="payment_track" />
         <ReferenceField source="paymentTrackId" reference="payment_track" link={false} emptyText="">
