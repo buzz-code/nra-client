@@ -16,7 +16,7 @@ const useBulkActionButtons = (readonly, additionalBulkButtons = [], props) => {
     return <>{actionButtons}</>;
 }
 
-const CommonPagination = () => <Pagination rowsPerPageOptions={[10, 25, 50, 100, 200]} />;
+const CommonPagination = () => <Pagination rowsPerPageOptions={[10, 25, 50, 100, 200]} perPage={200} />;
 
 export const CommonList = ({ children, importer, exporter, filterDefaultValues, ...props }) => (
     <List actions={<CommonListActions importer={importer} />} pagination={<CommonPagination />}
