@@ -109,6 +109,7 @@ const extendedTranslation = {
         validation: {
             valueConfirm: 'ערך לא תואם',
             unique: 'ערך קיים כבר',
+            minValue: 'ערך לא יכול להיות קטן מ-%{min}',
         },
         bulk_request: {
             params_dialog_title: 'פרמטרים נוספים',
