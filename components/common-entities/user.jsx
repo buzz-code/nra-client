@@ -74,6 +74,7 @@ const Inputs = ({ isCreate, isAdmin }) => {
         {isAdmin && <BooleanInput source="permissions.editPaymentTracksData" />}
         {isAdmin && <BooleanInput source="permissions.scannerUpload" />}
         {isAdmin && <BooleanInput source="permissions.absCountEffect" />}
+        {isAdmin && <BooleanInput source="permissions.inLessonReport" />}
         {isAdmin && <CommonJsonInput source="additionalData" />}
         {isAdmin && <CommonJsonInput source="userInfo" />}
         <BooleanInput source="isPaid" />
