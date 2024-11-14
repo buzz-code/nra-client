@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import { ResourceImportButton } from '../crudContainers/ResourceImportButton';
 import { Datagrid } from 'src/entities/att-report';
 import { useDataProvider, useNotify, useRedirect } from 'react-admin';
+import { defaultYearFilter } from '@shared/utils/yearFilter';
 
 export default () => {
     const dataProvider = useDataProvider();

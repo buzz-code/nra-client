@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { SimpleForm, TextInput, Title, useDataProvider, useNotify, Toolbar, SaveButton, RefreshButton } from 'react-admin';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useFormContext } from 'react-hook-form';
 import CallEndIcon from '@mui/icons-material/CallEnd'
 
@@ -23,7 +23,7 @@ const YemotSimulator = () => {
     const [isHangup, setIsHangup] = useState(false);
     const notify = useNotify();
 
-    const { mutate, isLoading } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: (body) => dataProvider.simulateYemotCall(body),
         onSuccess: (data) => {
             const parsedData = { lines: [], param: '' };
@@ -73,9 +73,9 @@ const YemotSimulator = () => {
             <Title title="סימולטור" />
             <CardContent>
                 <SimpleForm onSubmit={handleSubmit} defaultValues={defaultValues} toolbar={toolbar}>
-                    <TextInput source="ApiCallId" label="resources.yemot.ApiCallId" validate={required()} disabled />
-                    <TextInput source="ApiDID" label="resources.yemot.ApiDID" validate={required()} />
-                    <TextInput source="ApiPhone" label="resources.yemot.ApiPhone" validate={required()} />
+                    <TextInput source="ApiCallId" label="מזהה שיחה" validate={required()} disabled />
+                    <TextInput source="ApiDID" label="מספר מערכת" validate={required()} />
+                    <TextInput source="ApiPhone" label="מאת מס׳ טלפון" validate={required()} />
                     {params.map(param => (
                         <TextInput source={param} key={param} validate={required()} disabled={isHangup} />
                     ))}

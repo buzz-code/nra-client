@@ -3,7 +3,18 @@ import { useFormContext } from 'react-hook-form';
 import { useEffect } from 'react';
 import { readAsDataURL } from "@shared/utils/fileUtil";
 
-export const CommonImageInput = ({ source, accept = 'image/*', maxSize = 16_000_000, ...props }) => {
+const defaultImageAccept = {
+    'image/jpeg': ['jpg', 'jpeg'],
+    'image/png': ['png'],
+    'image/gif': ['gif'],
+    'image/svg+xml': ['svg'],
+    'image/vnd.microsoft.icon': ['ico'],
+    'image/bmp': ['bmp'],
+    'image/webp': ['webp'],
+    'image/tiff': ['tiff', 'tif'],
+}
+
+export const CommonImageInput = ({ source, accept = defaultImageAccept, maxSize = 16_000_000, ...props }) => {
     const { watch, setValue, setError } = useFormContext();
     const value = watch(source);
 

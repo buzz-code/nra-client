@@ -1,6 +1,6 @@
 import { handleActionSuccess, handleError } from '@shared/utils/notifyUtil';
 import { useDataProvider, useListContext, useNotify } from 'react-admin';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { BulkRequestButton } from './BulkRequestButton';
 
 export const BulkActionButton = ({ label, icon, name, defaultRequestValues, children }) => {
@@ -8,8 +8,8 @@ export const BulkActionButton = ({ label, icon, name, defaultRequestValues, chil
     const { selectedIds, onUnselectItems, resource } = useListContext();
     const notify = useNotify();
 
-    const { mutate, isLoading } = useMutation(
-        (data) => {
+    const { mutate, isPending } = useMutation({
+        mutationFn: (data) => {
             const params = {
                 ...data,
                 'extra.ids': selectedIds
@@ -21,7 +21,7 @@ export const BulkActionButton = ({ label, icon, name, defaultRequestValues, chil
                 })
                 .catch(handleError(notify));
         }
-    );
+    });
 
-    return <BulkRequestButton label={label} name={name} mutate={mutate} isLoading={isLoading} icon={icon} defaultRequestValues={defaultRequestValues} children={children} />
+    return <BulkRequestButton label={label} name={name} mutate={mutate} isLoading={isPending} icon={icon} defaultRequestValues={defaultRequestValues} children={children} />
 }

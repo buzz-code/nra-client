@@ -7,7 +7,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { createElement, useCallback, useEffect } from 'react';
 import { Form, Title, useDataProvider, useGetResourceLabel } from 'react-admin';
 import { Link } from 'react-router-dom';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
 import { defaultYearFilter, updateDefaultYear, yearChoices } from '@shared/utils/yearFilter';
 
@@ -40,10 +40,9 @@ export default ({ items }) => {
 const DashboardItem = ({ resource, icon, title, filter = {} }) => {
     const getResourceLabel = useGetResourceLabel();
     const dataProvider = useDataProvider();
-    const { mutate, isLoading, data } = useMutation(
-        [resource, 'getCount', {}],
-        () => dataProvider.getCount(resource, { filter })
-    );
+    const { mutate, isPending, data } = useMutation({
+        mutationFn: () => dataProvider.getCount(resource, { filter })
+    });
 
     useEffect(() => {
         mutate();
@@ -54,7 +53,7 @@ const DashboardItem = ({ resource, icon, title, filter = {} }) => {
             to={resource}
             icon={icon}
             title={title || getResourceLabel(resource)}
-            subtitle={isLoading ? <Loading /> : data}
+            subtitle={isPending ? <Loading /> : data}
         />
     )
 }

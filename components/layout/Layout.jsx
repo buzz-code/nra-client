@@ -4,19 +4,19 @@ import { useIsAdmin } from '@shared/utils/permissionsUtil';
 import { filterArrayByParams } from '@shared/utils/filtersUtil';
 import { TrialMessage } from './TrialMessage';
 
-const CustomLayout = ({ customMenuItems, menuGroups, children, ...props }) => {
+const CustomLayout = ({ customMenuItems, menuGroups, children }) => {
     const isAdmin = useIsAdmin();
     const { permissions } = usePermissions();
     const customMenuItemsArr = filterArrayByParams(customMenuItems, { isAdmin, permissions });
 
-    const Menu = (props) => (
-        <CustomMenu {...props} menuGroups={menuGroups}>
+    const Menu = () => (
+        <CustomMenu menuGroups={menuGroups}>
             {customMenuItemsArr}
         </CustomMenu>
     );
 
     return (
-        <Layout {...props} menu={Menu}>
+        <Layout menu={Menu}>
             <TrialMessage />
 
             {children}

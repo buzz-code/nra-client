@@ -1,12 +1,12 @@
 import { List, Datagrid, BulkDeleteWithConfirmButton, useResourceDefinition, Pagination, TextField } from 'react-admin';
 import { CommonListActions } from '@shared/components/crudContainers/CommonListActions';
 
-const useBulkActionButtons = (readonly, additionalBulkButtons = [], props) => {
+const useBulkActionButtons = (readonly, additionalBulkButtons = [], deleteResource, props) => {
     const { hasCreate } = useResourceDefinition(props);
 
     const actionButtons = additionalBulkButtons.concat([
         // <BulkExportButton />,
-        !readonly && hasCreate && <BulkDeleteWithConfirmButton resource={props.deleteResource} />,
+        !readonly && hasCreate && <BulkDeleteWithConfirmButton resource={deleteResource} />,
     ]).filter(Boolean);
 
     if (!actionButtons.length) {
@@ -25,8 +25,8 @@ export const CommonList = ({ children, importer, exporter, filterDefaultValues, 
     </List>
 )
 
-export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, ...props }) => {
-    const bulkActionButtons = useBulkActionButtons(readonly, additionalBulkButtons, props);
+export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, deleteResource, ...props }) => {
+    const bulkActionButtons = useBulkActionButtons(readonly, additionalBulkButtons, deleteResource, props);
 
     return (
         <Datagrid rowClick={!readonly && 'edit'} bulkActionButtons={bulkActionButtons} {...props}>

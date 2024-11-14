@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNotify } from 'react-admin';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { handleError } from '@shared/utils/notifyUtil';
 import { useIsAdmin } from "@shared/utils/permissionsUtil";
 import { PreviewListDialog } from './PreviewListDialog';
@@ -10,7 +10,7 @@ export const PreviewListWithSavingDialog = ({ resource, datagrid, data, saveData
     const [tryAgain, setTryAgain] = useState(false);
     const notify = useNotify();
 
-    const { mutate, isLoading } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: () => saveData(),
         onSuccess: ({ successCount, errorCount }) => {
             if (errorCount === 0 && successCount > 0) {
@@ -44,7 +44,7 @@ export const PreviewListWithSavingDialog = ({ resource, datagrid, data, saveData
     }, [isAdmin, data, mutate, handlePreviewCancel]);
 
     return (
-        <PreviewListDialog resource={resource} data={data} isLoading={isLoading}
+        <PreviewListDialog resource={resource} data={data} isLoading={isPending}
             tryAgain={tryAgain} datagrid={datagrid} onDialogClose={handlePreviewClose} />
     );
 };

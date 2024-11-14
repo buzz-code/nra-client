@@ -9,7 +9,7 @@ export const EmptyPage = (props: EmptyProps) => {
     const { className } = props;
     const { hasCreate } = useResourceDefinition(props);
     const resource = useResourceContext(props);
-    const { refetch } = useListContext(props);
+    const { refetch } = useListContext();
 
     const translate = useTranslate();
 

@@ -4,7 +4,7 @@ import { AutocompleteInputProps, ReferenceInput, ReferenceInputProps, FormDataCo
 import CommonAutocompleteInput from './CommonAutocompleteInput';
 
 type CommonReferenceInputProps = ReferenceInputProps & AutocompleteInputProps & {
-    dynamicFilter: Record<string, string>;
+    dynamicFilter?: Record<string, string>;
 };
 
 export default (props: CommonReferenceInputProps) => {

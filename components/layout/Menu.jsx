@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
-import { Menu, useResourceDefinitions } from 'react-admin';
+import { Menu, useHasDashboard, useResourceDefinitions } from 'react-admin';
 import SubMenu from './SubMenu';
 
-const CustomMenu = ({ hasDashboard, menuGroups, children }) => {
+const CustomMenu = ({ menuGroups, children }) => {
     const resources = useResourceDefinitions();
+    const hasDashboard = useHasDashboard();
 
     const [menuGroupsArr, otherResources] = useMemo(() => {
         const groupsDict = Object.fromEntries(menuGroups.map(item => (
