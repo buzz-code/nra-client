@@ -13,7 +13,7 @@ const EditToolbar = (props) => (
 );
 
 export const CommonEdit = ({ children, ...props }) => (
-    <Edit actions={<EditActions />} redirect='list' mutationMode='optimistic' {...props}>
+    <Edit actions={<EditActions />} redirect='list' mutationMode='pessimistic' {...props}>
         <SimpleForm toolbar={<EditToolbar />}>
             {children}
         </SimpleForm>
