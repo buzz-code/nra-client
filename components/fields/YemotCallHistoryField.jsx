@@ -30,6 +30,10 @@ const YemotCallHistoryItem = () => {
             .join(', ');
     }, [record.response]);
 
+    if (!parsedResponse) {
+        return null;
+    }
+
     return (
         <Chip label={parsedResponse} />
     );
