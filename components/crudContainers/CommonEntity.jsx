@@ -16,6 +16,7 @@ export function getResourceComponents({
     exporter = true,
     editResource,
     deleteResource,
+    sort,
 }) {
     const importerDef = importer
         ? {
@@ -32,7 +33,8 @@ export function getResourceComponents({
             <CommonList resource={resource}
                 filters={filtersArr} filterDefaultValues={filterDefaultValues}
                 importer={importerDef} exporter={exporter}
-                empty={<EmptyPage importer={importerDef} />}>
+                empty={<EmptyPage importer={importerDef} />}
+                sort={sort}>
                 <Datagrid isAdmin={isAdmin} deleteResource={deleteResource} />
             </CommonList>
         );

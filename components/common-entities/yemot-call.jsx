@@ -37,6 +37,7 @@ const entity = {
     Datagrid,
     filters,
     exporter: false,
+    sort: { field: 'createdAt', order: 'DESC' },
 };
 
 export default getResourceComponents(entity);
