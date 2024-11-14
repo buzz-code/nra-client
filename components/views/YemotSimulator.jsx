@@ -73,7 +73,7 @@ const YemotSimulator = () => {
             <Title title="סימולטור" />
             <CardContent>
                 <SimpleForm onSubmit={handleSubmit} defaultValues={defaultValues} toolbar={toolbar}>
-                    <TextInput source="ApiCallId" label="מזהה שיחה" validate={required()} disabled />
+                    <TextInput source="ApiCallId" label="מזהה שיחה" validate={required()} readOnly />
                     <TextInput source="ApiDID" label="מספר מערכת" validate={required()} />
                     <TextInput source="ApiPhone" label="מאת מס׳ טלפון" validate={required()} />
                     {params.map(param => (
