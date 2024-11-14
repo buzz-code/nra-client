@@ -22,6 +22,7 @@ const YemotCallHistoryItem = () => {
                 const [key, value] = item.split('=');
                 return { key, value };
             })
+            .filter(({ key, value }) => Boolean(value))
             .map(({ key, value }) => {
                 const [type, text] = value.split('-');
                 return text;
