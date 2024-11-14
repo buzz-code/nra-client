@@ -1,5 +1,7 @@
-import { ArrayField, BooleanField, ChipField, DateField, ReferenceField, SingleFieldList, TextField } from 'react-admin';
+import { BooleanField, DateField, ReferenceField, TextField } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
+import YemotCallHistoryField from '@shared/components/fields/YemotCallHistoryField';
+import YemotCallDataField from '@shared/components/fields/YemotCallDataField';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonJsonField } from '@shared/components/fields/CommonJsonItem';
 import { CommonReferenceInputFilter } from '@shared/components/fields/CommonReferenceInputFilter';
@@ -12,23 +14,18 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
     return (
         <CommonDatagrid {...props} readonly>
             {children}
-            <TextField source="id" />
-            <ReferenceField source="userId" reference="user" />
-            <TextField source="apiCallId" />
+            {isAdmin && <TextField source="id" />}
+            {isAdmin && <ReferenceField source="userId" reference="user" />}
+            {isAdmin && <TextField source="apiCallId" />}
             <TextField source="phone" />
-            <ArrayField source="history">
-                <SingleFieldList>
-                    <ChipField source="response" />
-                </SingleFieldList>
-            </ArrayField>
-            <CommonJsonField source="history" />
-            <TextField source="currentStep" />
-            <CommonJsonField source="data" />
+            <YemotCallHistoryField source="history" />
             <BooleanField source="isOpen" />
             <BooleanField source="hasError" />
             <TextField source="errorMessage" />
-            <DateField showDate showTime source="createdAt" />
-            <DateField showDate showTime source="updatedAt" />
+            {isAdmin && <TextField source="currentStep" />}
+            {isAdmin && <YemotCallDataField source="data" />}
+            {isAdmin && <DateField showDate showTime source="createdAt" />}
+            {isAdmin && <DateField showDate showTime source="updatedAt" />}
         </CommonDatagrid>
     );
 }
