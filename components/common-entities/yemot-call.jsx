@@ -1,4 +1,5 @@
 import { BooleanField, DateField, ReferenceField, TextField } from 'react-admin';
+import { BooleanInput, DateInput, TextInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import YemotCallHistoryField from '@shared/components/fields/YemotCallHistoryField';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
@@ -7,6 +8,14 @@ import { CommonReferenceInputFilter } from '@shared/components/fields/CommonRefe
 
 const filters = [
     ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" />,
+    ({ isAdmin }) => isAdmin && <DateInput source="createdAt:$gte" label="נוצר אחרי" />,
+    ({ isAdmin }) => isAdmin && <DateInput source="createdAt:$lte" label="נוצר לפני" />,
+    ({ isAdmin }) => isAdmin && <DateInput source="updatedAt:$gte" label="עודכן אחרי" />,
+    ({ isAdmin }) => isAdmin && <DateInput source="updatedAt:$lte" label="עודכן לפני" />,
+    <TextInput source="phone:$cont" alwaysOn />,
+    <BooleanInput source="isOpen" />,
+    <BooleanInput source="hasError" />,
+    <TextInput source="errorMessage:$cont" />,
 ];
 
 const Datagrid = ({ isAdmin, children, ...props }) => {
