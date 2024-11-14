@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useRecordContext, ArrayField, ChipField, SingleFieldList } from 'react-admin';
 import Chip from '@mui/material/Chip';
+import Tooltip from '@mui/material/Tooltip';
 
 const YemotCallHistoryField = ({ source }) => (
     <ArrayField source="history">
@@ -35,7 +36,9 @@ const YemotCallHistoryItem = () => {
     }
 
     return (
-        <Chip label={parsedResponse} />
+        <Tooltip title={record.time}>
+            <Chip label={parsedResponse} />
+        </Tooltip>
     );
 }
 
