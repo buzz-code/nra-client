@@ -11,8 +11,8 @@ import UndoIcon from '@mui/icons-material/Undo';
 const filters = [
     ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" alwaysOn />,
     <CommonEntityNameInput source="entityName" alwaysOn />,
-    <DateInput source="createdAt:$gte" label="נוצר אחרי" alwaysOn />,
-    <DateInput source="createdAt:$lte" label="נוצר לפני" alwaysOn />,
+    ({ isAdmin }) => isAdmin && <DateInput source="createdAt:$gte" alwaysOn />,
+    ({ isAdmin }) => isAdmin && <DateInput source="createdAt:$lte" alwaysOn />,
     <BooleanInput source="isReverted" />,
 ];
 

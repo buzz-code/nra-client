@@ -11,8 +11,8 @@ const filters = [
     ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" />,
     <CommonEntityNameInput source="entityName" />,
     <TextInput source="fileName" />,
-    <DateInput source="createdAt:$gte" label="תאריך אחרי" alwaysOn />,
-    <DateInput source="createdAt:$lte" label="תאריך לפני" alwaysOn />,
+    ({ isAdmin }) => isAdmin && <DateInput source="createdAt:$gte" alwaysOn />,
+    ({ isAdmin }) => isAdmin && <DateInput source="createdAt:$lte" alwaysOn />,
 ];
 
 const Datagrid = ({ isAdmin, children, ...props }) => {

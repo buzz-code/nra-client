@@ -11,6 +11,10 @@ export const generalResourceFieldsTranslation = {
     createdAt: 'תאריך יצירה',
     updatedAt: 'תאריך עדכון',
     'name:$cont': 'שם',
+    'createdAt:$gte': 'נוצר אחרי',
+    'createdAt:$lte': 'נוצר לפני',
+    'updatedAt:$gte': 'עודכן אחרי',
+    'updatedAt:$lte': 'עודכן לפני',
     year: 'שנה',
 }
 
