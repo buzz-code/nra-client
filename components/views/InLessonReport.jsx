@@ -172,7 +172,7 @@ export default ({ gradeMode = false }) => {
                                             </Grid>
                                             {gradeMode ? (
                                                 <Grid item xs={columnWidth}>
-                                                    <NumberInput source={String(student.student.id) + '.grade'} label='ציון' {...rest} min={0} max={1000} />
+                                                    <NumberInput source={String(student.student.id) + '.grade'} label='ציון' {...rest} min={0} max={1_000_000} />
                                                 </Grid>
                                             ) : <>
                                                 <Grid item xs={columnWidth}>
