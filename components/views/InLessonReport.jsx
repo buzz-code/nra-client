@@ -58,12 +58,14 @@ export default ({ gradeMode = false }) => {
                 return students;
             }));
             const students = [], studentIds = new Set();
-            allStudents.flat().forEach(student => {
-                if (!studentIds.has(student.student.id)) {
-                    students.push(student);
-                    studentIds.add(student.student.id);
-                }
-            });
+            allStudents.flat()
+                .filter(student => student.student)
+                .forEach(student => {
+                    if (!studentIds.has(student.student.id)) {
+                        students.push(student);
+                        studentIds.add(student.student.id);
+                    }
+                });
 
             setLesson(lesson);
             setStudents(students);
