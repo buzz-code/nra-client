@@ -68,6 +68,7 @@ export default ({ gradeMode = false }) => {
             setLesson(lesson);
             setStudents(students);
         } catch (e) {
+            console.error(e);
             notify('ra.message.lesson_not_found', { type: 'error' });
         }
     }, [dataProvider, notify, setLesson, setStudents]);
