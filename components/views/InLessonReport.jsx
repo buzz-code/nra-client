@@ -128,14 +128,25 @@ export default ({ gradeMode = false }) => {
                         </Box>
                     </>}
                     {lesson && <>
-                        <Box padding={2}>
-                            <Typography variant="h6" component="div">
-                                סימון נוכחות לתלמידות - שיעור {lesson.name}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                סמני את התלמידות שחסרו בשיעור
-                            </Typography>
-                        </Box>
+                        {gradeMode ? (
+                            <Box padding={2}>
+                                <Typography variant="h6" component="div">
+                                    הגדרת ציונים לתלמידות - שיעור {lesson.name}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    מלאי את הציונים של התלמידות
+                                </Typography>
+                            </Box>
+                        ) : (
+                            <Box padding={2}>
+                                <Typography variant="h6" component="div">
+                                    סימון נוכחות לתלמידות - שיעור {lesson.name}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    סמני את התלמידות שחסרו בשיעור
+                                </Typography>
+                            </Box>
+                        )}
                         <Divider />
                         <SimpleForm toolbar={null} onSubmit={handleSave}>
                             <Grid container spacing={2}>
