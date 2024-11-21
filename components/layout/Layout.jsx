@@ -9,11 +9,13 @@ import { setRumUser } from '@shared/utils/openobserveRumUtil';
 const CustomLayout = ({ customMenuItems, menuGroups, children }) => {
     const isAdmin = useIsAdmin();
     const { permissions } = usePermissions();
-    const identity = useGetIdentity();
+    const { data: identity } = useGetIdentity();
     const customMenuItemsArr = filterArrayByParams(customMenuItems, { isAdmin, permissions });
 
     useEffect(() => {
-        setRumUser(identity);
+        if (identity) {
+            setRumUser(identity);
+        }
     }, [identity]);
 
     const Menu = () => (
