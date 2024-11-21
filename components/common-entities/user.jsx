@@ -1,4 +1,4 @@
-import { BooleanField, BooleanInput, Button, DateField, DateTimeInput, EmailField, FormDataConsumer, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, useRecordContext, ReferenceField, Labeled, DateInput } from 'react-admin';
+import { BooleanField, BooleanInput, Button, DateField, DateTimeInput, EmailField, FormDataConsumer, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, ReferenceField, Labeled, DateInput, useGetRecordId } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
@@ -8,14 +8,14 @@ import { useNavigate } from 'react-router-dom';
 import CommonReferenceInput from '@shared/components/fields/CommonReferenceInput';
 
 const ImpersonateButton = ({ ...props }) => {
-    const record = useRecordContext(props);
+    const recordId = useGetRecordId();
     const dataProvider = useDataProvider();
     const authProvider = useAuthProvider();
     const navigate = useNavigate();
 
     const impersonate = async (e) => {
         e.stopPropagation();
-        await dataProvider.impersonate(record.id);
+        await dataProvider.impersonate(recordId);
         await authProvider.getIdentity(true);
         navigate('/');
         window.location.reload();
