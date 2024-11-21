@@ -1,6 +1,5 @@
 import { BooleanField, BooleanInput, Button, DateField, DateTimeInput, EmailField, FormDataConsumer, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, useRecordContext, ReferenceField, Labeled, DateInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
-import { QuickFilter } from '@shared/components/fields/QuickFilter';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonJsonField, CommonJsonInput } from '@shared/components/fields/CommonJsonItem';
@@ -31,7 +30,7 @@ const filters = [
     <TextInput source="name" alwaysOn />,
     <TextInput source="email" alwaysOn />,
     <TextInput source="phoneNumber" />,
-    <QuickFilter source="fromEmail" defaultValue="gmail" />
+    <TextInput source="userInfo:$cont" label="מידע נוסף" />,
 ];
 
 const Datagrid = ({ isAdmin, children, ...props }) => {
