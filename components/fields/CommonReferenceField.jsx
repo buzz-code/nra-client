@@ -18,7 +18,7 @@ export const MultiReferenceField = ({ source, reference, optionalSource, optiona
     }
     if (record[optionalSource]) {
         return (
-            <ReferenceOneField source={optionalSource} reference={reference} target={optionalTarget} sortBy={sortBy} {...props} />
+            <ReferenceOneField source={optionalSource} reference={reference} target={optionalTarget} sortBy={sortBy} link={false} {...props} />
         )
     }
 
