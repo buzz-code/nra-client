@@ -3,7 +3,7 @@ import { useDataProvider, useListContext, useNotify } from 'react-admin';
 import { useMutation } from '@tanstack/react-query';
 import { BulkRequestButton } from './BulkRequestButton';
 
-export const BulkReportButton = ({ label, icon, name, filename, defaultRequestValues, children }) => {
+export const BulkReportButton = ({ label, icon, name, filename, defaultRequestValues, reloadOnEnd = false, children }) => {
     const dataProvider = useDataProvider();
     const { selectedIds, onUnselectItems, resource } = useListContext();
     const notify = useNotify();
@@ -25,5 +25,6 @@ export const BulkReportButton = ({ label, icon, name, filename, defaultRequestVa
         }
     });
 
-    return <BulkRequestButton label={label} name={name} mutate={mutate} isLoading={isPending} icon={icon} defaultRequestValues={defaultRequestValues} children={children} />
+    return <BulkRequestButton label={label} name={name} mutate={mutate} isLoading={isPending} icon={icon}
+        defaultRequestValues={defaultRequestValues} reloadOnEnd={reloadOnEnd} children={children} />
 }
