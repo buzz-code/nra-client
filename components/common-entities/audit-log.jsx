@@ -1,4 +1,4 @@
-import { BooleanField, BooleanInput, DateField, DateInput, ReferenceField, TextField } from 'react-admin';
+import { BooleanField, DateField, DateInput, NullableBooleanInput, ReferenceField, TextField } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonJsonField } from '@shared/components/fields/CommonJsonItem';
@@ -13,7 +13,7 @@ const filters = [
     <CommonEntityNameInput source="entityName" alwaysOn />,
     ({ isAdmin }) => isAdmin && <DateInput source="createdAt:$gte" alwaysOn />,
     ({ isAdmin }) => isAdmin && <DateInput source="createdAt:$lte" alwaysOn />,
-    <BooleanInput source="isReverted" />,
+    <NullableBooleanInput source="isReverted" />,
 ];
 
 const additionalBulkButtons = [
