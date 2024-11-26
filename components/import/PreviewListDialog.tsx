@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Button, Form, ListContextProvider, useList, useResourceContext, useTranslate } from "react-admin";
+import { Button, Form, ListContextProvider, ResourceContextProvider, useList, useResourceContext, useTranslate } from "react-admin";
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -40,9 +40,11 @@ export const PreviewListDialog = ({ resource, data, isLoading, tryAgain, datagri
                     </Form>
                 )}
                 <ListContextProvider value={listContext}>
-                    <Datagrid readonly isAdmin={isAdmin} resource={dataResource}>
-                        <ImportStatusField />
-                    </Datagrid>
+                    <ResourceContextProvider value={dataResource}>
+                        <Datagrid readonly isAdmin={isAdmin} bulkActionButtons={null}>
+                            <ImportStatusField />
+                        </Datagrid>
+                    </ResourceContextProvider>
                 </ListContextProvider>
             </DialogContent>
             <DialogActions>
