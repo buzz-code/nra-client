@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
-import { useRecordContext, ArrayField, ChipField, SingleFieldList } from 'react-admin';
+import { useRecordContext, ArrayField, SingleFieldList } from 'react-admin';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
 
 const YemotCallHistoryField = ({ source }) => (
-    <ArrayField source="history">
+    <ArrayField source={source}>
         <SingleFieldList>
             <YemotCallHistoryItem />
         </SingleFieldList>
@@ -41,9 +41,5 @@ const YemotCallHistoryItem = () => {
         </Tooltip>
     );
 }
-
-YemotCallHistoryField.defaultProps = {
-    addLabel: true,
-};
 
 export default YemotCallHistoryField;
