@@ -1,9 +1,9 @@
 import { useMemo, useContext } from 'react';
-import { CreateButton, TopToolbar, FilterButton, useListContext, useResourceContext, useResourceDefinition, FilterContext } from 'react-admin';
+import { CreateButton, TopToolbar, FilterButton, useListContext, useResourceContext, useResourceDefinition, FilterContext, SelectColumnsButton } from 'react-admin';
 import { ResourceImportButton } from '@shared/components/crudContainers/ResourceImportButton';
 import { ResourceExportButton } from './ResourceExportButton';
 
-export const CommonListActions = ({ importer, ...props }) => {
+export const CommonListActions = ({ importer, configurable, ...props }) => {
     const {
         sort,
         filterValues,
@@ -14,13 +14,14 @@ export const CommonListActions = ({ importer, ...props }) => {
     const resource = useResourceContext(props);
     const { hasCreate } = useResourceDefinition(props);
     const filters = useContext(FilterContext);
-    const {hasCreate: _, ...restProps} = props;
+    const { hasCreate: _, ...restProps } = props;
 
     return useMemo(
         () => (
             <TopToolbar {...restProps}>
                 {filters && <FilterButton />}
                 {hasCreate && <CreateButton />}
+                {configurable && <SelectColumnsButton />}
                 {exporter !== false && (
                     <ResourceExportButton
                         disabled={total === 0}

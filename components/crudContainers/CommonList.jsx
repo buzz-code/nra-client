@@ -1,4 +1,4 @@
-import { List, Datagrid, BulkDeleteWithConfirmButton, useResourceDefinition, Pagination, TextField } from 'react-admin';
+import { List, Datagrid, BulkDeleteWithConfirmButton, useResourceDefinition, Pagination, TextField, DatagridConfigurable } from 'react-admin';
 import { CommonListActions } from '@shared/components/crudContainers/CommonListActions';
 
 const useBulkActionButtons = (readonly, additionalBulkButtons = [], deleteResource, props) => {
@@ -18,20 +18,21 @@ const useBulkActionButtons = (readonly, additionalBulkButtons = [], deleteResour
 
 const CommonPagination = () => <Pagination rowsPerPageOptions={[10, 25, 50, 100, 200]} perPage={200} />;
 
-export const CommonList = ({ children, importer, exporter, filterDefaultValues, ...props }) => (
-    <List actions={<CommonListActions importer={importer} />} pagination={<CommonPagination />}
+export const CommonList = ({ children, importer, exporter, filterDefaultValues, configurable = true, ...props }) => (
+    <List actions={<CommonListActions importer={importer} configurable={configurable} />} pagination={<CommonPagination />}
         exporter={exporter} filterDefaultValues={filterDefaultValues} {...props}>
         {children}
     </List>
 )
 
-export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, deleteResource, ...props }) => {
+export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, deleteResource, configurable = true, ...props }) => {
     const bulkActionButtons = useBulkActionButtons(readonly, additionalBulkButtons, deleteResource, props);
+    const RaDataGrid = configurable ? DatagridConfigurable : Datagrid;
 
     return (
-        <Datagrid rowClick={!readonly && 'edit'} bulkActionButtons={bulkActionButtons} {...props}>
+        <RaDataGrid rowClick={!readonly && 'edit'} bulkActionButtons={bulkActionButtons} {...props}>
             {children}
-        </Datagrid>
+        </RaDataGrid>
     )
 }
 
