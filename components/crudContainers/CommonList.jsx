@@ -6,7 +6,7 @@ const useBulkActionButtons = (readonly, additionalBulkButtons = [], deleteResour
 
     const actionButtons = additionalBulkButtons.concat([
         // <BulkExportButton />,
-        !readonly && hasCreate && <BulkDeleteWithConfirmButton resource={deleteResource} />,
+        !readonly && hasCreate && <BulkDeleteWithConfirmButton key='bulkDeleteWithConfirmButton' resource={deleteResource} />,
     ]).filter(Boolean);
 
     if (!actionButtons.length) {
