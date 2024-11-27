@@ -23,7 +23,7 @@ export default ({ items }) => {
         </Grid>
         <Grid item xs={3}>
             <Form>
-                <CommonAutocompleteInput source="year" label="שנה" choices={yearChoices} defaultValue={defaultYearFilter.year} onChange={handleYearChange} />
+                <CommonAutocompleteInput source="year" label="שנה" choices={yearChoices} defaultValue={defaultYearFilter.year} onChange={handleYearChange} disableClearable />
             </Form>
         </Grid>
         <Grid item xs={12}>
