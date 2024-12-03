@@ -15,6 +15,7 @@ import { PreviewListWithSavingDialog } from '../import/PreviewListWithSavingDial
 import { CommonSliderInput } from '../fields/CommonSliderInput';
 import { useIsInLessonReportWithLate } from '@shared/utils/permissionsUtil';
 import { defaultYearFilter } from '@shared/utils/yearFilter';
+import CommonReferenceInput from '../fields/CommonReferenceInput';
 
 const attResource = 'att_report';
 const gradeResource = 'grade';
@@ -122,7 +123,7 @@ export default ({ gradeMode = false }) => {
                         <Divider />
                         <Box padding={2}>
                             <SimpleForm toolbar={null} onSubmit={() => handleGetLesson(lessonKey)}>
-                                <TextInput label="מזהה שיעור" source="lessonKey" onChange={(e) => setLessonKey(e.target.value)} />
+                                <CommonReferenceInput label="מזהה שיעור" source="lessonKey" reference="lesson" optionValue='key' onChange={(e) => setLessonKey(e)} filter={defaultYearFilter} />
                                 <SaveButton icon={<PlayArrowIcon />} label='הצג שיעור' />
                             </SimpleForm>
                         </Box>
