@@ -10,6 +10,8 @@ export const getDynamicFilter = (dynamicFilter: Record<string, any>, fullValues:
                 const value = fullValues[key];
                 if (value) {
                     res[key] = value;
+                } else {
+                    delete res[key];
                 }
             }
         }
