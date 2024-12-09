@@ -1,5 +1,5 @@
-import React, { useContext, useMemo } from 'react';
-import { FormDataConsumer, NumberInput } from 'react-admin';
+import React, { useCallback, useContext, useMemo } from 'react';
+import { FormDataConsumer, NumberInput, DateInput, minValue, maxValue } from 'react-admin';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,16 +8,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import { CommonSliderInput } from '../fields/CommonSliderInput';
 import { ReportContext } from './context';
 
-const Text = ({ children }) => (
-    <Typography variant="body1" component="div">
-        {children}
-    </Typography>
-);
+export const getDefaultReportDate = () => new Date().toISOString().split('T')[0];
 
-export const StudentList = () => {
+export const StudentList = ({ reportDates, setReportDates }) => {
     const { gradeMode, isShowLate, students } = useContext(ReportContext);
 
     const columns = useMemo(() => {
@@ -33,15 +30,52 @@ export const StudentList = () => {
         return cols;
     }, [gradeMode, isShowLate]);
 
+    const handleDateChange = useCallback((index) => (date) => {
+        setReportDates(reportDates => {
+            const newDates = [...reportDates];
+            newDates[index] = date;
+            return newDates;
+        });
+    }, [setReportDates]);
+
+    const addReportDate = useCallback(() => {
+        setReportDates(reportDates => [...reportDates, getDefaultReportDate()]);
+    }, [setReportDates]);
+
     return (
         <TableContainer component={Paper}>
-            <Table>
+            <Table stickyHeader size='small'>
                 <TableHead>
+                    <TableRow>
+                        <TableCell>
+                            <Button onClick={addReportDate}>הוסף תאריך חדש</Button>
+                        </TableCell>
+                        {reportDates.map((date, index) => (
+                            <TableCell
+                                key={`date-${index}`}
+                                colSpan={columns.length}
+                            >
+                                <DateInput
+                                    source={`reportDates[${index}]`}
+                                    label={`תאריך דוח ${index + 1}`}
+                                    defaultValue={date}
+                                    onChange={handleDateChange(index)}
+                                    fullWidth
+                                />
+                            </TableCell>
+                        ))}
+                    </TableRow>
                     <TableRow>
                         <TableCell>
                             <Text>שם התלמידה</Text>
                         </TableCell>
-                        <ReportItemHeader columns={columns} />
+                        {reportDates.map((date, index) => (
+                            columns.map(column => (
+                                <TableCell key={`header-${index}-${column.id}`}>
+                                    <Text>{column.label}</Text>
+                                </TableCell>
+                            ))
+                        ))}
                     </TableRow>
                 </TableHead>
                 <FormDataConsumer>
@@ -54,12 +88,16 @@ export const StudentList = () => {
                                         <TableCell>
                                             <Text>{student.student.name}</Text>
                                         </TableCell>
-                                        <ReportItemInputs
-                                            columns={columns}
-                                            studentId={student.student.id}
-                                            maxValue={formData.howManyLessons}
-                                            {...rest}
-                                        />
+                                        {reportDates.map((date, index) => (
+                                            <ReportItemInputs
+                                                key={`report-${student.student.id}-${index}`}
+                                                index={index}
+                                                columns={columns}
+                                                studentId={student.student.id}
+                                                lessonCount={formData.howManyLessons}
+                                                {...rest}
+                                            />
+                                        ))}
                                     </TableRow>
                                 ))}
                         </TableBody>
@@ -70,29 +108,27 @@ export const StudentList = () => {
     );
 };
 
-const ReportItemHeader = ({ columns }) => (
-    columns.map(column => (
-        <TableCell key={column.id}>
-            <Text>{column.label}</Text>
-        </TableCell>
-    ))
+const Text = ({ children }) => (
+    <Typography variant="body1" component="div">
+        {children}
+    </Typography>
 );
 
-const ReportItemInputs = ({ columns, studentId, maxValue, ...rest }) => (
-    columns.map(column => (
+const ReportItemInputs = ({ index, columns, studentId, lessonCount, ...rest }) => (
+    columns.map((column) => (
         <TableCell key={column.id}>
             {column.type === 'number' ? (
                 <NumberInput
-                    source={`${studentId}.${column.id}`}
+                    source={`${studentId}.${column.id}_${index}`}
                     label={column.label}
-                    min={0}
-                    max={1_000_000}
+                    validate={[minValue(0), maxValue(1_000_000)]}
+                    helperText={false}
                     {...rest}
                 />
             ) : (
                 <CommonSliderInput
-                    source={`${studentId}.${column.id}`}
-                    max={maxValue}
+                    source={`${studentId}.${column.id}_${index}`}
+                    max={lessonCount}
                     {...rest}
                 />
             )}

@@ -1,39 +1,32 @@
-
-import React from 'react';
-import { SimpleForm, DateInput, NumberInput } from 'react-admin';
-import Grid from '@mui/material/Grid';
+import React, { useState } from 'react';
+import { SimpleForm, NumberInput } from 'react-admin';
 import Divider from '@mui/material/Divider';
 import { ReportHeader } from './ReportHeader';
-import { StudentList } from './StudentList';
+import { getDefaultReportDate, StudentList } from './StudentList';
 import { FormActions } from './FormActions';
 
-export const MainReport = ({ gradeMode, handleSave }) => (
-    <>
-        <ReportHeader />
-        <SimpleForm toolbar={null} onSubmit={handleSave}>
-            <Grid container spacing={2}>
-                <Grid item xs={6}>
-                    <DateInput 
-                        source="reportDate" 
-                        label="תאריך דוח" 
-                        defaultValue={new Date().toISOString().split('T')[0]} 
-                        fullWidth 
-                    />
-                </Grid>
+export const MainReport = ({ gradeMode, handleSave }) => {
+    const [reportDates, setReportDates] = useState([getDefaultReportDate()]);
+
+    return (
+        <>
+            <ReportHeader />
+            <SimpleForm toolbar={null} onSubmit={handleSave}>
                 {!gradeMode && (
-                    <Grid item xs={6}>
-                        <NumberInput 
-                            source="howManyLessons" 
-                            label="מספר שיעורים" 
-                            defaultValue={1} 
-                            fullWidth 
-                        />
-                    </Grid>
+                    <NumberInput
+                        source="howManyLessons"
+                        label="מספר שיעורים"
+                        defaultValue={1}
+                        fullWidth
+                    />
                 )}
-            </Grid>
-            <Divider />
-            <StudentList />
-            <FormActions />
-        </SimpleForm>
-    </>
-);
+                <Divider />
+                <StudentList
+                    reportDates={reportDates}
+                    setReportDates={setReportDates}
+                />
+                <FormActions />
+            </SimpleForm>
+        </>
+    );
+};

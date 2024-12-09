@@ -29,23 +29,31 @@ export const InLessonReport = ({
     }, []);
 
     const handleSave = useCallback((formData) => {
-        const { reportDate, howManyLessons, ...rest } = formData;
-        const dataToSave = Object.keys(rest).map((studentId) => ({
-            reportDate,
+        const { reportDates, howManyLessons, ...rest } = formData;
+        const dataToSave = [];
+
+        const entry = {
             teacherReferenceId: lesson.teacherReferenceId,
             klassReferenceId: lesson.klassReferenceIds[0],
             lessonReferenceId: lesson.id,
-            studentReferenceId: studentId,
-            ...(gradeMode
-                ? { grade: rest[studentId]?.grade ?? 0 }
-                : {
-                    howManyLessons,
-                    absCount: round(
-                        (rest[studentId]?.absence ?? 0) +
-                        (rest[studentId]?.late ?? 0) * 0.3
-                    ),
-                })
-        }));
+        };
+        reportDates.forEach((reportDate, index) => {
+            const reportDateEntry = { ...entry, reportDate };
+            Object.keys(rest).forEach((studentId) => {
+                const newEntry = { ...reportDateEntry, studentReferenceId: studentId };
+                if (gradeMode) {
+                    newEntry.grade = rest[studentId]?.[`grade_${index}`] ?? 0;
+                } else {
+                    newEntry.howManyLessons = howManyLessons;
+                    newEntry.absCount = round(
+                        (rest[studentId]?.[`absence_${index}`] ?? 0) +
+                        (rest[studentId]?.[`late_${index}`] ?? 0) * 0.3
+                    );
+                }
+                dataToSave.push(newEntry);
+            });
+        });
+
         setDataToSave(dataToSave);
     }, [lesson, gradeMode]);
 
@@ -64,7 +72,7 @@ export const InLessonReport = ({
     };
 
     return (
-        <Container maxWidth="sm" mt={4}>
+        <Container fixed mt={4}>
             <Paper>
                 <Stack>
                     {!lesson ? (
