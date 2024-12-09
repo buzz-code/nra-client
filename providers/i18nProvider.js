@@ -62,7 +62,7 @@ const extendedTranslation = {
             action_success: 'בוצע בהצלחה',
             no_options: 'לא נמצאו פריטים',
             pending: 'בתהליך',
-            lesson_not_found: 'השיעור לא נמצא',
+            lesson_not_found: 'השיעור לא נמצא, או שאין תלמידות משוייכות לשיעור',
         },
         navigation: {
             clear_filters: 'נקה מסננים',
