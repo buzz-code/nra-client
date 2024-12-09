@@ -3,11 +3,12 @@ import { Container, Paper, Stack } from '@mui/material';
 import { ReportContext, defaultContextValue } from './context';
 import { LessonSelector } from './LessonSelector';
 import { MainReport } from './MainReport';
+import { round } from '@shared/utils/numericUtil';
 
-export const InLessonReport = ({ 
-    gradeMode, 
-    resource, 
-    Datagrid, 
+export const InLessonReport = ({
+    gradeMode,
+    resource,
+    Datagrid,
     handleSuccess,
     setDataToSave,
     data,
@@ -35,11 +36,14 @@ export const InLessonReport = ({
             klassReferenceId: lesson.klassReferenceIds[0],
             lessonReferenceId: lesson.id,
             studentReferenceId: studentId,
-            ...(gradeMode 
+            ...(gradeMode
                 ? { grade: rest[studentId]?.grade ?? 0 }
                 : {
                     howManyLessons,
-                    absCount: (rest[studentId]?.absence ?? 0) + (rest[studentId]?.late ?? 0) * 0.3,
+                    absCount: round(
+                        (rest[studentId]?.absence ?? 0) +
+                        (rest[studentId]?.late ?? 0) * 0.3
+                    ),
                 })
         }));
         setDataToSave(dataToSave);
@@ -67,7 +71,7 @@ export const InLessonReport = ({
                         <LessonSelector onLessonFound={handleLessonFound} />
                     ) : (
                         <ReportContext.Provider value={contextValue}>
-                            <MainReport gradeMode={gradeMode} handleSave={handleSave}/>
+                            <MainReport gradeMode={gradeMode} handleSave={handleSave} />
                         </ReportContext.Provider>
                     )}
                 </Stack>
