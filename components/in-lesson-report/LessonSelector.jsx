@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Box, Typography, Divider } from '@mui/material';
-import { SimpleForm, SaveButton, useDataProvider, useNotify } from 'react-admin';
+import { SaveButton, useDataProvider, useNotify, TabbedForm, TextInput, Toolbar } from 'react-admin';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CommonReferenceInput from '../fields/CommonReferenceInput';
 import { defaultYearFilter } from '@shared/utils/yearFilter';
@@ -62,17 +62,23 @@ export const LessonSelector = ({ onLessonFound }) => {
             </Box>
             <Divider />
             <Box padding={2}>
-                <SimpleForm toolbar={null} onSubmit={handleGetLesson}>
-                    <CommonReferenceInput 
-                        label="מזהה שיעור" 
-                        source="lessonKey" 
-                        reference="lesson" 
-                        optionValue='key' 
-                        onChange={(e) => setLessonKey(e)} 
-                        filter={defaultYearFilter} 
-                    />
-                    <SaveButton icon={<PlayArrowIcon />} label='הצג שיעור' />
-                </SimpleForm>
+                <TabbedForm
+                    toolbar={<Toolbar><SaveButton icon={<PlayArrowIcon />} label='הצג שיעור' /></Toolbar>}
+                    onSubmit={handleGetLesson}>
+                    <TabbedForm.Tab label="רשימה נפתחת">
+                        <CommonReferenceInput
+                            label="שיעור"
+                            source="lessonKey"
+                            reference="lesson"
+                            optionValue='key'
+                            onChange={(e) => setLessonKey(e)}
+                            filter={defaultYearFilter}
+                        />
+                    </TabbedForm.Tab>
+                    <TabbedForm.Tab label="מספר שיעור">
+                        <TextInput label="מזהה שיעור" source="lessonKey" onChange={(e) => setLessonKey(e.target.value)} />
+                    </TabbedForm.Tab>
+                </TabbedForm>
             </Box>
         </>
     );
