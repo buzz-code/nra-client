@@ -61,6 +61,7 @@ export const StudentList = ({ reportDates, setReportDates }) => {
                                     defaultValue={date}
                                     onChange={handleDateChange(index)}
                                     fullWidth
+                                    helperText={false}
                                 />
                             </TableCell>
                         ))}
@@ -123,6 +124,13 @@ const ReportItemInputs = ({ index, columns, studentId, lessonCount, ...rest }) =
                     label={column.label}
                     validate={[minValue(0), maxValue(1_000_000)]}
                     helperText={false}
+                    sx={{
+                        '& .MuiInputBase-root': {
+                            padding: 0,
+                            margin: 0
+                        },
+
+                    }}
                     {...rest}
                 />
             ) : (
