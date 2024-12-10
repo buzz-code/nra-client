@@ -5,6 +5,8 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CommonReferenceInput from '../fields/CommonReferenceInput';
 import { defaultYearFilter } from '@shared/utils/yearFilter';
 
+const lessonKeyAndName = item => `${item.name} (${item.key})`;
+
 export const LessonSelector = ({ onLessonFound }) => {
     const dataProvider = useDataProvider();
     const notify = useNotify();
@@ -71,6 +73,7 @@ export const LessonSelector = ({ onLessonFound }) => {
                             source="lessonKey"
                             reference="lesson"
                             optionValue='key'
+                            optionText={lessonKeyAndName}
                             onChange={(e) => setLessonKey(e)}
                             filter={defaultYearFilter}
                         />
