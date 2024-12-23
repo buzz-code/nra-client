@@ -4,6 +4,7 @@ import { ReportContext, defaultContextValue } from './context';
 import { LessonSelector } from './LessonSelector';
 import { MainReport } from './MainReport';
 import { round } from '@shared/utils/numericUtil';
+import { useLateValue } from '@shared/utils/settingsUtil';
 
 export const InLessonReport = ({
     gradeMode,
@@ -17,6 +18,7 @@ export const InLessonReport = ({
 }) => {
     const [lesson, setLesson] = useState(null);
     const [students, setStudents] = useState(null);
+    const lateValue = useLateValue();
 
     const handleLessonFound = useCallback(({ lesson, students }) => {
         setLesson(lesson);
@@ -47,7 +49,7 @@ export const InLessonReport = ({
                     newEntry.howManyLessons = howManyLessons;
                     newEntry.absCount = round(
                         (rest[studentId]?.[`absence_${index}`] ?? 0) +
-                        (rest[studentId]?.[`late_${index}`] ?? 0) * 0.3
+                        (rest[studentId]?.[`late_${index}`] ?? 0) * lateValue
                     );
                 }
                 dataToSave.push(newEntry);
