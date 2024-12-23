@@ -1,5 +1,6 @@
 import { List, Datagrid, BulkDeleteWithConfirmButton, useResourceDefinition, Pagination, TextField, DatagridConfigurable } from 'react-admin';
 import { CommonListActions } from '@shared/components/crudContainers/CommonListActions';
+import { useDefaultPageSize } from '@shared/utils/settingsUtil';
 
 const useBulkActionButtons = (readonly, additionalBulkButtons = [], deleteResource, props) => {
     const { hasCreate } = useResourceDefinition(props);
@@ -16,14 +17,19 @@ const useBulkActionButtons = (readonly, additionalBulkButtons = [], deleteResour
     return <>{actionButtons}</>;
 }
 
-const CommonPagination = () => <Pagination rowsPerPageOptions={[10, 25, 50, 100, 200]} perPage={200} />;
+const CommonPagination = () => <Pagination rowsPerPageOptions={[10, 25, 50, 100, 200]} />;
 
-export const CommonList = ({ children, importer, exporter, filterDefaultValues, configurable = true, ...props }) => (
-    <List actions={<CommonListActions importer={importer} configurable={configurable} />} pagination={<CommonPagination />}
-        exporter={exporter} filterDefaultValues={filterDefaultValues} {...props}>
-        {children}
-    </List>
-)
+export const CommonList = ({ children, importer, exporter, filterDefaultValues, configurable = true, ...props }) => {
+    const defaultPageSize = useDefaultPageSize();
+    
+    return (
+        <List actions={<CommonListActions importer={importer} configurable={configurable} />}
+            pagination={<CommonPagination />} perPage={defaultPageSize}
+            exporter={exporter} filterDefaultValues={filterDefaultValues} {...props}>
+            {children}
+        </List>
+    );
+}
 
 export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, deleteResource, configurable = true, ...props }) => {
     const bulkActionButtons = useBulkActionButtons(readonly, additionalBulkButtons, deleteResource, props);
