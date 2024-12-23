@@ -1,6 +1,7 @@
 import { List, Datagrid, BulkDeleteWithConfirmButton, useResourceDefinition, Pagination, TextField, DatagridConfigurable } from 'react-admin';
 import { CommonListActions } from '@shared/components/crudContainers/CommonListActions';
 import { useDefaultPageSize } from '@shared/utils/settingsUtil';
+import { PAGE_SIZE_OPTIONS } from '@shared/config/settings';
 
 const useBulkActionButtons = (readonly, additionalBulkButtons = [], deleteResource, props) => {
     const { hasCreate } = useResourceDefinition(props);
@@ -17,7 +18,7 @@ const useBulkActionButtons = (readonly, additionalBulkButtons = [], deleteResour
     return <>{actionButtons}</>;
 }
 
-const CommonPagination = () => <Pagination rowsPerPageOptions={[10, 25, 50, 100, 200]} />;
+const CommonPagination = () => <Pagination rowsPerPageOptions={PAGE_SIZE_OPTIONS} />;
 
 export const CommonList = ({ children, importer, exporter, filterDefaultValues, configurable = true, ...props }) => {
     const defaultPageSize = useDefaultPageSize();

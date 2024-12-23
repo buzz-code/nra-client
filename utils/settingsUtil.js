@@ -1,3 +1,4 @@
+import { DEFAULT_PAGE_SIZE } from "@shared/config/settings";
 import { useGetIdentity } from "react-admin";
 
 export const useDefaultPageSize = () => {
@@ -6,5 +7,5 @@ export const useDefaultPageSize = () => {
 }
 
 export function getDefaultPageSize(identity) {
-    return identity?.additionalData?.defaultPageSize || 10;
+    return identity?.additionalData?.defaultPageSize || DEFAULT_PAGE_SIZE;
 }
