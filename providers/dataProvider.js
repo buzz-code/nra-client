@@ -35,6 +35,11 @@ dataProvider.impersonate = async (userId) =>
         body: JSON.stringify({ userId })
     });
 
+dataProvider.updateSettings = async ({ data }) =>
+    dataProvider.exec('settings', '', {
+        method: 'POST',
+        body: JSON.stringify(data)
+    });
 
 const createQueryParamsStrWithAction = (queryParams, action) => {
     return new URLSearchParams({
