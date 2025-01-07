@@ -2,7 +2,7 @@ import { DateField, DateTimeInput, TextField, TextInput, RichTextField, required
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
-import { RichTextInput } from 'ra-input-rich-text';
+import { CommonRichTextInput } from '@shared/components/fields/CommonRichTextInput';
 
 const filters = [
     <TextInput source="name:$cont" alwaysOn />,
@@ -28,7 +28,7 @@ const Inputs = ({ isCreate, isAdmin }) => {
     return <>
         {!isCreate && isAdmin && <TextInput source="id" disabled />}
         <TextInput source="description" disabled={!isCreate} validate={[required(), maxLength(255)]} />
-        <RichTextInput source="value" validate={required()} />
+        <CommonRichTextInput source="value" validate={required()} />
         <NumberInput source="order" />
         {!isCreate && isAdmin && <DateTimeInput source="createdAt" disabled />}
         {!isCreate && isAdmin && <DateTimeInput source="updatedAt" disabled />}
