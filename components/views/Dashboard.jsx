@@ -5,7 +5,7 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import { createElement, useCallback, useEffect } from 'react';
-import { Form, Title, useDataProvider, useGetResourceLabel } from 'react-admin';
+import { Form, Title, useDataProvider, useGetResourceLabel, useCreatePath } from 'react-admin';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
@@ -50,7 +50,9 @@ export default () => {
 const DashboardItem = ({ resource, icon = 'List', title, filter = {}, yearFilterType = 'year' }) => {
     const getResourceLabel = useGetResourceLabel();
     const dataProvider = useDataProvider();
-    
+    const createPath = useCreatePath();
+    const resourcePath = createPath({ resource, type: 'list' });
+
     const mergedFilter = {
         ...filter,
         ...(yearFilterType === 'year' && { year: defaultYearFilter.year }),
@@ -69,7 +71,7 @@ const DashboardItem = ({ resource, icon = 'List', title, filter = {}, yearFilter
 
     return (
         <CardWithIcon
-            to={resource}
+            to={{ pathname: resourcePath, search: 'filter=' + JSON.stringify(mergedFilter) }}
             icon={IconComponent}
             title={title || getResourceLabel(resource)}
             subtitle={isPending ? <Loading /> : data}
