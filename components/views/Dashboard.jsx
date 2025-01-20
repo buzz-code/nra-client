@@ -10,8 +10,18 @@ import { Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
 import { defaultYearFilter, updateDefaultYear, yearChoices } from '@shared/utils/yearFilter';
+import { useDashboardItems } from '@shared/utils/settingsUtil';
+import ListIcon from '@mui/icons-material/List';
+import PersonIcon from '@mui/icons-material/Person';
 
-export default ({ items }) => {
+const iconMap = {
+    List: ListIcon,
+    Person: PersonIcon,
+    // Add more icons as needed
+};
+
+export default () => {
+    const items = useDashboardItems();
     const handleYearChange = useCallback((value) => {
         updateDefaultYear(value);
         window.location.reload();
@@ -37,21 +47,30 @@ export default ({ items }) => {
     </Grid>
 }
 
-const DashboardItem = ({ resource, icon, title, filter = {} }) => {
+const DashboardItem = ({ resource, icon = 'List', title, filter = {}, yearFilterType = 'year' }) => {
     const getResourceLabel = useGetResourceLabel();
     const dataProvider = useDataProvider();
+    
+    const mergedFilter = {
+        ...filter,
+        ...(yearFilterType === 'year' && { year: defaultYearFilter.year }),
+        ...(yearFilterType === 'year:$cont' && { 'year:$cont': defaultYearFilter.year })
+    };
+
     const { mutate, isPending, data } = useMutation({
-        mutationFn: () => dataProvider.getCount(resource, { filter })
+        mutationFn: () => dataProvider.getCount(resource, { filter: mergedFilter })
     });
 
     useEffect(() => {
         mutate();
     }, []);
 
+    const IconComponent = iconMap[icon] || iconMap.List;
+
     return (
         <CardWithIcon
             to={resource}
-            icon={icon}
+            icon={IconComponent}
             title={title || getResourceLabel(resource)}
             subtitle={isPending ? <Loading /> : data}
         />
