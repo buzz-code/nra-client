@@ -42,7 +42,7 @@ export const BulkRequestButton = ({ label, name, mutate, isLoading, icon, defaul
             {isLoading ? loader : icon}
         </Button>
 
-        <Dialog onClose={handleDialogClose} open={showDialog}>
+        <Dialog onClose={handleDialogClose} open={showDialog} fullWidth>
             <DialogTitle>
                 {translate('ra.bulk_request.params_dialog_title')}
             </DialogTitle>
