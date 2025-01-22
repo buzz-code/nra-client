@@ -44,3 +44,12 @@ export function getDefaultDashboardItems() {
         }
     ];
 }
+
+export const useReportStyles = () => {
+    const { identity } = useGetIdentity();
+    return getReportStyles(identity);
+}
+
+export function getReportStyles(identity) {
+    return identity?.additionalData?.reportStyles || [];
+}
