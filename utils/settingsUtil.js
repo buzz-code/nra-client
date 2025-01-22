@@ -53,3 +53,28 @@ export const useReportStyles = () => {
 export function getReportStyles(identity) {
     return identity?.additionalData?.reportStyles || [];
 }
+
+export const useReportCardSettings = () => {
+    const { identity } = useGetIdentity();
+    return getReportCardSettings(identity);
+}
+
+export function getReportCardSettings(identity) {
+    return identity?.additionalData?.reportCardSettings || getDefaultReportCardSettings();
+}
+
+export function getDefaultReportCardSettings() {
+    return {
+        attendance: true,
+        grades: true,
+        showStudentTz: true,
+        groupByKlass: false,
+        hideAbsTotal: false,
+        minimalReport: false,
+        forceAtt: false,
+        forceGrades: false,
+        downComment: false,
+        lastGrade: true,
+        debug: true
+    };
+}
