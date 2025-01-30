@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo } from 'react';
-import { FormDataConsumer, NumberInput, DateInput, minValue, maxValue } from 'react-admin';
+import { NumberInput, DateInput, minValue, maxValue, useRecordContext } from 'react-admin';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -11,11 +11,13 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { CommonSliderInput } from '../fields/CommonSliderInput';
 import { ReportContext } from './context';
+import { CommonHebrewDateField } from '@shared/components/fields/CommonHebrewDateField';
 
 export const getDefaultReportDate = () => new Date().toISOString().split('T')[0];
 
 export const StudentList = ({ reportDates, setReportDates }) => {
     const { gradeMode, isShowLate, students } = useContext(ReportContext);
+    const record = useRecordContext();
 
     const columns = useMemo(() => {
         const cols = [];
@@ -63,6 +65,7 @@ export const StudentList = ({ reportDates, setReportDates }) => {
                                     fullWidth
                                     helperText={false}
                                 />
+                                <CommonHebrewDateField source={`reportDates[${index}]`} />
                             </TableCell>
                         ))}
                     </TableRow>
@@ -79,31 +82,26 @@ export const StudentList = ({ reportDates, setReportDates }) => {
                         ))}
                     </TableRow>
                 </TableHead>
-                <FormDataConsumer>
-                    {({ formData, ...rest }) => (
-                        <TableBody>
-                            {students
-                                .filter(student => student.student)
-                                .map(student => (
-                                    <TableRow key={student.student.id}>
-                                        <TableCell>
-                                            <Text>{student.student.name}</Text>
-                                        </TableCell>
-                                        {reportDates.map((date, index) => (
-                                            <ReportItemInputs
-                                                key={`report-${student.student.id}-${index}`}
-                                                index={index}
-                                                columns={columns}
-                                                studentId={student.student.id}
-                                                lessonCount={formData.howManyLessons}
-                                                {...rest}
-                                            />
-                                        ))}
-                                    </TableRow>
+                <TableBody>
+                    {students
+                        .filter(student => student.student)
+                        .map(student => (
+                            <TableRow key={student.student.id}>
+                                <TableCell>
+                                    <Text>{student.student.name}</Text>
+                                </TableCell>
+                                {reportDates.map((date, index) => (
+                                    <ReportItemInputs
+                                        key={`report-${student.student.id}-${index}`}
+                                        index={index}
+                                        columns={columns}
+                                        studentId={student.student.id}
+                                        lessonCount={record.howManyLessons}
+                                    />
                                 ))}
-                        </TableBody>
-                    )}
-                </FormDataConsumer>
+                            </TableRow>
+                        ))}
+                </TableBody>
             </Table>
         </TableContainer>
     );

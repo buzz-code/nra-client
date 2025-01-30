@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SimpleForm, NumberInput } from 'react-admin';
+import { FormDataConsumer, SimpleForm, NumberInput, RecordContextProvider } from 'react-admin';
 import Divider from '@mui/material/Divider';
 import { ReportHeader } from './ReportHeader';
 import { getDefaultReportDate, StudentList } from './StudentList';
@@ -12,20 +12,26 @@ export const MainReport = ({ gradeMode, handleSave }) => {
         <>
             <ReportHeader />
             <SimpleForm toolbar={null} onSubmit={handleSave}>
-                {!gradeMode && (
-                    <NumberInput
-                        source="howManyLessons"
-                        label="מספר שיעורים"
-                        defaultValue={1}
-                        fullWidth
-                    />
-                )}
-                <Divider />
-                <StudentList
-                    reportDates={reportDates}
-                    setReportDates={setReportDates}
-                />
-                <FormActions />
+                <FormDataConsumer>
+                    {({ formData }) => (
+                        <RecordContextProvider value={formData}>
+                            {!gradeMode && (
+                                <NumberInput
+                                    source="howManyLessons"
+                                    label="מספר שיעורים"
+                                    defaultValue={1}
+                                    fullWidth
+                                />
+                            )}
+                            <Divider />
+                            <StudentList
+                                reportDates={reportDates}
+                                setReportDates={setReportDates}
+                            />
+                            <FormActions />
+                        </RecordContextProvider>
+                    )}
+                </FormDataConsumer>
             </SimpleForm>
         </>
     );
