@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo } from 'react';
-import { NumberInput, DateInput, minValue, maxValue, useRecordContext } from 'react-admin';
+import { NumberInput, DateInput, minValue, maxValue, useRecordContext, TextInput, maxLength } from 'react-admin';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -23,6 +23,7 @@ export const StudentList = ({ reportDates, setReportDates }) => {
         const cols = [];
         if (gradeMode) {
             cols.push({ id: 'grade', label: 'ציון', type: 'number' });
+            cols.push({ id: 'comments', label: 'הערה', type: 'text' });
         } else {
             cols.push({ id: 'absence', label: 'חיסורים', type: 'slider' });
             if (isShowLate) {
@@ -122,13 +123,16 @@ const ReportItemInputs = ({ index, columns, studentId, lessonCount, ...rest }) =
                     label={column.label}
                     validate={[minValue(0), maxValue(1_000_000)]}
                     helperText={false}
-                    sx={{
-                        '& .MuiInputBase-root': {
-                            padding: 0,
-                            margin: 0
-                        },
-
-                    }}
+                    {...rest}
+                />
+            ) : column.type === 'text' ? (
+                <TextInput
+                    source={`${studentId}.${column.id}_${index}`}
+                    label={column.label}
+                    validate={[maxLength(500)]}
+                    fullWidth
+                    multiline
+                    helperText={false}
                     {...rest}
                 />
             ) : (

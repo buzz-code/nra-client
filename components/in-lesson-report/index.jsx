@@ -45,6 +45,7 @@ export const InLessonReport = ({
                 const newEntry = { ...reportDateEntry, studentReferenceId: studentId };
                 if (gradeMode) {
                     newEntry.grade = rest[studentId]?.[`grade_${index}`] ?? 0;
+                    newEntry.comments = rest[studentId]?.[`comments_${index}`] ?? '';
                 } else {
                     newEntry.howManyLessons = howManyLessons;
                     newEntry.absCount = round(
