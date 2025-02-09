@@ -7,12 +7,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Stack from '@mui/material/Stack';
 
-export const BulkRequestButton = ({ label, name, mutate, isLoading, icon, defaultRequestValues, reloadOnEnd = false, children }) => {
+export const BulkRequestButton = ({ label, name, mutate, isLoading, icon, defaultRequestValues = {}, requestValues = {}, reloadOnEnd = false, children }) => {
     const [showDialog, setShowDialog] = useState(false);
     const translate = useTranslate();
     const resource = useResourceContext();
     const refresh = useRefresh();
-    const [requestValues, setRequestValues] = useStore('common.BulkRequestButton.' + resource + '.' + name, defaultRequestValues);
+    const [cachedRequestValues, setRequestValues] = useStore('common.BulkRequestButton.' + resource + '.' + name, defaultRequestValues);
 
     const doMutation = useCallback(async (dataToSend) => {
         await mutate(dataToSend);
@@ -33,9 +33,13 @@ export const BulkRequestButton = ({ label, name, mutate, isLoading, icon, defaul
     const handleSubmit = useCallback((formValues) => {
         setRequestValues(formValues);
         handleDialogClose();
-        const dataToSend = Object.fromEntries(Object.entries(formValues).map(([key, value]) => (['extra.' + key, value])));
+        const requestData = {
+            ...formValues,
+            ...requestValues,
+        };
+        const dataToSend = Object.fromEntries(Object.entries(requestData).map(([key, value]) => (['extra.' + key, value])));
         doMutation(dataToSend);
-    }, [setRequestValues, handleDialogClose, doMutation]);
+    }, [requestValues, setRequestValues, handleDialogClose, doMutation]);
 
     return <>
         <Button label={label} onClick={handleButtonClick} disabled={isLoading}>
@@ -46,7 +50,7 @@ export const BulkRequestButton = ({ label, name, mutate, isLoading, icon, defaul
             <DialogTitle>
                 {translate('ra.bulk_request.params_dialog_title')}
             </DialogTitle>
-            <Form onSubmit={handleSubmit} defaultValues={requestValues}>
+            <Form onSubmit={handleSubmit} defaultValues={cachedRequestValues}>
                 <DialogContent>
                     <Stack>
                         {children}
