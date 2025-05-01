@@ -8,9 +8,8 @@ import { createElement, useCallback, useEffect } from 'react';
 import { Form, Title, useDataProvider, useGetResourceLabel, useCreatePath } from 'react-admin';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import CommonAutocompleteInput from '../fields/CommonAutocompleteInput';
+import CommonAutocompleteInput from '@shared/components/fields/CommonAutocompleteInput';
 import { defaultYearFilter, updateDefaultYear, yearChoices } from '@shared/utils/yearFilter';
-import { useDashboardItems } from '@shared/utils/settingsUtil';
 import ListIcon from '@mui/icons-material/List';
 import PersonIcon from '@mui/icons-material/Person';
 
@@ -20,8 +19,7 @@ const iconMap = {
     // Add more icons as needed
 };
 
-export default () => {
-    const items = useDashboardItems();
+export default ({ dashboardItems = [] }) => {
     const handleYearChange = useCallback((value) => {
         updateDefaultYear(value);
         window.location.reload();
@@ -39,7 +37,7 @@ export default () => {
         <Grid item xs={12}>
             <Divider />
         </Grid>
-        {items.map((item, index) => (
+        {dashboardItems.map((item, index) => (
             <Grid item xs={6} md={3} key={index}>
                 <DashboardItem {...item} />
             </Grid>
