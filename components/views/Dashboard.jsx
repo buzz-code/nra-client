@@ -12,14 +12,23 @@ import CommonAutocompleteInput from '@shared/components/fields/CommonAutocomplet
 import { defaultYearFilter, updateDefaultYear, yearChoices } from '@shared/utils/yearFilter';
 import ListIcon from '@mui/icons-material/List';
 import PersonIcon from '@mui/icons-material/Person';
+import EventIcon from '@mui/icons-material/Event';
+import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
+import CommentIcon from '@mui/icons-material/Comment';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import PeopleIcon from '@mui/icons-material/People';
 
 const iconMap = {
     List: ListIcon,
     Person: PersonIcon,
-    // Add more icons as needed
+    Event: EventIcon,
+    Gift: CardGiftcardIcon,
+    Comment: CommentIcon,
+    Location: LocationOnIcon,
+    People: PeopleIcon
 };
 
-export default ({ dashboardItems = [] }) => {
+export default ({ dashboardItems = [], children }) => {
     const handleYearChange = useCallback((value) => {
         updateDefaultYear(value);
         window.location.reload();
@@ -42,6 +51,7 @@ export default ({ dashboardItems = [] }) => {
                 <DashboardItem {...item} />
             </Grid>
         ))}
+        {children}
     </Grid>
 }
 
@@ -69,7 +79,7 @@ const DashboardItem = ({ resource, icon = 'List', title, filter = {}, yearFilter
 
     return (
         <CardWithIcon
-            to={{ pathname: resourcePath, search: 'filter=' + JSON.stringify(mergedFilter) }}
+            to={{ pathname: resourcePath, search: filter && Object.keys(filter).length ? 'filter=' + JSON.stringify(mergedFilter) : undefined }}
             icon={IconComponent}
             title={title || getResourceLabel(resource)}
             subtitle={isPending ? <Loading /> : data}
