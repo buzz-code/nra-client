@@ -6,7 +6,8 @@ import { useFormContext } from 'react-hook-form';
 import CallEndIcon from '@mui/icons-material/CallEnd'
 
 const defaultValues = {
-    ApiCallId: String(Math.random()),
+    ApiCallId: String(Math.random()).slice(2),
+    ApiExtension: '123',
     ApiDID: '', //0774311257
     ApiPhone: '', //0527609942
 };
@@ -74,6 +75,7 @@ const YemotSimulator = () => {
             <CardContent>
                 <SimpleForm onSubmit={handleSubmit} defaultValues={defaultValues} toolbar={toolbar}>
                     <TextInput source="ApiCallId" label="מזהה שיחה" validate={required()} readOnly />
+                    <TextInput source="ApiExtension" label="שלוחה" validate={required()} readOnly />
                     <TextInput source="ApiDID" label="מספר מערכת" validate={required()} />
                     <TextInput source="ApiPhone" label="מאת מס׳ טלפון" validate={required()} />
                     {params.map(param => (
