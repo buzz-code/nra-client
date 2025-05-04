@@ -57,7 +57,7 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
 
 const Inputs = ({ isCreate, isAdmin }) => {
     return <>
-        {isAdmin && <FormDataConsumer>{({ formData }) => <ImpersonateButton record={formData} />}</FormDataConsumer>}
+        {!isCreate && isAdmin && <FormDataConsumer>{({ formData }) => <ImpersonateButton record={formData} />}</FormDataConsumer>}
         {!isCreate && isAdmin && <TextInput source="id" disabled />}
         <TextInput source="name" validate={[required(), maxLength(500)]} />
         <TextInput source="email" validate={[required(), maxLength(500)]} disabled={!isAdmin} />
