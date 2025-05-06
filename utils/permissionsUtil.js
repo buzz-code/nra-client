@@ -9,6 +9,15 @@ export function isAdmin(permissions) {
     return !!permissions?.admin;
 }
 
+export const useIsTeacher = () => {
+    const { permissions } = usePermissions();
+    return isTeacher(permissions);
+}
+
+export function isTeacher(permissions) {
+    return !!permissions?.teacher;
+}
+
 export const useIsShowUsersData = () => {
     const { permissions } = usePermissions();
     return isShowUsersData(permissions);
