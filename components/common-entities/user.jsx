@@ -1,4 +1,4 @@
-import { BooleanField, BooleanInput, Button, DateField, DateTimeInput, EmailField, FormDataConsumer, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, ReferenceField, Labeled, DateInput, useGetRecordId } from 'react-admin';
+import { BooleanField, BooleanInput, Button, DateField, DateTimeInput, EmailField, FormDataConsumer, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, ReferenceField, Labeled, DateInput, useGetRecordId, ReferenceInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
@@ -42,7 +42,7 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
             <EmailField source="email" />
             <TextField source="phoneNumber" />
             {/* {isAdmin && <TextField source="active" />} */}
-            {isAdmin && <TextField source="effective_id" />}
+            {isAdmin && <ReferenceField source="effective_id" reference="user" />}
             {isAdmin && <CommonJsonField source="permissions" />}
             {isAdmin && <CommonJsonField source="additionalData" />}
             <CommonJsonField source="userInfo" />
@@ -63,11 +63,13 @@ const Inputs = ({ isCreate, isAdmin }) => {
         <TextInput source="email" validate={[required(), maxLength(500)]} disabled={!isAdmin} />
         {isAdmin && <TextInput source="password" />}
         <TextInput source="phoneNumber" validate={maxLength(11)} />
+        {isAdmin && <ReferenceInput source="effective_id" reference="user" />}
         {isAdmin && <TextInput source="active" />}
         {isAdmin && <TextInput source="fromEmail" />}
         {isAdmin && <TextInput source="replyToEmail" />}
-        {isAdmin && <TextInput source="effective_id" />}
         {isAdmin && <CommonJsonInput source="permissions" />}
+        {isAdmin && <BooleanInput source="permissions.teacher" />}
+        {isAdmin && <BooleanInput source="permissions.manager" />}
         {isAdmin && <BooleanInput source="permissions.showUsersData" />}
         {isAdmin && <BooleanInput source="permissions.editPagesData" />}
         {isAdmin && <BooleanInput source="permissions.editPaymentTracksData" />}
