@@ -4,6 +4,7 @@ import { CommonEdit } from '@shared/components/crudContainers/CommonEdit';
 import { CommonCreate } from '@shared/components/crudContainers/CommonCreate';
 import { EmptyPage } from './EmptyPage';
 import { filterArrayByParams } from '@shared/utils/filtersUtil';
+import { usePermissions } from 'react-admin';
 
 export function getResourceComponents({
     resource,
@@ -28,7 +29,8 @@ export function getResourceComponents({
 
     const List = () => {
         const isAdmin = useIsAdmin();
-        const filtersArr = filterArrayByParams(filters, { isAdmin });
+        const { permissions } = usePermissions();
+        const filtersArr = filterArrayByParams(filters, { isAdmin, permissions });
 
         return (
             <CommonList resource={resource}

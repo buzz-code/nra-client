@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { ReferenceInput, useListContext } from 'react-admin';
 import CommonAutocompleteInput from './CommonAutocompleteInput';
 
-export const CommonReferenceInputFilter = ({ label, source, reference, alwaysOn, dynamicFilter }) => {
+export const CommonReferenceInputFilter = ({ label = undefined, source, reference, alwaysOn = {}, dynamicFilter = {} }) => {
     const { filterValues } = useListContext();
     const filter = useMemo(() => getDynamicFilter(dynamicFilter, filterValues), [dynamicFilter, filterValues]);
 
