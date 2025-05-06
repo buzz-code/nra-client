@@ -1,13 +1,12 @@
-import { DateField, DateInput, ReferenceArrayField, ReferenceField, TextField, TextInput } from 'react-admin';
+import { DateField, ReferenceArrayField, ReferenceField, TextField, TextInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { ShowMatchingRecordsButton } from '@shared/components/fields/ShowMatchingRecordsButton';
-import { CommonReferenceInputFilter } from '@shared/components/fields/CommonReferenceInputFilter';
+import { adminCreatedAtFilters, adminUserFilter } from '@shared/components/fields/PermissionFilter';
 
 const filters = [
-    ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" />,
-    ({ isAdmin }) => isAdmin && <DateInput source="createdAt:$gte" alwaysOn />,
-    ({ isAdmin }) => isAdmin && <DateInput source="createdAt:$lte" alwaysOn />,
+    adminUserFilter,
+    ...adminCreatedAtFilters,
     <TextInput source="from:$cont" label="מאת" />,
     <TextInput source="subject:$cont" label="נושא" />,
 ];

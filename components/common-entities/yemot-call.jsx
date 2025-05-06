@@ -1,17 +1,13 @@
 import { BooleanField, DateField, ReferenceField, TextField } from 'react-admin';
-import { DateInput, NullableBooleanInput, TextInput } from 'react-admin';
+import { NullableBooleanInput, TextInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import YemotCallHistoryField from '@shared/components/fields/YemotCallHistoryField';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonJsonField } from '@shared/components/fields/CommonJsonItem';
-import { CommonReferenceInputFilter } from '@shared/components/fields/CommonReferenceInputFilter';
+import { commonAdminFilters } from '@shared/components/fields/PermissionFilter';
 
 const filters = [
-    ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" />,
-    ({ isAdmin }) => isAdmin && <DateInput source="createdAt:$gte" />,
-    ({ isAdmin }) => isAdmin && <DateInput source="createdAt:$lte" />,
-    ({ isAdmin }) => isAdmin && <DateInput source="updatedAt:$gte" />,
-    ({ isAdmin }) => isAdmin && <DateInput source="updatedAt:$lte" />,
+    ...commonAdminFilters,
     <TextInput source="phone:$cont" alwaysOn />,
     <NullableBooleanInput source="isOpen" />,
     <NullableBooleanInput source="hasError" />,

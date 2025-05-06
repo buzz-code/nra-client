@@ -7,10 +7,10 @@ import { CommonEntityNameInput } from '@shared/components/fields/CommonEntityNam
 import { CommonMailField } from '@shared/components/fields/CommonMailField';
 import CommonReferenceInput from '@shared/components/fields/CommonReferenceInput';
 import { useUnique } from '@shared/utils/useUnique';
-import { CommonReferenceInputFilter } from '@shared/components/fields/CommonReferenceInputFilter';
+import { adminUserFilter } from '@shared/components/fields/PermissionFilter';
 
 const filters = [
-    ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" />,
+    adminUserFilter,
     <TextInput source="alias:$cont" label="כתובת מייל" />,
     <TextInput source="entity:$cont" label="טבלת יעד" />,
 ];

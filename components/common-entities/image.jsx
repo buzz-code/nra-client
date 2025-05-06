@@ -7,10 +7,10 @@ import { CommonJsonField, CommonJsonInput } from '@shared/components/fields/Comm
 import { CommonImageInput } from '@shared/components/fields/CommonImageInput';
 import CommonAutocompleteInput from '@shared/components/fields/CommonAutocompleteInput';
 import { useUnique } from '@shared/utils/useUnique';
-import { CommonReferenceInputFilter } from '@shared/components/fields/CommonReferenceInputFilter';
+import { adminUserFilter } from '@shared/components/fields/PermissionFilter';
 
 const filters = [
-    ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" />,
+    adminUserFilter,
 ];
 
 const Datagrid = ({ isAdmin, children, ...props }) => {

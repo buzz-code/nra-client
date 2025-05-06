@@ -1,18 +1,17 @@
-import { BooleanField, DateField, DateInput, ReferenceField, TextField, TextInput } from 'react-admin';
+import { BooleanField, DateField, ReferenceField, TextField, TextInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonEntityNameField } from '@shared/components/fields/CommonEntityNameField';
 import { CommonCountField } from '@shared/components/fields/CommonCountField';
 import { CommonEntityNameInput } from '@shared/components/fields/CommonEntityNameInput';
 import { ShowMatchingRecordsButton } from '@shared/components/fields/ShowMatchingRecordsButton';
-import { CommonReferenceInputFilter } from '@shared/components/fields/CommonReferenceInputFilter';
+import { adminCreatedAtFilters, adminUserFilter } from '@shared/components/fields/PermissionFilter';
 
 const filters = [
-    ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" />,
+    adminUserFilter,
     <CommonEntityNameInput source="entityName" />,
     <TextInput source="fileName" />,
-    ({ isAdmin }) => isAdmin && <DateInput source="createdAt:$gte" alwaysOn />,
-    ({ isAdmin }) => isAdmin && <DateInput source="createdAt:$lte" alwaysOn />,
+    ...adminCreatedAtFilters,
 ];
 
 const Datagrid = ({ isAdmin, children, ...props }) => {

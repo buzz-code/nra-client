@@ -9,10 +9,10 @@ import Stack from '@mui/material/Stack';
 import EditIcon from '@mui/icons-material/Edit';
 import CircularProgress from '@mui/material/CircularProgress';
 import { handleError } from '@shared/utils/notifyUtil';
-import { CommonReferenceInputFilter } from '@shared/components/fields/CommonReferenceInputFilter';
+import { adminCreatedAtFilters, adminUserFilter } from '@shared/components/fields/PermissionFilter';
 
 const filters = [
-    ({ isAdmin }) => isAdmin && <CommonReferenceInputFilter source="userId" reference="user" />,
+    adminUserFilter,
     <TextInput source="name:$cont" alwaysOn />,
     <TextInput source="description:$cont" label="תיאור" />,
     <TextInput source="value:$cont" label="ערך" alwaysOn />,

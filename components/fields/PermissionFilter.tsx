@@ -20,10 +20,17 @@ export const adminFilter = (children) => {
   return permissionFilter(isAdmin, children);
 }
 
-export const commonAdminFilters = [
-  adminFilter(<CommonReferenceInputFilter source="userId" reference="user" />),
+export const adminUserFilter = adminFilter(<CommonReferenceInputFilter source="userId" reference="user" alwaysOn />);
+export const adminCreatedAtFilters = [
   adminFilter(<DateInput source="createdAt:$gte" />),
   adminFilter(<DateInput source="createdAt:$lte" />),
+];
+export const adminUpdatedAtFilters = [
   adminFilter(<DateInput source="updatedAt:$gte" />),
   adminFilter(<DateInput source="updatedAt:$lte" />),
+];
+export const commonAdminFilters = [
+  adminUserFilter,
+  ...adminCreatedAtFilters,
+  ...adminUpdatedAtFilters,
 ];
