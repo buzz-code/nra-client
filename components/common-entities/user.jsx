@@ -70,10 +70,10 @@ const Inputs = ({ isCreate, isAdmin }) => {
         {isAdmin && <TextInput source="fromEmail" />}
         {isAdmin && <TextInput source="replyToEmail" />}
         {isAdmin && <CommonJsonInput source="permissions" />}
-        {isAdmin && Object.keys(permissionKeys).map((key) => (
+        {isAdmin && Object.values(permissionKeys).map((key) => (
             <BooleanInput key={key} source={`permissions.${key}`} />
         ))}
-        {isAdmin && Object.keys(appPermissions).map((key) => (
+        {isAdmin && Object.values(appPermissions).map((key) => (
             <BooleanInput key={key} source={`permissions.${key}`} />
         ))}
         {isAdmin && <CommonJsonInput source="additionalData" />}
