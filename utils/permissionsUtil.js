@@ -1,22 +1,28 @@
 import { usePermissions } from "react-admin";
+import get from 'lodash/get';
+import { permissionKeys } from '@shared/config/permissionsConfig';
 
-export const useIsAdmin = () => {
-    const { permissions } = usePermissions();
-    return isAdmin(permissions);
+export function hasPermissionLogic(currentUserPermissions, permissionKey) {
+    if (!currentUserPermissions) {
+        return false;
+    }
+
+    return !!get(currentUserPermissions, permissionKey, false);
 }
 
-export function isAdmin(permissions) {
-    return !!permissions?.admin;
-}
+export const useHasPermission = (permissionKey) => {
+    const { permissions: currentUserPermissions, isLoading } = usePermissions();
+    if (isLoading) {
+        return false;
+    }
+    return hasPermissionLogic(currentUserPermissions, permissionKey);
+};
 
-export const useIsTeacher = () => {
-    const { permissions } = usePermissions();
-    return isTeacher(permissions);
-}
+export const isAdmin = (permissions) => hasPermissionLogic(permissions, permissionKeys.admin);
+export const useIsAdmin = () => useHasPermission(permissionKeys.admin);
 
-export function isTeacher(permissions) {
-    return !!permissions?.teacher;
-}
+export const isManager = (permissions) => hasPermissionLogic(permissions, permissionKeys.manager);
+export const useIsManager = () => useHasPermission(permissionKeys.manager);
 
 export const useIsShowUsersData = () => {
     const { permissions } = usePermissions();

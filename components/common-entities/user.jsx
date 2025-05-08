@@ -1,4 +1,6 @@
 import { BooleanField, BooleanInput, Button, DateField, DateTimeInput, EmailField, FormDataConsumer, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, ReferenceField, Labeled, DateInput, useGetRecordId, ReferenceInput } from 'react-admin';
+import { permissionKeys } from '@shared/config/permissionsConfig';
+import { appPermissions } from 'src/utils/appPermissions';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
@@ -68,14 +70,12 @@ const Inputs = ({ isCreate, isAdmin }) => {
         {isAdmin && <TextInput source="fromEmail" />}
         {isAdmin && <TextInput source="replyToEmail" />}
         {isAdmin && <CommonJsonInput source="permissions" />}
-        {isAdmin && <BooleanInput source="permissions.teacher" />}
-        {isAdmin && <BooleanInput source="permissions.manager" />}
-        {isAdmin && <BooleanInput source="permissions.showUsersData" />}
-        {isAdmin && <BooleanInput source="permissions.editPagesData" />}
-        {isAdmin && <BooleanInput source="permissions.editPaymentTracksData" />}
-        {isAdmin && <BooleanInput source="permissions.scannerUpload" />}
-        {isAdmin && <BooleanInput source="permissions.absCountEffect" />}
-        {isAdmin && <BooleanInput source="permissions.inLessonReport" />}
+        {isAdmin && Object.keys(permissionKeys).map((key) => (
+            <BooleanInput key={key} source={`permissions.${key}`} />
+        ))}
+        {isAdmin && Object.keys(appPermissions).map((key) => (
+            <BooleanInput key={key} source={`permissions.${key}`} />
+        ))}
         {isAdmin && <CommonJsonInput source="additionalData" />}
         {isAdmin && <CommonJsonInput source="userInfo" />}
         <BooleanInput source="isPaid" />
