@@ -32,7 +32,7 @@ const Inputs = ({ isCreate, isAdmin }) => {
         {!isCreate && isAdmin && <TextInput source="id" disabled />}
         {isAdmin && <CommonReferenceInput source="userId" reference="user" emptyValue={0} emptyText='system' />}
         <TextInput source="name" disabled={!isCreate} validate={[required(), maxLength(100)]} />
-        <TextInput source="description" disabled={!isCreate} validate={[required(), maxLength(100)]} />
+        <TextInput source="description" disabled={!isCreate} validate={[required(), maxLength(500)]} />
         <TextInput source="value" validate={[required(), maxLength(10000)]} />
         {!isCreate && isAdmin && <DateTimeInput source="createdAt" disabled />}
         {!isCreate && isAdmin && <DateTimeInput source="updatedAt" disabled />}
