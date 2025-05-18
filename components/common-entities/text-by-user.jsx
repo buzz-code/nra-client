@@ -9,7 +9,7 @@ import Stack from '@mui/material/Stack';
 import EditIcon from '@mui/icons-material/Edit';
 import CircularProgress from '@mui/material/CircularProgress';
 import { handleError } from '@shared/utils/notifyUtil';
-import { adminCreatedAtFilters, adminUserFilter } from '@shared/components/fields/PermissionFilter';
+import { adminUserFilter } from '@shared/components/fields/PermissionFilter';
 
 const filters = [
     adminUserFilter,
@@ -67,6 +67,7 @@ const EditTextButton = ({ label, icon, loader }) => {
         } else {
             create(resource, {
                 data: {
+                    userId: record.userId,
                     name: record.name,
                     description: record.description,
                     value,
