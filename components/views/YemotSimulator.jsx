@@ -10,6 +10,7 @@ const defaultValues = {
     ApiExtension: '123',
     ApiDID: '', //0774311257
     ApiPhone: '', //0527609942
+    ApiEnterID: '',
 };
 const TEXT_REGEX = /\=t-([^=\.]*)/
 const PARAM_REGEX = /read=t-[^=]*=([^,\.]*)/
@@ -78,6 +79,7 @@ const YemotSimulator = () => {
                     <TextInput source="ApiExtension" label="שלוחה" validate={required()} readOnly />
                     <TextInput source="ApiDID" label="מספר מערכת" validate={required()} />
                     <TextInput source="ApiPhone" label="מאת מס׳ טלפון" validate={required()} />
+                    <TextInput source="ApiEnterID" label="מספר זיהוי" />
                     {params.map(param => (
                         <TextInput source={param} key={param} validate={required()} disabled={isHangup} />
                     ))}
