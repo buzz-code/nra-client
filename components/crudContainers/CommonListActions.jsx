@@ -30,12 +30,21 @@ export const CommonListActions = ({ importer, configurable, ...props }) => {
                         filterValues={filterValues}
                     />
                 )}
-                {importer !== null && (
+                {importer?.fields && (
                     <ResourceImportButton
                         resource={resource}
                         refetch={refetch}
                         fields={importer.fields}
                         datagrid={importer.datagrid}
+                    />
+                )}
+                {importer?.updateFields && (
+                    <ResourceImportButton
+                        resource={resource}
+                        refetch={refetch}
+                        fields={importer.updateFields}
+                        datagrid={importer.datagrid}
+                        update
                     />
                 )}
             </TopToolbar>

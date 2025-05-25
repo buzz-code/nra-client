@@ -3,7 +3,7 @@ import { useSavableData } from '../import/util';
 import { ImportButton } from '../import/ImportButton';
 import { PreviewListWithSavingDialog } from '../import/PreviewListWithSavingDialog';
 
-export const ResourceImportButton = ({ resource, refetch = null, fields, handleDataBeforePreview = null, xlsxOptions = {}, datagrid, handleSuccess = null, ...props }) => {
+export const ResourceImportButton = ({ resource, refetch = null, fields, handleDataBeforePreview = null, xlsxOptions = {}, datagrid, handleSuccess = null, update = false, ...props }) => {
     const [uploadedData, setUploadedData] = useState(null);
     const [fileName, setFileName] = useState(null);
     const { data, saveData } = useSavableData(resource, fileName, uploadedData);
@@ -20,7 +20,7 @@ export const ResourceImportButton = ({ resource, refetch = null, fields, handleD
     }, [setUploadedData, setFileName]);
 
     return <>
-        <ImportButton fields={fields} handleDataParse={handleDataParse} xlsxOptions={xlsxOptions} {...props} />
+        <ImportButton fields={fields} handleDataParse={handleDataParse} xlsxOptions={xlsxOptions} update={update} {...props} />
         <PreviewListWithSavingDialog resource={resource} datagrid={datagrid}
             data={data} saveData={saveData}
             refetch={refetch} handleSuccess={handleSuccess} handlePreviewCancel={handlePreviewCancel} />

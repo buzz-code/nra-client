@@ -41,7 +41,7 @@ export const PreviewListDialog = ({ resource, data, isLoading, tryAgain, datagri
                 )}
                 <ListContextProvider value={listContext}>
                     <ResourceContextProvider value={dataResource}>
-                        <Datagrid readonly isAdmin={isAdmin} bulkActionButtons={null}>
+                        <Datagrid readonly isAdmin={isAdmin} bulkActionButtons={null} isPreview>
                             <ImportStatusField />
                         </Datagrid>
                     </ResourceContextProvider>

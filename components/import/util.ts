@@ -29,12 +29,17 @@ const useSaveData = (resource: string, data: any[], fileName: string, fileId: nu
         let successCount = 0, errorCount = 0;
         for (const index in data) {
             const item = data[index];
-            if (item.id) {
+            if (item.status === STATUSES.pending || item.status === STATUSES.success) {
                 continue;
             }
             updateDataItem(index, { status: STATUSES.pending });
             try {
-                const res = await createItem(item);
+                let res;
+                if (item.id) {
+                    res = await updateItem(item);
+                } else {
+                    res = await createItem(item);
+                }
                 updateDataItem(index, { id: res.data.id, status: STATUSES.success });
                 successCount++;
             } catch (e) {
@@ -44,13 +49,13 @@ const useSaveData = (resource: string, data: any[], fileName: string, fileId: nu
             }
         }
 
-        const entityIds = data.map(item => item.id).filter(id => id);
-        if (entityIds.length) {
+        const successEntities = data.filter(item => item.status === STATUSES.success);
+        if (successEntities.length) {
             const isFullSuccess = successCount === data.length;
             if (fileId) {
                 const dataToUpdate = {
                     id: fileId,
-                    entityIds,
+                    entityIds: successEntities.map(item => item.id),
                     fullSuccess: isFullSuccess,
                 };
                 await updateItem(dataToUpdate, 'import_file');
@@ -60,7 +65,7 @@ const useSaveData = (resource: string, data: any[], fileName: string, fileId: nu
                     fileName,
                     fileSource: 'קובץ שהועלה',
                     entityName: resourceValue,
-                    entityIds,
+                    entityIds: successEntities.map(item => item.id),
                     fullSuccess: isFullSuccess,
                     response: 'נשמר',
                 };
