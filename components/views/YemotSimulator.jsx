@@ -55,13 +55,10 @@ const parseParameterFromLine = (line) => {
 };
 
 const parseYemotResponse = (responseBody) => {
-    const parsedData = { lines: [], param: '' };
+    const parsedData = { lines: [], param: '', hangup: false };
     const lines = responseBody.split('&');
     
     for (const line of lines) {
-        if (line.includes('hangup')) {
-            return { ...parsedData, hangup: true };
-        }
         
         const messageResult = parseResponseLine(line);
         if (messageResult) {
@@ -71,6 +68,10 @@ const parseYemotResponse = (responseBody) => {
         const param = parseParameterFromLine(line);
         if (param) {
             parsedData.param = param;
+        }
+
+        if (line.includes('hangup')) {
+            parsedData.hangup = true;
         }
     }
     
@@ -206,14 +207,17 @@ const YemotSimulator = () => {
         onSuccess: (data) => {
             const parsedData = parseYemotResponse(data.body);
             
+            if (parsedData.lines.length > 0) {
+                setHistory(prevData => ([...prevData, parsedData.lines]));
+            }
+            
+            if (parsedData.param) {
+                setParams(prevData => ([parsedData.param]));
+            }
+
             if (parsedData.hangup) {
                 setIsHangup(true);
                 return;
-            }
-
-            setHistory(prevData => ([...prevData, parsedData.lines]));
-            if (parsedData.param) {
-                setParams(prevData => ([parsedData.param]));
             }
 
             notify('ra.yemot_simulator.step_success', { type: 'info' });
