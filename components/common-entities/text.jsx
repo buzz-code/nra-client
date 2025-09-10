@@ -1,4 +1,4 @@
-import { DateField, DateTimeInput, maxLength, ReferenceField, required, TextField, TextInput } from 'react-admin';
+import { DateField, DateTimeInput, maxLength, ReferenceField, required, TextField, TextInput, useRecordContext } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
@@ -10,6 +10,7 @@ const filters = [
     <TextInput source="name:$cont" alwaysOn />,
     <TextInput source="description:$cont" label="תיאור" />,
     <TextInput source="value:$cont" label="ערך" alwaysOn />,
+    <TextInput source="filepath:$cont" label="נתיב קובץ שמע" />,
 ];
 
 const Datagrid = ({ isAdmin, children, ...props }) => {
@@ -21,6 +22,7 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
             <TextField source="name" />
             <TextField source="description" />
             <TextField source="value" />
+            <TextField source="filepath" />
             {isAdmin && <DateField showDate showTime source="createdAt" />}
             {isAdmin && <DateField showDate showTime source="updatedAt" />}
         </CommonDatagrid>
@@ -28,12 +30,22 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
 }
 
 const Inputs = ({ isCreate, isAdmin }) => {
+    const record = useRecordContext();
+    const isSystemText = record?.userId === 0;
+
     return <>
         {!isCreate && isAdmin && <TextInput source="id" disabled />}
         {isAdmin && <CommonReferenceInput source="userId" reference="user" emptyValue={0} emptyText='system' />}
         <TextInput source="name" disabled={!isCreate} validate={[required(), maxLength(100)]} />
         <TextInput source="description" disabled={!isCreate} validate={[required(), maxLength(500)]} />
         <TextInput source="value" validate={[required(), maxLength(10000)]} />
+        {!isSystemText && (
+            <TextInput 
+                source="filepath" 
+                validate={[maxLength(255)]} 
+                helperText="אופציונלי - אם מלא, ישלח קובץ במקום טקסט"
+            />
+        )}
         {!isCreate && isAdmin && <DateTimeInput source="createdAt" disabled />}
         {!isCreate && isAdmin && <DateTimeInput source="updatedAt" disabled />}
     </>

@@ -16,6 +16,7 @@ const filters = [
     <TextInput source="name:$cont" alwaysOn />,
     <TextInput source="description:$cont" label="תיאור" />,
     <TextInput source="value:$cont" label="ערך" alwaysOn />,
+    <TextInput source="filepath:$cont" label="נתיב קובץ שמע" />,
 ];
 
 const Datagrid = ({ isAdmin, children, ...props }) => {
@@ -27,7 +28,8 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
             <TextField source="name" />
             <TextField source="description" />
             <TextField source="value" />
-            <EditTextButton label='עריכה' icon={<EditIcon />} loader={<CircularProgress size={16} />} /> - use overrideTextId to know if create or update
+            <TextField source="filepath" />
+            <EditTextButton label='עריכה' icon={<EditIcon />} loader={<CircularProgress size={16} />} />
         </CommonDatagrid>
     );
 }
@@ -55,12 +57,13 @@ const EditTextButton = ({ label, icon, loader }) => {
         onSuccess: handleSuccess,
         onError: handleError(notify),
     });
-    const handleSave = (value) => {
+    const handleSave = (data) => {
         if (record.overrideTextId) {
             update(resource, {
                 id: record.overrideTextId,
                 data: {
-                    value
+                    value: data.value,
+                    filepath: data.filepath,
                 },
                 previousData: {}
             });
@@ -70,7 +73,8 @@ const EditTextButton = ({ label, icon, loader }) => {
                     userId: record.userId,
                     name: record.name,
                     description: record.description,
-                    value,
+                    value: data.value,
+                    filepath: data.filepath,
                 }
             });
         }
@@ -82,9 +86,9 @@ const EditTextButton = ({ label, icon, loader }) => {
     const handleDialogClose = useCallback(() => {
         setShowDialog(false);
     }, [setShowDialog]);
-    const handleSubmit = useCallback(({ value }) => {
+    const handleSubmit = useCallback(({ value, filepath }) => {
         handleDialogClose();
-        handleSave(value);
+        handleSave({ value, filepath });
     }, [handleDialogClose, handleSave]);
 
     const isLoading = createResponse.isLoading || updateResponse.isLoading;
@@ -99,6 +103,11 @@ const EditTextButton = ({ label, icon, loader }) => {
                 <DialogContent>
                     <Stack>
                         <TextInput source='value' label='ערך' validate={[required(), maxLength(10000)]} />
+                        <TextInput 
+                            source='filepath' 
+                            validate={[maxLength(255)]} 
+                            helperText="אופציונלי - אם מלא, ישלח קובץ במקום טקסט"
+                        />
                     </Stack>
                 </DialogContent>
                 <DialogActions>
