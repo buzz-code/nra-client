@@ -118,12 +118,12 @@ const HangupButton = ({ params, isHangup, handleSubmit, ...props }) => {
     const form = useFormContext();
 
     const handleClick = useCallback(() => {
-        form.setValue('hangup', true);
+        form.setValue('hangup', 'yes');
     }, [form]);
 
     useEffect(() => {
         if (isHangup) {
-            form.setValue('hangup', true);
+            form.setValue('hangup', 'yes');
             form.handleSubmit(handleSubmit);
         }
     }, [isHangup, form, handleSubmit]);
