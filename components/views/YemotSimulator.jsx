@@ -1,9 +1,10 @@
-import { Card, CardContent } from '@mui/material';
+import { Card, CardContent, Chip, Box } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { SimpleForm, TextInput, Title, useDataProvider, useNotify, Toolbar, SaveButton, RefreshButton } from 'react-admin';
 import { useMutation } from '@tanstack/react-query';
 import { useFormContext } from 'react-hook-form';
 import CallEndIcon from '@mui/icons-material/CallEnd'
+import AudioFileIcon from '@mui/icons-material/AudioFile'
 
 const defaultValues = {
     ApiCallId: String(Math.random()).slice(2),
@@ -13,6 +14,7 @@ const defaultValues = {
     ApiEnterID: '',
 };
 const TEXT_REGEX = /\=t-([^=\.]*)/
+const FILE_REGEX = /\=f-([^=\.]*)/
 const PARAM_REGEX = /read=t-[^=]*=([^,\.]*)/
 const required = (message = 'ra.validation.required') =>
     (value, allValues) => (value || allValues.hangup) ? undefined : message;
@@ -34,11 +36,27 @@ const YemotSimulator = () => {
                     setIsHangup(true);
                     break;
                 }
-                const [, text] = TEXT_REGEX.exec(line);
-                parsedData.lines.push(text);
+                
+                // Check for text messages
+                const textMatch = TEXT_REGEX.exec(line);
+                if (textMatch) {
+                    const [, text] = textMatch;
+                    parsedData.lines.push({ type: 'text', content: text });
+                }
+                
+                // Check for file messages
+                const fileMatch = FILE_REGEX.exec(line);
+                if (fileMatch) {
+                    const [, filename] = fileMatch;
+                    parsedData.lines.push({ type: 'file', content: filename });
+                }
+                
                 if (line.startsWith('read')) {
-                    const [, param] = PARAM_REGEX.exec(line);
-                    parsedData.param = param;
+                    const paramMatch = PARAM_REGEX.exec(line);
+                    if (paramMatch) {
+                        const [, param] = paramMatch;
+                        parsedData.param = param;
+                    }
                 }
             }
 
@@ -93,11 +111,30 @@ const YemotSimulator = () => {
 
 const HistoryStep = ({ lines }) => {
     return (
-        <div>
-            {lines.map(line => (
-                <div>{line}</div>
+        <Box sx={{ marginY: 1, padding: 1, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
+            {lines.map((line, index) => (
+                <div key={index} style={{ marginBottom: '4px' }}>
+                    {line.type === 'file' ? (
+                        <Chip 
+                            icon={<AudioFileIcon />}
+                            label={line.content}
+                            variant="outlined"
+                            color="secondary"
+                            size="small"
+                            sx={{ 
+                                backgroundColor: '#e3f2fd',
+                                borderColor: '#1976d2',
+                                '& .MuiChip-label': {
+                                    fontWeight: 'bold'
+                                }
+                            }}
+                        />
+                    ) : (
+                        <span>{line.content}</span>
+                    )}
+                </div>
             ))}
-        </div>
+        </Box>
     )
 }
 
