@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { useInput } from 'react-admin';
-import { Tabs, Tab, Paper, Typography } from '@mui/material';
+import { InputHelperText, useInput } from 'react-admin';
+import { Box, FormControl, FormHelperText, FormLabel, Tabs, Tab } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import CreateIcon from '@mui/icons-material/Create';
 import ImageUploadTab from './ImageUploadTab';
 import DigitalDrawingTab from './DigitalDrawingTab';
 
-const SignatureInput = ({ source, label }) => {
+const SignatureInput = ({ label, ...props }) => {
   const {
     field: { value, onChange },
-  } = useInput({ source });
+    fieldState: { error, invalid },
+    isRequired
+  } = useInput(props);
 
   const [tab, setTab] = useState(0);
   const [uploadedPreview, setUploadedPreview] = useState(value || null);
@@ -35,29 +37,39 @@ const SignatureInput = ({ source, label }) => {
   };
 
   return (
-    <Paper elevation={1} sx={{ p: 2, mt: 2, width: '100%' }}>
-      {label && <Typography variant="subtitle1">{label}</Typography>}
-      <Tabs value={tab} onChange={(e, v) => setTab(v)}>
-        <Tab icon={<UploadIcon />} label="העלאת תמונה" />
-        <Tab icon={<CreateIcon />} label="ציור דיגיטלי" />
-      </Tabs>
+    <FormControl error={!!error} margin="normal">
+      <Box sx={{ mt: 1 }}>
+        <FormLabel component="legend">
+          {label}
+          {isRequired && ' *'}
+        </FormLabel>
+        <Tabs value={tab} onChange={(e, v) => setTab(v)}>
+          <Tab icon={<UploadIcon />} label="העלאת תמונה" />
+          <Tab icon={<CreateIcon />} label="ציור דיגיטלי" />
+        </Tabs>
 
-      {tab === 0 && (
-        <ImageUploadTab
-          preview={uploadedPreview}
-          onUpload={(data) => handleChange(data, 'upload')}
-          onRemove={() => handleClear()}
-        />
-      )}
+        {tab === 0 && (
+          <ImageUploadTab
+            preview={uploadedPreview}
+            onUpload={(data) => handleChange(data, 'upload')}
+            onRemove={() => handleClear()}
+          />
+        )}
 
-      {tab === 1 && (
-        <DigitalDrawingTab
-          preview={canvasData}
-          onSave={(data) => handleChange(data, 'canvas')}
-          onClear={() => handleClear()}
-        />
+        {tab === 1 && (
+          <DigitalDrawingTab
+            preview={canvasData}
+            onSave={(data) => handleChange(data, 'canvas')}
+            onClear={() => handleClear()}
+          />
+        )}
+      </Box>
+      {invalid && (
+        <FormHelperText error={invalid}>
+          <InputHelperText error={error?.message} />
+        </FormHelperText>
       )}
-    </Paper>
+    </FormControl>
   );
 };
 

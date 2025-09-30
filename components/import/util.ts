@@ -7,21 +7,21 @@ export const STATUSES = {
     error: 'error',
 };
 
-export const useSavableData = (resource: string, fileName: string, baseData: any[]) => {
+export const useSavableData = (resource: string, fileName: string, baseData: any[], metadata?: any, fileSource?: string) => {
     const [data, setData] = useState<any[]>(baseData);
     const [fileId, setFileId] = useState<number>();
     const updateItem = useCallback((index: string, item: any) => {
         data[index] = { ...data[index], ...item };
         setData([...data]);
     }, [data]);
-    const saveData = useSaveData(resource, data, fileName, fileId, updateItem, setFileId);
+    const saveData = useSaveData(resource, data, fileName, fileId, updateItem, setFileId, metadata, fileSource);
 
     useEffect(() => { setData(baseData) }, [baseData]);
 
     return { data, saveData };
 }
 
-const useSaveData = (resource: string, data: any[], fileName: string, fileId: number, updateDataItem: (index: string, item: any) => void, setFileId: (fileId: number) => void) => {
+const useSaveData = (resource: string, data: any[], fileName: string, fileId: number, updateDataItem: (index: string, item: any) => void, setFileId: (fileId: number) => void, metadata?: any, fileSource?: string) => {
     const resourceValue = useResourceContext({ resource });
     const { createItem, updateItem } = useCreateItem(resourceValue);
 
@@ -57,17 +57,21 @@ const useSaveData = (resource: string, data: any[], fileName: string, fileId: nu
                     id: fileId,
                     entityIds: successEntities.map(item => item.id),
                     fullSuccess: isFullSuccess,
+                    metadata: metadata || undefined,
+                    // if fileSource was specified we update it as well
+                    ...(fileSource ? { fileSource } : {}),
                 };
                 await updateItem(dataToUpdate, 'import_file');
             } else {
                 const fileData = {
                     userId: data[0].userId,
                     fileName,
-                    fileSource: 'קובץ שהועלה',
+                    fileSource: fileSource || 'קובץ שהועלה',
                     entityName: resourceValue,
                     entityIds: successEntities.map(item => item.id),
                     fullSuccess: isFullSuccess,
                     response: 'נשמר',
+                    metadata: metadata || null,
                 };
                 const res = await createItem(fileData, 'import_file');
                 setFileId(res.data.id);
