@@ -10,7 +10,7 @@ export const CommonHebrewDateField = ({ source }) => {
         return null;
     }
 
-    const jewishDate = useMemo(() => convertDateToHebrew(get(record, source)), [record, source]);
+    const jewishDate = convertDateToHebrew(get(record, source));
 
     return (
         <span>{jewishDate}</span>
