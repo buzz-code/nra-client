@@ -14,7 +14,8 @@ import {
     Button,
     IconButton
 } from '@mui/material';
-import { Visibility as VisibilityIcon, Close as CloseIcon } from '@mui/icons-material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import CloseIcon from '@mui/icons-material/Close';
 
 const YemotCallHistoryField = ({ source }) => {
     const record = useRecordContext();
