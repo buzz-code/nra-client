@@ -6,15 +6,14 @@ import { CommonCountField } from '@shared/components/fields/CommonCountField';
 import { CommonEntityNameInput } from '@shared/components/fields/CommonEntityNameInput';
 import { ShowMatchingRecordsButton } from '@shared/components/fields/ShowMatchingRecordsButton';
 import { adminCreatedAtFilters, adminUserFilter } from '@shared/components/fields/PermissionFilter';
-import { useIsLessonSignature } from 'src/utils/appPermissions';
 
-const fileSourceChoices = [
+export const fileSourceChoices = [
     { id: 'קובץ שהועלה', name: 'קובץ שהועלה' },
     { id: 'טופס נוכחות', name: 'טופס נוכחות' },
     { id: 'נשלח במייל', name: 'נשלח במייל' },
 ];
 
-const filters = [
+export const filters = [
     adminUserFilter,
     <CommonEntityNameInput source="entityName" />,
     <TextInput source="fileName" />,
@@ -22,8 +21,7 @@ const filters = [
     ...adminCreatedAtFilters,
 ];
 
-const Datagrid = ({ isAdmin, children, ...props }) => {
-    const hasLessonSignature = useIsLessonSignature();
+export const Datagrid = ({ isAdmin, hasLessonSignature = false, children, ...props }) => {
     return (
         <CommonDatagrid {...props} readonly>
             {children}
@@ -44,7 +42,7 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
     );
 }
 
-const Representation = 'fileName';
+export const Representation = 'fileName';
 
 const entity = {
     Datagrid,
