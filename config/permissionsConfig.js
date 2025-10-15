@@ -5,6 +5,7 @@ export const permissionKeys = {
     showUsersData: 'showUsersData',
     editPagesData: 'editPagesData',
     editPaymentTracksData: 'editPaymentTracksData',
+    genericImageUpload: 'genericImageUpload',
     // Keys for permissions like 'inLessonReport', 'scannerUpload', etc.,
     // are intentionally omitted here as they are for a different app.
     // The generic permission checker will still function if these keys are

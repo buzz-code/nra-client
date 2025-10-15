@@ -1,4 +1,6 @@
-import { DateField, DateTimeInput, ImageField, maxLength, ReferenceField, required, TextField, TextInput } from 'react-admin';
+import React from 'react';
+import { DateField, DateTimeInput, ImageField, maxLength, ReferenceField, required, TextField, TextInput, useRecordContext } from 'react-admin';
+import get from 'lodash/get';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
@@ -8,6 +10,7 @@ import { CommonImageInput } from '@shared/components/fields/CommonImageInput';
 import CommonAutocompleteInput from '@shared/components/fields/CommonAutocompleteInput';
 import { useUnique } from '@shared/utils/useUnique';
 import { adminUserFilter } from '@shared/components/fields/PermissionFilter';
+import { useIsGenericImageUpload } from '@shared/utils/permissionsUtil';
 
 const filters = [
     adminUserFilter,
@@ -30,6 +33,44 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
 
 const imageTargetEnum = ['לוגו לתעודה', 'לוגו לתחתית התעודה'];
 
+const ImageTargetInput = ({ source, validate }) => {
+    const canUseGenericUpload = useIsGenericImageUpload();
+    const record = useRecordContext();
+    const currentValue = get(record, source);
+
+    const choices = React.useMemo(() => {
+        const baseChoices = imageTargetEnum.map(item => ({ id: item, name: item }));
+
+        if (currentValue && !imageTargetEnum.includes(currentValue)) {
+            return [...baseChoices, { id: currentValue, name: currentValue }];
+        }
+
+        return baseChoices;
+    }, [currentValue]);
+
+    const handleCreate = (newValue) => {
+        const trimmedValue = newValue?.trim?.();
+        if (trimmedValue) {
+            const newChoice = { id: trimmedValue, name: trimmedValue };
+            if (!choices.find(choice => choice.id === newChoice.id)) {
+                choices.push(newChoice);
+            }
+            return newChoice;
+        }
+        return null;
+    };
+
+    return (
+        <CommonAutocompleteInput
+            source={source}
+            choices={choices}
+            validate={validate}
+            onCreate={canUseGenericUpload ? handleCreate : undefined}
+            helperText={canUseGenericUpload ? "בחר מהרשימה או הזן טקסט חופשי" : undefined}
+        />
+    );
+};
+
 const Inputs = ({ isCreate, isAdmin }) => {
     const unique = useUnique();
 
@@ -38,7 +79,7 @@ const Inputs = ({ isCreate, isAdmin }) => {
         {isAdmin && <CommonReferenceInput source="userId" reference="user" validate={required()} />}
         {/* <CommonJsonInput source="fileData" /> */}
         <CommonImageInput source="fileData" validate={required()} />
-        <CommonAutocompleteInput source="imageTarget" choices={imageTargetEnum.map(item => ({ id: item, name: item }))} validate={[required(), maxLength(255), unique()]} />
+        <ImageTargetInput source="imageTarget" validate={[required(), maxLength(255), unique()]} />
         {!isCreate && isAdmin && <DateTimeInput source="createdAt" disabled />}
         {!isCreate && isAdmin && <DateTimeInput source="updatedAt" disabled />}
     </>;
