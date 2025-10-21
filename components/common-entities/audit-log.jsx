@@ -16,7 +16,7 @@ const filters = [
 ];
 
 const additionalBulkButtons = [
-    <BulkActionButton label='שחזור מידע' icon={<UndoIcon />} name='revert' />
+    <BulkActionButton label='שחזור מידע' icon={<UndoIcon />} name='revert' reloadOnEnd />
 ];
 
 
