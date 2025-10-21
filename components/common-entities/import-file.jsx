@@ -18,7 +18,8 @@ export const filters = [
     <CommonEntityNameInput source="entityName" />,
     <TextInput source="fileName" />,
     <SelectInput source="fileSource" choices={fileSourceChoices} />,
-    ...adminCreatedAtFilters,
+    <DateInput source="createdAt:$gte" />,
+    <DateInput source="createdAt:$lte" />,
 ];
 
 export const Datagrid = ({ isAdmin, hasLessonSignature = false, children, ...props }) => {
@@ -29,8 +30,6 @@ export const Datagrid = ({ isAdmin, hasLessonSignature = false, children, ...pro
             {isAdmin && <ReferenceField source="userId" reference="user" />}
             <TextField source="fileName" />
             <TextField source="fileSource" />
-            {hasLessonSignature && <TextField source="metadata.lessonTopic" sortable={false} />}
-            {hasLessonSignature && <TextField source="metadata.lessonTime" sortable={false} />}
             {hasLessonSignature && <ImageField source="metadata.signatureData" sortable={false} />}
             <CommonCountField source="entityIds" />
             <CommonEntityNameField source="entityName" />
@@ -48,6 +47,7 @@ const entity = {
     Datagrid,
     filters,
     Representation,
+    sort: { field: 'createdAt', order: 'DESC' },
 };
 
 export default getResourceComponents(entity);
