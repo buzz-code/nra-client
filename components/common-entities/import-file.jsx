@@ -1,11 +1,11 @@
-import { BooleanField, DateField, ReferenceField, TextField, TextInput, ImageField, SelectInput } from 'react-admin';
+import { BooleanField, DateField, DateInput, ReferenceField, TextField, TextInput, ImageField, SelectInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonEntityNameField } from '@shared/components/fields/CommonEntityNameField';
 import { CommonCountField } from '@shared/components/fields/CommonCountField';
 import { CommonEntityNameInput } from '@shared/components/fields/CommonEntityNameInput';
 import { ShowMatchingRecordsButton } from '@shared/components/fields/ShowMatchingRecordsButton';
-import { adminCreatedAtFilters, adminUserFilter } from '@shared/components/fields/PermissionFilter';
+import { adminUserFilter } from '@shared/components/fields/PermissionFilter';
 
 export const fileSourceChoices = [
     { id: 'קובץ שהועלה', name: 'קובץ שהועלה' },
