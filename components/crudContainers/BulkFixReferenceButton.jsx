@@ -1,6 +1,6 @@
 import HelpIcon from '@mui/icons-material/Help';
 import { BulkActionButton } from './BulkActionButton';
 
-export const BulkFixReferenceButton = () => (
-    <BulkActionButton name='fixReferences' label='תיקון שיוך תלמידה' icon={<HelpIcon />} reloadOnEnd />
+export const BulkFixReferenceButton = ({ label = 'תיקון שיוך תלמידה' }) => (
+    <BulkActionButton name='fixReferences' label={label} icon={<HelpIcon />} reloadOnEnd />
 );
