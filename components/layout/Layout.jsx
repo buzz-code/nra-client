@@ -11,6 +11,7 @@ const CustomLayout = ({ customMenuItems, menuGroups, children }) => {
     const { permissions } = usePermissions();
     const { data: identity } = useGetIdentity();
     const customMenuItemsArr = filterArrayByParams(customMenuItems, { isAdmin, permissions });
+    const menuItemsArr = filterArrayByParams(menuGroups, { isAdmin, permissions });
 
     useEffect(() => {
         if (identity) {
@@ -19,7 +20,7 @@ const CustomLayout = ({ customMenuItems, menuGroups, children }) => {
     }, [identity]);
 
     const Menu = () => (
-        <CustomMenu menuGroups={menuGroups}>
+        <CustomMenu menuGroups={menuItemsArr}>
             {customMenuItemsArr}
         </CustomMenu>
     );
