@@ -18,9 +18,13 @@ const CustomMenu = ({ menuGroups, children }) => {
         const otherResources = [];
 
         for (const resource of Object.values(resources)) {
-            const arr = groupsDict[resource.options?.menuGroup].resources ?? otherResources;
             if (resource.hasList) {
-                arr.push(resource.name);
+                if (resource.options?.menuGroup) {
+                    const arr = groupsDict[resource.options?.menuGroup].resources ?? otherResources;
+                    arr.push(resource.name);
+                } else {
+                    otherResources.push(<Menu.ResourceItem key={resource.name} name={resource.name} />);
+                }
             }
         }
 
