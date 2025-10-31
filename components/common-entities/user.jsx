@@ -8,6 +8,8 @@ import { CommonJsonField, CommonJsonInput } from '@shared/components/fields/Comm
 import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from 'react-router-dom';
 import CommonReferenceInput from '@shared/components/fields/CommonReferenceInput';
+import { BulkActionButton } from '../crudContainers/BulkActionButton';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const ImpersonateButton = ({ ...props }) => {
     const recordId = useGetRecordId();
@@ -36,8 +38,13 @@ const filters = [
 ];
 
 const Datagrid = ({ isAdmin, children, ...props }) => {
+    const additionalBulkButtons = [
+        isAdmin && <BulkActionButton label='סימון שילם/לא שילם' icon={<CheckCircleIcon />} name='bulkUpdatePaid' key='bulkUpdatePaid' reloadOnEnd >
+            <BooleanInput source="isPaid" label="שילם" />
+        </BulkActionButton>,
+    ];
     return (
-        <CommonDatagrid {...props}>
+        <CommonDatagrid {...props} additionalBulkButtons={additionalBulkButtons}>
             {children}
             {isAdmin && <TextField source="id" />}
             <TextField source="name" />
