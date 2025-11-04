@@ -7,28 +7,74 @@ export const STATUSES = {
     error: 'error',
 };
 
-export const useSavableData = (resource: string, fileName: string, baseData: any[], metadata?: any, fileSource?: string) => {
+export interface PreSaveHookResult {
+    updatedData?: any[];
+    metadata?: any;
+}
+
+export type PreSaveHook = (data: any[]) => Promise<PreSaveHookResult | void>;
+
+export const useSavableData = (
+    resource: string, 
+    fileName: string, 
+    baseData: any[], 
+    metadata?: any, 
+    fileSource?: string,
+    preSaveHook?: PreSaveHook
+) => {
     const [data, setData] = useState<any[]>(baseData);
     const [fileId, setFileId] = useState<number>();
     const updateItem = useCallback((index: string, item: any) => {
         data[index] = { ...data[index], ...item };
         setData([...data]);
     }, [data]);
-    const saveData = useSaveData(resource, data, fileName, fileId, updateItem, setFileId, metadata, fileSource);
+    const saveData = useSaveData(resource, data, fileName, fileId, updateItem, setFileId, metadata, fileSource, preSaveHook);
 
     useEffect(() => { setData(baseData) }, [baseData]);
 
     return { data, saveData };
 }
 
-const useSaveData = (resource: string, data: any[], fileName: string, fileId: number, updateDataItem: (index: string, item: any) => void, setFileId: (fileId: number) => void, metadata?: any, fileSource?: string) => {
+const useSaveData = (
+    resource: string, 
+    data: any[], 
+    fileName: string, 
+    fileId: number, 
+    updateDataItem: (index: string, item: any) => void, 
+    setFileId: (fileId: number) => void, 
+    metadata?: any, 
+    fileSource?: string,
+    preSaveHook?: PreSaveHook
+) => {
     const resourceValue = useResourceContext({ resource });
     const { createItem, updateItem } = useCreateItem(resourceValue);
 
     const saveData = useCallback(async () => {
+        let activeData = data;
+        let activeMetadata = metadata;
+
+        // Call pre-save hook if provided
+        if (preSaveHook) {
+            try {
+                const hookResult = await preSaveHook(data);
+                if (hookResult) {
+                    if (hookResult.updatedData) {
+                        activeData = hookResult.updatedData;
+                    }
+                    if (hookResult.metadata !== undefined) {
+                        activeMetadata = hookResult.metadata;
+                    }
+                }
+            } catch (e) {
+                console.error('Pre-save hook failed:', e);
+                // Return early if pre-save hook fails
+                return { successCount: 0, errorCount: data.length };
+            }
+        }
+
         let successCount = 0, errorCount = 0;
-        for (const index in data) {
-            const item = data[index];
+        for (const index in activeData) {
+            const item = activeData[index];
             if (item.status === STATUSES.pending || item.status === STATUSES.success) {
                 continue;
             }
@@ -49,29 +95,29 @@ const useSaveData = (resource: string, data: any[], fileName: string, fileId: nu
             }
         }
 
-        const successEntities = data.filter(item => item.status === STATUSES.success);
+        const successEntities = activeData.filter(item => item.status === STATUSES.success);
         if (successEntities.length) {
-            const isFullSuccess = successCount === data.length;
+            const isFullSuccess = successCount === activeData.length;
             if (fileId) {
                 const dataToUpdate = {
                     id: fileId,
                     entityIds: successEntities.map(item => item.id),
                     fullSuccess: isFullSuccess,
-                    metadata: metadata || undefined,
+                    metadata: activeMetadata || undefined,
                     // if fileSource was specified we update it as well
                     ...(fileSource ? { fileSource } : {}),
                 };
                 await updateItem(dataToUpdate, 'import_file');
             } else {
                 const fileData = {
-                    userId: data[0].userId,
+                    userId: activeData[0].userId,
                     fileName,
                     fileSource: fileSource || 'קובץ שהועלה',
                     entityName: resourceValue,
                     entityIds: successEntities.map(item => item.id),
                     fullSuccess: isFullSuccess,
                     response: 'נשמר',
-                    metadata: metadata || null,
+                    metadata: activeMetadata || null,
                 };
                 const res = await createItem(fileData, 'import_file');
                 setFileId(res.data.id);
@@ -79,7 +125,7 @@ const useSaveData = (resource: string, data: any[], fileName: string, fileId: nu
         }
 
         return { successCount, errorCount };
-    }, [data, fileId, fileName, resourceValue, createItem, updateItem, updateDataItem, setFileId]);
+    }, [data, fileId, fileName, resourceValue, createItem, updateItem, updateDataItem, setFileId, metadata, fileSource, preSaveHook]);
 
     return saveData;
 }
