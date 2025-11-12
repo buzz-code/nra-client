@@ -20,7 +20,7 @@ export const PreviewListWithSavingDialog = ({ resource, datagrid, data, saveData
                 refetch?.();
                 handleSuccess?.();
             } else if (successCount > 0) {
-                notify('ra.message.import_partial_error', { type: 'warning' });
+                notify('ra.message.import_partial_error', { type: 'warning', messageArgs: { errorCount } });
                 refetch?.();
                 setTryAgain(true);
             } else {

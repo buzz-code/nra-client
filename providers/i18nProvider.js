@@ -56,7 +56,7 @@ const extendedTranslation = {
             authentication_error: 'שרת האימות החזיר שגיאה ולא ניתן היה לבדוק את האישורים שלך.',
             import_title: 'ייבוא רשומות',
             import_success: 'הייבוא הסתיים בהצלחה',
-            import_partial_error: 'הייבוא הסתיים עם שגיאות',
+            import_partial_error: 'הייבוא הסתיים עם %{errorCount} שגיאות',
             import_error: 'הייבוא נכשל',
             report_generation_success: 'הקובץ הופק בהצלחה',
             action_success: 'בוצע בהצלחה',
