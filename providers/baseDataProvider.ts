@@ -89,7 +89,10 @@ const mergeEncodedQueries = (...encodedQueries) => encodedQueries.map((query) =>
 const getQueryJoin = (sort: QuerySort, filter: QueryFilter[]): QueryJoin[] => {
   const sortJoin = getSortJoin(sort);
   const filterJoin = getFilterJoin(filter);
-  return [...sortJoin, ...filterJoin];
+  const joins = sortJoin.concat(filterJoin);
+  const uniqueJoinFields = Array.from(new Set(joins.map(j => j.field)));
+  const uniqueJoins = uniqueJoinFields.map(field => joins.find(j => j.field === field));
+  return uniqueJoins;
 }
 
 const getSortJoin = (sort: QuerySort): QueryJoin[] => {
