@@ -136,8 +136,25 @@ const calcFileName = (disposition, filename) => {
 }
 
 const saveResponseFile = async ({ json }, filename) => {
+  validateFileResponse(json);
   const blob = await fetch(`data:${json.type};base64,${json.data}`).then(res => res.blob());
   return saveAs(blob, calcFileName(json.disposition, filename));
+}
+
+const validateFileResponse = (response: any) => {
+  if (!response) {
+    throw new Error('Invalid file response');
+  }
+  const expectedKeys = ['data', 'type', 'disposition', 'contentLength'];
+  const missingKeys = expectedKeys.filter(key => !(key in response));
+  if (missingKeys.length > 0) {
+    throw new Error(`Invalid file response, missing keys: ${missingKeys.join(', ')}`);
+  }
+  const { data, contentLength } = response;
+  const actualLength = data.length;
+  if (actualLength !== contentLength) {
+    throw new Error(`Invalid file response, content length mismatch: expected ${contentLength}, got ${actualLength}`);
+  }
 }
 
 export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedDataProvider => ({
