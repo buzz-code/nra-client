@@ -37,19 +37,18 @@ export const createTheme = (options = {}) => {
             ...(success && { success: { main: success } }),
             ...(warning && { warning: { main: warning } }),
         },
-        // components: {
-        //     ...defaultTheme.components,
-        //     RaLayout: {
-        //         styleOverrides: {
-        //             root: {
-        //                 "& .RaLayout-appFrame": {
-        //                     maxWidth: '100vw',
-        //                     overflow: 'auto',
-        //                 },
-        //             }
-        //         }
-        //     }
-        // }
+        components: {
+            ...defaultTheme.components,
+            RaMenuItemLink: {
+                styleOverrides: {
+                    root: {
+                        '&.RaMenuItemLink-active': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                        },
+                    },
+                },
+            },
+        },
     };
 };
 
