@@ -19,6 +19,7 @@ export function getResourceComponents({
     deleteResource,
     sort,
     configurable = true,
+    additionalListActions,
 }) {
     const importerDef = importer
         ? {
@@ -37,7 +38,8 @@ export function getResourceComponents({
                 filters={filtersArr} filterDefaultValues={filterDefaultValues}
                 importer={importerDef} exporter={exporter}
                 empty={<EmptyPage importer={importerDef} />}
-                sort={sort} configurable={configurable}>
+                sort={sort} configurable={configurable}
+                additionalListActions={additionalListActions}>
                 <Datagrid isAdmin={isAdmin} deleteResource={deleteResource} configurable={configurable} />
             </CommonList>
         );
