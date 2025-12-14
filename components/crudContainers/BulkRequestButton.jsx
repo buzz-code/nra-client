@@ -1,18 +1,17 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { Button, Form, useTranslate, SaveButton, useStore, useResourceContext, useRefresh } from 'react-admin';
 import DownloadingIcon from '@mui/icons-material/Downloading';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Stack from '@mui/material/Stack';
+import { ActionOrDialogButton } from './ActionOrDialogButton';
 
-export const BulkRequestButton = ({ label, name, mutate, isLoading, icon, defaultRequestValues = {}, requestValues = {}, reloadOnEnd = false, children }) => {
-    const [showDialog, setShowDialog] = useState(false);
+export const BulkRequestButton = ({ label, name, mutate, isLoading, icon, defaultRequestValues = {}, requestValues = {}, reloadOnEnd = false, dialogTitle, children }) => {
     const translate = useTranslate();
     const resource = useResourceContext();
     const refresh = useRefresh();
     const [cachedRequestValues, setRequestValues] = useStore('common.BulkRequestButton.' + resource + '.' + name, defaultRequestValues);
+    const defaultDialogTitle = translate('ra.bulk_request.params_dialog_title');
 
     const doMutation = useCallback(async (dataToSend) => {
         await mutate(dataToSend);
@@ -20,49 +19,40 @@ export const BulkRequestButton = ({ label, name, mutate, isLoading, icon, defaul
             refresh();
         }
     }, [mutate, reloadOnEnd, refresh]);
-    const handleButtonClick = useCallback(() => {
-        if (!children) {
-            doMutation({});
-        } else {
-            setShowDialog(true);
-        }
-    }, [children, doMutation, setShowDialog]);
-    const handleDialogClose = useCallback(() => {
-        setShowDialog(false);
-    }, [setShowDialog]);
-    const handleSubmit = useCallback((formValues) => {
+
+    const handleSubmit = useCallback((formValues, onClose) => {
         setRequestValues(formValues);
-        handleDialogClose();
+        onClose();
         const requestData = {
             ...formValues,
             ...requestValues,
         };
         const dataToSend = Object.fromEntries(Object.entries(requestData).map(([key, value]) => (['extra.' + key, value])));
         doMutation(dataToSend);
-    }, [requestValues, setRequestValues, handleDialogClose, doMutation]);
+    }, [requestValues, setRequestValues, doMutation]);
 
-    return <>
-        <Button label={label} onClick={handleButtonClick} disabled={isLoading}>
-            {isLoading ? loader : icon}
-        </Button>
-
-        <Dialog onClose={handleDialogClose} open={showDialog} fullWidth>
-            <DialogTitle>
-                {translate('ra.bulk_request.params_dialog_title')}
-            </DialogTitle>
-            <Form onSubmit={handleSubmit} defaultValues={cachedRequestValues}>
-                <DialogContent>
-                    <Stack>
-                        {children}
-                    </Stack>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleDialogClose} label={translate('ra.action.cancel')} />
-                    <SaveButton alwaysEnable autoFocus variant='text' icon={null} label={translate('ra.action.confirm')} />
-                </DialogActions>
-            </Form>
-        </Dialog>
-    </>
+    return (
+        <ActionOrDialogButton
+            label={label}
+            disabled={isLoading}
+            icon={isLoading ? loader : icon}
+            title={dialogTitle ?? defaultDialogTitle}
+            onClick={() => doMutation({})}
+            dialogContent={children && (({ onClose }) => (
+                <Form onSubmit={(values) => handleSubmit(values, onClose)} defaultValues={cachedRequestValues}>
+                    <DialogContent>
+                        <Stack>
+                            {children}
+                        </Stack>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={onClose} label={translate('ra.action.cancel')} />
+                        <SaveButton alwaysEnable autoFocus variant='text' icon={null} label={translate('ra.action.confirm')} />
+                    </DialogActions>
+                </Form>
+            ))}
+        />
+    );
 }
 
 const loader = <DownloadingIcon />;
