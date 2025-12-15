@@ -28,7 +28,7 @@ export function getResourceComponents({
         }
         : null;
 
-    const List = () => {
+    const List = ({ filter = {} }) => {
         const isAdmin = useIsAdmin();
         const { permissions } = usePermissions();
         const filtersArr = filterArrayByParams(filters, { isAdmin, permissions });
@@ -36,6 +36,7 @@ export function getResourceComponents({
         return (
             <CommonList resource={resource}
                 filters={filtersArr} filterDefaultValues={filterDefaultValues}
+                filter={filter}
                 importer={importerDef} exporter={exporter}
                 empty={<EmptyPage importer={importerDef} />}
                 sort={sort} configurable={configurable}
