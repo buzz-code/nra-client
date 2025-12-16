@@ -34,21 +34,19 @@ export function getResourceComponents({
         }
         : null;
 
-    // Create EditButton component if inline edit is enabled
-    const EditButton = (inlineEdit && Inputs) ? (
-        ({ isAdmin }) => (
+    const List = ({ filter = {} }) => {
+        const isAdmin = useIsAdmin();
+        const { permissions } = usePermissions();
+        const filtersArr = filterArrayByParams(filters, { isAdmin, permissions });
+
+        // Create EditButton component if inline edit is enabled
+        const EditButton = (inlineEdit && Inputs) ? (
             <EditInDialogButton 
                 Inputs={(props) => <Inputs {...props} isAdmin={isAdmin} />}
                 resource={editResource || resource}
                 title={dialogEditTitle}
             />
-        )
-    ) : null;
-
-    const List = ({ filter = {} }) => {
-        const isAdmin = useIsAdmin();
-        const { permissions } = usePermissions();
-        const filtersArr = filterArrayByParams(filters, { isAdmin, permissions });
+        ) : null;
 
         // Only provide inline create context if both flag is enabled AND Inputs component exists
         const inlineEditContextValue = (inlineCreate && Inputs) ? {
@@ -79,7 +77,7 @@ export function getResourceComponents({
                         deleteResource={deleteResource} 
                         configurable={configurable} 
                         readonly={readonly}
-                        EditButton={EditButton ? <EditButton isAdmin={isAdmin} /> : null} 
+                        EditButton={EditButton} 
                     />
                 </CommonList>
             </InlineEditProvider>
