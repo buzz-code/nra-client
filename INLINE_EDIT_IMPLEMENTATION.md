@@ -10,24 +10,25 @@ This implementation adds inline editing functionality to all entities in the nra
 
 Created in `components/dialogs/`:
 
-#### CommonFormDialog.jsx
-- Core reusable dialog component for both edit and create operations
+#### CommonFormDialogContent (in CommonFormDialog.jsx)
+- Dialog content component that works with the existing `ActionOrDialogButton`
 - Integrates with React Admin's `useUpdate` and `useCreate` hooks
 - Handles form submission, loading states, and error notifications
 - Automatically refreshes data on successful save
-- Uses React Admin's translation system for internationalization
-- Supports custom titles and dialog configuration
+- Renders DialogContent and DialogActions for use within a dialog
 
 #### EditInDialogButton.jsx
 - Row-level button component that opens the edit dialog
+- **Reuses existing `ActionOrDialogButton`** component
 - Uses `useRecordContext()` to access the current row's data
-- Manages dialog open/close state internally
+- Uses React Admin's translation system for default titles
 - Prevents row click event propagation to avoid conflicting navigation
 - Renders the same `Inputs` component used in the full edit page
 
 #### CreateInDialogButton.jsx
 - List-level button component that opens the create dialog
-- Similar pattern to React Admin's CreateButton but opens a dialog
+- **Reuses existing `ActionOrDialogButton`** component
+- Uses React Admin's translation system for default titles
 - Supports default values for pre-populated fields
 - Replaces the standard create button when inline create is enabled
 
@@ -43,12 +44,10 @@ Added support for:
 The component now creates an EditButton when inline edit is enabled and passes the necessary props to CommonList for inline create support.
 
 #### CommonList.jsx
-Added parameters:
-- `inlineCreate`: Flag to enable inline create
-- `CreateInputs`: The Inputs component for create dialog
-- `dialogCreateTitle`: Custom title for create dialog
+**MINIMAL CHANGES** - Added only ONE parameter:
+- `inlineCreateProps`: Object containing inline create configuration (spread to CommonListActions)
 
-These are passed to CommonListActions to render the appropriate create button.
+This single parameter groups all inline create props and is spread to CommonListActions, keeping CommonList changes to an absolute minimum.
 
 #### CommonListActions.jsx
 Updated to:
@@ -197,17 +196,19 @@ If issues arise, simply remove the flags to revert to the old behavior.
 ## Files Changed
 
 ```
-INLINE_EDIT_IMPLEMENTATION.md                  (new - this file)
-INLINE_EDIT_USAGE.md                           (new - user guide)
-components/dialogs/CommonFormDialog.jsx        (new)
-components/dialogs/EditInDialogButton.jsx      (new)
-components/dialogs/CreateInDialogButton.jsx    (new)
-components/crudContainers/CommonEntity.jsx     (updated)
-components/crudContainers/CommonList.jsx       (updated)
+INLINE_EDIT_IMPLEMENTATION.md                   (documentation)
+INLINE_EDIT_USAGE.md                            (documentation)
+components/dialogs/CommonFormDialog.jsx         (new - CommonFormDialogContent)
+components/dialogs/EditInDialogButton.jsx       (new - uses ActionOrDialogButton)
+components/dialogs/CreateInDialogButton.jsx     (new - uses ActionOrDialogButton)
+components/crudContainers/CommonEntity.jsx      (updated)
+components/crudContainers/CommonList.jsx        (updated - MINIMAL: 1 parameter)
 components/crudContainers/CommonListActions.jsx (updated)
 ```
 
-**Total**: 8 files (5 new, 3 updated), ~381 lines added
+**Total**: 8 files (5 new, 3 updated), ~100 lines changed
+
+**Key improvements**: Reuses existing ActionOrDialogButton, minimal changes to CommonList
 
 ## Conclusion
 
