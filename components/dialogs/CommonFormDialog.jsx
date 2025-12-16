@@ -33,39 +33,41 @@ export const CommonFormDialog = ({
   
   const isLoading = isUpdating || isCreating;
   
-  const handleSave = async (data) => {
+  const handleSave = (data) => {
     const transformedData = transform ? transform(data) : data;
     
-    try {
-      if (mode === 'edit') {
-        await update(
-          resource,
-          { id: record.id, data: transformedData },
-          {
-            onSuccess: () => {
-              notify('ra.notification.updated', { type: 'info' });
-              refresh();
-              onClose();
-            },
-            ...mutationOptions,
-          }
-        );
-      } else {
-        await create(
-          resource,
-          { data: transformedData },
-          {
-            onSuccess: () => {
-              notify('ra.notification.created', { type: 'info' });
-              refresh();
-              onClose();
-            },
-            ...mutationOptions,
-          }
-        );
-      }
-    } catch (error) {
-      notify(error.message || 'ra.notification.http_error', { type: 'error' });
+    if (mode === 'edit') {
+      update(
+        resource,
+        { id: record.id, data: transformedData },
+        {
+          onSuccess: () => {
+            notify('ra.notification.updated', { type: 'info' });
+            refresh();
+            onClose();
+          },
+          onError: (error) => {
+            notify(error.message || 'ra.notification.http_error', { type: 'error' });
+          },
+          ...mutationOptions,
+        }
+      );
+    } else {
+      create(
+        resource,
+        { data: transformedData },
+        {
+          onSuccess: () => {
+            notify('ra.notification.created', { type: 'info' });
+            refresh();
+            onClose();
+          },
+          onError: (error) => {
+            notify(error.message || 'ra.notification.http_error', { type: 'error' });
+          },
+          ...mutationOptions,
+        }
+      );
     }
   };
   
