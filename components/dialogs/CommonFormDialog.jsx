@@ -3,6 +3,7 @@ import {
   useCreate, 
   useRefresh, 
   useNotify,
+  useTranslate,
   SimpleForm,
   SaveButton,
   Button
@@ -27,6 +28,7 @@ export const CommonFormDialog = ({
 }) => {
   const refresh = useRefresh();
   const notify = useNotify();
+  const translate = useTranslate();
   
   const [update, { isLoading: isUpdating }] = useUpdate();
   const [create, { isLoading: isCreating }] = useCreate();
@@ -71,6 +73,10 @@ export const CommonFormDialog = ({
     }
   };
   
+  const defaultTitle = mode === 'edit' 
+    ? translate('ra.action.edit') 
+    : translate('ra.action.create');
+  
   return (
     <Dialog
       open={open}
@@ -78,12 +84,10 @@ export const CommonFormDialog = ({
       maxWidth={maxWidth}
       fullWidth={fullWidth}
       scroll="paper"
-      dir="rtl"
       aria-labelledby="form-dialog-title"
-      onClick={(e) => e.stopPropagation()}
     >
       <DialogTitle id="form-dialog-title">
-        {title || (mode === 'edit' ? 'עריכה' : 'יצירה חדשה')}
+        {title || defaultTitle}
       </DialogTitle>
       <DialogContent dividers>
         <SimpleForm
