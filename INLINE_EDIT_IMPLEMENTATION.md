@@ -14,6 +14,7 @@ Created in `components/dialogs/`:
 - React Context for providing inline edit configuration
 - Eliminates prop drilling through component tree
 - Provides `inlineCreate`, `CreateInputs`, and `dialogCreateTitle` to descendants
+- **Fully documented with JSDoc** including type definitions
 
 #### CommonCreateButton.jsx
 - **Context-aware** create button component
@@ -21,14 +22,17 @@ Created in `components/dialogs/`:
 - If context has inline create enabled, renders `CreateInDialogButton`
 - Otherwise, renders standard `CreateButton`
 - This allows `CommonListActions` to be agnostic about inline editing
+- **Includes JSDoc documentation**
 
-#### CommonFormDialogContent (in CommonFormDialog.jsx)
+#### CommonFormDialogContent.jsx
 - Dialog content component that works with the existing `ActionOrDialogButton`
 - **Uses React Admin's `EditBase` and `CreateBase`** for proper form handling
 - Leverages React Admin's data fetching, validation, and mutation logic
 - Handles form submission, loading states, and error notifications automatically
 - Automatically refreshes data on successful save
 - Renders DialogContent and DialogActions for use within a dialog
+- **Performance optimized with useCallback**
+- **Comprehensive JSDoc with parameter descriptions**
 
 #### EditInDialogButton.jsx
 - Row-level button component that opens the edit dialog
@@ -55,9 +59,11 @@ Added support for:
 - `dialogCreateTitle`: Optional custom title for create dialog
 
 **Key improvements**:
-- **EditButton defined at entity level** (outside List component) for better organization
+- **EditButton defined at entity level** (inside List component) for better organization
 - Uses `readonly` flag to control row click behavior (cleaner than separate inlineEdit flag)
 - Wraps List with InlineEditProvider to provide context for inline create
+- **Optimized with useMemo** - EditButton and context value are memoized to prevent unnecessary re-renders
+- **Comprehensive JSDoc** documenting all parameters and return types
 
 #### CommonList.jsx
 **ZERO CHANGES** - The CommonList component itself is completely unchanged from the original.
@@ -147,15 +153,21 @@ Dialog closes + UI updates
 
 5. **Smart Button Pattern**: `CommonCreateButton` is context-aware and decides internally whether to render inline or regular button.
 
-6. **EditButton at Entity Level**: Defined in `getResourceComponents` for better organization, not inside the List component.
+6. **EditButton at Entity Level**: Defined inside List component in `getResourceComponents` for better organization and access to context.
 
 7. **readonly Flag**: Uses existing `readonly` flag to control row click behavior, cleaner than introducing a separate `inlineEdit` flag for the datagrid.
 
-8. **Backward Compatible**: Opt-in design means existing entities work unchanged.
+8. **Performance Optimization**: Uses `useMemo` for EditButton and context value creation, and `useCallback` for event handlers to prevent unnecessary re-renders.
 
-9. **No Navigation**: Dialogs keep users on the list page, improving workflow.
+9. **Code Documentation**: Comprehensive JSDoc comments for all public APIs, making the code self-documenting and easier to maintain.
 
-10. **Internationalization**: Uses React Admin's translation system, not hardcoded strings.
+10. **Naming Consistency**: File names match exported component names (e.g., `CommonFormDialogContent.jsx` exports `CommonFormDialogContent`).
+
+11. **Backward Compatible**: Opt-in design means existing entities work unchanged.
+
+12. **No Navigation**: Dialogs keep users on the list page, improving workflow.
+
+13. **Internationalization**: Uses React Admin's translation system, not hardcoded strings.
 
 ## What Was NOT Implemented (As Requested)
 
