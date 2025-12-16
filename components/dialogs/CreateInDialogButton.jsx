@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Button, useResourceContext } from 'react-admin';
+import { useResourceContext, useTranslate } from 'react-admin';
 import AddIcon from '@mui/icons-material/Add';
-import { CommonFormDialog } from './CommonFormDialog';
+import { ActionOrDialogButton } from '@shared/components/crudContainers/ActionOrDialogButton';
+import { CommonFormDialogContent } from './CommonFormDialog';
 
 export const CreateInDialogButton = ({
   Inputs,
@@ -13,30 +13,28 @@ export const CreateInDialogButton = ({
   dialogProps,
   ...rest
 }) => {
-  const [open, setOpen] = useState(false);
   const resource = useResourceContext({ resource: resourceProp });
+  const translate = useTranslate();
+  
+  const defaultTitle = title || translate('ra.action.create');
   
   return (
-    <>
-      <Button
-        onClick={() => setOpen(true)}
-        label={label}
-        startIcon={icon}
-        {...rest}
-      />
-      {open && (
-        <CommonFormDialog
+    <ActionOrDialogButton
+      label={label}
+      startIcon={icon}
+      title={defaultTitle}
+      dialogContent={({ onClose }) => (
+        <CommonFormDialogContent
           mode="create"
           resource={resource}
           record={defaultValues}
-          open={open}
-          onClose={() => setOpen(false)}
-          title={title}
+          onClose={onClose}
           {...dialogProps}
         >
           <Inputs isCreate={true} />
-        </CommonFormDialog>
+        </CommonFormDialogContent>
       )}
-    </>
+      {...rest}
+    />
   );
 };

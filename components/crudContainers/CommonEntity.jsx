@@ -46,17 +46,26 @@ export function getResourceComponents({
             />
         ) : null;
 
+        const inlineCreateProps = inlineCreate ? {
+            inlineCreate: true,
+            CreateInputs: (props) => <Inputs {...props} isAdmin={isAdmin} />,
+            dialogCreateTitle,
+        } : undefined;
+
         return (
-            <CommonList resource={resource}
-                filters={filtersArr} filterDefaultValues={filterDefaultValues}
+            <CommonList 
+                resource={resource}
+                filters={filtersArr} 
+                filterDefaultValues={filterDefaultValues}
                 filter={filter}
-                importer={importerDef} exporter={exporter}
+                importer={importerDef} 
+                exporter={exporter}
                 empty={<EmptyPage importer={importerDef} />}
-                sort={sort} configurable={configurable}
+                sort={sort} 
+                configurable={configurable}
                 additionalListActions={additionalListActions}
-                inlineCreate={inlineCreate}
-                CreateInputs={inlineCreate ? (props) => <Inputs {...props} isAdmin={isAdmin} /> : null}
-                dialogCreateTitle={dialogCreateTitle}>
+                inlineCreateProps={inlineCreateProps}
+            >
                 <Datagrid isAdmin={isAdmin} deleteResource={deleteResource} configurable={configurable} inlineEdit={inlineEdit} EditButton={EditButton} />
             </CommonList>
         );

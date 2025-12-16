@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Button, useRecordContext, useResourceContext } from 'react-admin';
+import { useRecordContext, useResourceContext, useTranslate } from 'react-admin';
 import EditIcon from '@mui/icons-material/Edit';
-import { CommonFormDialog } from './CommonFormDialog';
+import { ActionOrDialogButton } from '@shared/components/crudContainers/ActionOrDialogButton';
+import { CommonFormDialogContent } from './CommonFormDialog';
 
 export const EditInDialogButton = ({
   Inputs,
@@ -12,36 +12,31 @@ export const EditInDialogButton = ({
   dialogProps,
   ...rest
 }) => {
-  const [open, setOpen] = useState(false);
   const record = useRecordContext();
   const resource = useResourceContext({ resource: resourceProp });
+  const translate = useTranslate();
   
   if (!record) return null;
   
+  const defaultTitle = title || translate('ra.action.edit');
+  
   return (
-    <>
-      <Button
-        onClick={(e) => {
-          e.stopPropagation();
-          setOpen(true);
-        }}
-        label={label}
-        startIcon={icon}
-        {...rest}
-      />
-      {open && (
-        <CommonFormDialog
+    <ActionOrDialogButton
+      label={label}
+      startIcon={icon}
+      title={defaultTitle}
+      dialogContent={({ onClose }) => (
+        <CommonFormDialogContent
           mode="edit"
           resource={resource}
           record={record}
-          open={open}
-          onClose={() => setOpen(false)}
-          title={title}
+          onClose={onClose}
           {...dialogProps}
         >
           <Inputs isCreate={false} />
-        </CommonFormDialog>
+        </CommonFormDialogContent>
       )}
-    </>
+      {...rest}
+    />
   );
 };

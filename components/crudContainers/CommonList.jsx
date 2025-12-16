@@ -21,11 +21,11 @@ const useBulkActionButtons = (readonly, additionalBulkButtons = [], deleteResour
 
 const CommonPagination = () => <Pagination rowsPerPageOptions={PAGE_SIZE_OPTIONS} />;
 
-export const CommonList = ({ children, importer, exporter, filterDefaultValues, configurable = true, additionalListActions, inlineCreate = false, CreateInputs, dialogCreateTitle, ...props }) => {
+export const CommonList = ({ children, importer, exporter, filterDefaultValues, configurable = true, additionalListActions, inlineCreateProps, ...props }) => {
     const defaultPageSize = useDefaultPageSize();
     
     return (
-        <List actions={<CommonListActions importer={importer} configurable={configurable} inlineCreate={inlineCreate} CreateInputs={CreateInputs} dialogCreateTitle={dialogCreateTitle}>{additionalListActions}</CommonListActions>}
+        <List actions={<CommonListActions importer={importer} configurable={configurable} {...inlineCreateProps}>{additionalListActions}</CommonListActions>}
             pagination={<CommonPagination />} perPage={defaultPageSize}
             exporter={exporter} filterDefaultValues={filterDefaultValues} {...props}>
             {children}
