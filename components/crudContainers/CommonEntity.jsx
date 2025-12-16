@@ -6,6 +6,7 @@ import { EmptyPage } from './EmptyPage';
 import { filterArrayByParams } from '@shared/utils/filtersUtil';
 import { usePermissions } from 'react-admin';
 import { EditInDialogButton } from '@shared/components/dialogs/EditInDialogButton';
+import { InlineEditProvider } from '@shared/components/dialogs/InlineEditContext';
 
 export function getResourceComponents({
     resource,
@@ -46,28 +47,29 @@ export function getResourceComponents({
             />
         ) : null;
 
-        const inlineCreateProps = inlineCreate ? {
+        const inlineEditContextValue = (inlineCreate && Inputs) ? {
             inlineCreate: true,
             CreateInputs: (props) => <Inputs {...props} isAdmin={isAdmin} />,
             dialogCreateTitle,
-        } : undefined;
+        } : null;
 
         return (
-            <CommonList 
-                resource={resource}
-                filters={filtersArr} 
-                filterDefaultValues={filterDefaultValues}
-                filter={filter}
-                importer={importerDef} 
-                exporter={exporter}
-                empty={<EmptyPage importer={importerDef} />}
-                sort={sort} 
-                configurable={configurable}
-                additionalListActions={additionalListActions}
-                inlineCreateProps={inlineCreateProps}
-            >
-                <Datagrid isAdmin={isAdmin} deleteResource={deleteResource} configurable={configurable} inlineEdit={inlineEdit} EditButton={EditButton} />
-            </CommonList>
+            <InlineEditProvider value={inlineEditContextValue}>
+                <CommonList 
+                    resource={resource}
+                    filters={filtersArr} 
+                    filterDefaultValues={filterDefaultValues}
+                    filter={filter}
+                    importer={importerDef} 
+                    exporter={exporter}
+                    empty={<EmptyPage importer={importerDef} />}
+                    sort={sort} 
+                    configurable={configurable}
+                    additionalListActions={additionalListActions}
+                >
+                    <Datagrid isAdmin={isAdmin} deleteResource={deleteResource} configurable={configurable} inlineEdit={inlineEdit} EditButton={EditButton} />
+                </CommonList>
+            </InlineEditProvider>
         );
     }
 

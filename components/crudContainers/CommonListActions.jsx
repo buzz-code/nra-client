@@ -1,10 +1,10 @@
 import { useMemo, useContext } from 'react';
-import { CreateButton, TopToolbar, FilterButton, useListContext, useResourceContext, useResourceDefinition, FilterContext, SelectColumnsButton } from 'react-admin';
+import { TopToolbar, FilterButton, useListContext, useResourceContext, useResourceDefinition, FilterContext, SelectColumnsButton } from 'react-admin';
 import { ResourceImportButton } from '@shared/components/crudContainers/ResourceImportButton';
 import { ResourceExportButton } from './ResourceExportButton';
-import { CreateInDialogButton } from '@shared/components/dialogs/CreateInDialogButton';
+import { CommonCreateButton } from '@shared/components/dialogs/CommonCreateButton';
 
-export const CommonListActions = ({ importer, configurable, children, inlineCreate = false, CreateInputs, dialogCreateTitle, ...props }) => {
+export const CommonListActions = ({ importer, configurable, children, ...props }) => {
     const {
         sort,
         filterValues,
@@ -21,17 +21,7 @@ export const CommonListActions = ({ importer, configurable, children, inlineCrea
         () => (
             <TopToolbar {...restProps}>
                 {filters && <FilterButton />}
-                {hasCreate && (
-                    inlineCreate ? (
-                        <CreateInDialogButton
-                            Inputs={CreateInputs}
-                            resource={resource}
-                            title={dialogCreateTitle}
-                        />
-                    ) : (
-                        <CreateButton />
-                    )
-                )}
+                {hasCreate && <CommonCreateButton />}
                 {children}
                 {configurable && <SelectColumnsButton />}
                 {exporter !== false && (
@@ -70,9 +60,6 @@ export const CommonListActions = ({ importer, configurable, children, inlineCrea
             sort,
             exporter,
             hasCreate,
-            inlineCreate,
-            CreateInputs,
-            dialogCreateTitle,
         ]
     );
 }
