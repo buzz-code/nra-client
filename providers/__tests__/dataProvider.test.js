@@ -160,14 +160,16 @@ describe('dataProvider', () => {
     it('executes action with download', async () => {
       const queryParams = { format: 'pdf' };
       const bodyParams = { ids: [1, 2] };
+      const responseData = btoa('test pdf content');
       const mockResponse = {
         json: {
-          data: btoa('test pdf content'),
+          data: responseData,
           type: 'application/pdf',
           disposition: 'attachment; filename="report.pdf"',
+          contentLength: responseData.length,
         },
       };
-      
+
       fetchJson.mockResolvedValueOnce(mockResponse);
 
       // Mock URL.createObjectURL to return a dummy URL
@@ -192,14 +194,16 @@ describe('dataProvider', () => {
     });
 
     it('executes download with default empty params', async () => {
+      const responseData = btoa('test pdf content');
       const mockResponse = {
         json: {
-          data: btoa('test pdf content'),
+          data: responseData,
           type: 'application/pdf',
           disposition: 'attachment; filename="report.pdf"',
+          contentLength: responseData.length,
         },
       };
-      
+
       fetchJson.mockResolvedValueOnce(mockResponse);
 
       // Mock URL.createObjectURL to return a dummy URL

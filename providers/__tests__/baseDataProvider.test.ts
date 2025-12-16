@@ -167,11 +167,13 @@ describe('baseDataProvider', () => {
 
       const mockBlob = new Blob(['test'], { type: 'application/json' });
       const disposition = 'attachment; filename="test.json"';
+      const data = 'base64data';
       httpClient.mockResolvedValueOnce({
         json: {
           type: 'application/json',
-          data: 'base64data',
+          data,
           disposition,
+          contentLength: data.length,
         },
       });
       (global.fetch as jest.Mock).mockResolvedValueOnce({
