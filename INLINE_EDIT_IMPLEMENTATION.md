@@ -6,9 +6,21 @@ This implementation adds inline editing functionality to all entities in the nra
 
 ## What Was Implemented
 
-### 1. New Dialog Components (3 files)
+### 1. New Dialog Components (5 files)
 
 Created in `components/dialogs/`:
+
+#### InlineEditContext.jsx
+- React Context for providing inline edit configuration
+- Eliminates prop drilling through component tree
+- Provides `inlineCreate`, `CreateInputs`, and `dialogCreateTitle` to descendants
+
+#### CommonCreateButton.jsx
+- **Context-aware** create button component
+- Reads from `InlineEditContext` to decide behavior
+- If context has inline create enabled, renders `CreateInDialogButton`
+- Otherwise, renders standard `CreateButton`
+- This allows `CommonListActions` to be agnostic about inline editing
 
 #### CommonFormDialogContent (in CommonFormDialog.jsx)
 - Dialog content component that works with the existing `ActionOrDialogButton`
@@ -30,7 +42,7 @@ Created in `components/dialogs/`:
 - **Reuses existing `ActionOrDialogButton`** component
 - Uses React Admin's translation system for default titles
 - Supports default values for pre-populated fields
-- Replaces the standard create button when inline create is enabled
+- Used by `CommonCreateButton` when inline create is enabled
 
 ### 2. Updated CRUD Components (4 files)
 
@@ -44,16 +56,15 @@ Added support for:
 The component now creates an EditButton when inline edit is enabled and passes the necessary props to CommonList for inline create support.
 
 #### CommonList.jsx
-**MINIMAL CHANGES** - Added only ONE parameter:
-- `inlineCreateProps`: Object containing inline create configuration (spread to CommonListActions)
+**ZERO CHANGES** - The CommonList component itself is completely unchanged from the original.
 
-This single parameter groups all inline create props and is spread to CommonListActions, keeping CommonList changes to an absolute minimum.
+Only `CommonDatagrid` (exported from the same file) was modified to support inline edit button rendering.
 
 #### CommonListActions.jsx
 Updated to:
-- Import and use `CreateInDialogButton`
-- Conditionally render either `CreateInDialogButton` or standard `CreateButton` based on `inlineCreate` flag
-- Pass necessary props to the dialog button
+- Import and use `CommonCreateButton` (context-aware button)
+- Removed conditional logic - `CommonCreateButton` handles the decision internally
+- Simplified by removing inline create props (now provided via Context)
 
 #### CommonDatagrid
 Added parameters:
@@ -121,17 +132,21 @@ Dialog closes + UI updates
 
 ### Key Design Decisions
 
-1. **Reuse Existing Components**: The dialog uses the same `Inputs` component as the full edit/create pages, avoiding code duplication.
+1. **Context API**: Uses React Context to provide inline edit configuration, eliminating prop drilling through CommonList.
 
-2. **Self-Contained State**: Button components manage their own dialog open/close state, reducing prop drilling.
+2. **Reuse Existing Components**: The dialog uses the same `Inputs` component as the full edit/create pages, avoiding code duplication. Also reuses existing `ActionOrDialogButton`.
 
-3. **Backward Compatible**: Opt-in design means existing entities work unchanged.
+3. **Zero Changes to CommonList**: The main CommonList component is completely unchanged. Only CommonDatagrid (in the same file) was modified.
 
-4. **No Navigation**: Dialogs keep users on the list page, improving workflow.
+4. **Smart Button Pattern**: `CommonCreateButton` is context-aware and decides internally whether to render inline or regular button.
 
-5. **Internationalization**: Uses React Admin's translation system, not hardcoded strings.
+5. **Backward Compatible**: Opt-in design means existing entities work unchanged.
 
-6. **Row Click Behavior**: When inline edit is enabled, row clicks are disabled to prevent conflicting navigation.
+6. **No Navigation**: Dialogs keep users on the list page, improving workflow.
+
+7. **Internationalization**: Uses React Admin's translation system, not hardcoded strings.
+
+8. **Row Click Behavior**: When inline edit is enabled, row clicks are disabled to prevent conflicting navigation.
 
 ## What Was NOT Implemented (As Requested)
 
@@ -196,19 +211,25 @@ If issues arise, simply remove the flags to revert to the old behavior.
 ## Files Changed
 
 ```
-INLINE_EDIT_IMPLEMENTATION.md                   (documentation)
-INLINE_EDIT_USAGE.md                            (documentation)
-components/dialogs/CommonFormDialog.jsx         (new - CommonFormDialogContent)
-components/dialogs/EditInDialogButton.jsx       (new - uses ActionOrDialogButton)
-components/dialogs/CreateInDialogButton.jsx     (new - uses ActionOrDialogButton)
-components/crudContainers/CommonEntity.jsx      (updated)
-components/crudContainers/CommonList.jsx        (updated - MINIMAL: 1 parameter)
-components/crudContainers/CommonListActions.jsx (updated)
+INLINE_EDIT_IMPLEMENTATION.md                    (documentation)
+INLINE_EDIT_USAGE.md                             (documentation)
+components/dialogs/InlineEditContext.jsx         (new - Context for config)
+components/dialogs/CommonCreateButton.jsx        (new - context-aware button)
+components/dialogs/CommonFormDialog.jsx          (new - CommonFormDialogContent)
+components/dialogs/EditInDialogButton.jsx        (new - uses ActionOrDialogButton)
+components/dialogs/CreateInDialogButton.jsx      (new - uses ActionOrDialogButton)
+components/crudContainers/CommonEntity.jsx       (updated - wraps with Context)
+components/crudContainers/CommonList.jsx         (updated - ONLY CommonDatagrid modified)
+components/crudContainers/CommonListActions.jsx  (updated - uses CommonCreateButton)
 ```
 
-**Total**: 8 files (5 new, 3 updated), ~100 lines changed
+**Total**: 10 files (7 new, 3 updated), ~120 lines changed
 
-**Key improvements**: Reuses existing ActionOrDialogButton, minimal changes to CommonList
+**Key improvements**: 
+- Zero changes to CommonList component
+- Uses Context API (no prop drilling)
+- Reuses existing ActionOrDialogButton
+- Smart button pattern with CommonCreateButton
 
 ## Conclusion
 
