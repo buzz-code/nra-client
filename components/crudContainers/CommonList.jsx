@@ -33,14 +33,14 @@ export const CommonList = ({ children, importer, exporter, filterDefaultValues, 
     );
 }
 
-export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, deleteResource, hasDelete, configurable = true, inlineEdit = false, EditButton, ...props }) => {
+export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, deleteResource, hasDelete, configurable = true, EditButton, ...props }) => {
     const bulkActionButtons = useBulkActionButtons(readonly, additionalBulkButtons, deleteResource, hasDelete, props);
     const RaDataGrid = configurable ? DatagridConfigurable : Datagrid;
 
     return (
-        <RaDataGrid rowClick={!readonly && !inlineEdit && 'edit'} bulkActionButtons={bulkActionButtons} {...props}>
+        <RaDataGrid rowClick={!readonly && 'edit'} bulkActionButtons={bulkActionButtons} {...props}>
             {children}
-            {inlineEdit && EditButton}
+            {EditButton}
         </RaDataGrid>
     )
 }

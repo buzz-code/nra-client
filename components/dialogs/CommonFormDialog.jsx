@@ -1,15 +1,17 @@
 import { 
-  useUpdate, 
-  useCreate, 
-  useRefresh, 
+  EditBase,
+  CreateBase,
+  useRefresh,
   useNotify,
   SimpleForm,
   SaveButton,
-  Button
+  Button,
+  useRecordContext
 } from 'react-admin';
 import { DialogContent, DialogActions } from '@mui/material';
 
 // Dialog content component that works with ActionOrDialogButton
+// Uses React Admin's EditBase/CreateBase for proper form handling
 export const CommonFormDialogContent = ({
   mode,
   resource,
@@ -22,54 +24,47 @@ export const CommonFormDialogContent = ({
   const refresh = useRefresh();
   const notify = useNotify();
   
-  const [update, { isLoading: isUpdating }] = useUpdate();
-  const [create, { isLoading: isCreating }] = useCreate();
-  
-  const isLoading = isUpdating || isCreating;
-  
-  const handleSave = (data) => {
-    const transformedData = transform ? transform(data) : data;
-    
-    if (mode === 'edit') {
-      update(
-        resource,
-        { id: record.id, data: transformedData },
-        {
-          onSuccess: () => {
-            notify('ra.notification.updated', { type: 'info' });
-            refresh();
-            onClose();
-          },
-          onError: (error) => {
-            notify(error.message || 'ra.notification.http_error', { type: 'error' });
-          },
-          ...mutationOptions,
-        }
-      );
-    } else {
-      create(
-        resource,
-        { data: transformedData },
-        {
-          onSuccess: () => {
-            notify('ra.notification.created', { type: 'info' });
-            refresh();
-            onClose();
-          },
-          onError: (error) => {
-            notify(error.message || 'ra.notification.http_error', { type: 'error' });
-          },
-          ...mutationOptions,
-        }
-      );
-    }
+  const handleSuccess = () => {
+    notify(mode === 'edit' ? 'ra.notification.updated' : 'ra.notification.created', { type: 'info' });
+    refresh();
+    onClose();
   };
+  
+  const handleError = (error) => {
+    notify(error.message || 'ra.notification.http_error', { type: 'error' });
+  };
+  
+  const BaseComponent = mode === 'edit' ? EditBase : CreateBase;
+  const baseProps = mode === 'edit' 
+    ? { resource, id: record?.id }
+    : { resource, record };
+  
+  return (
+    <BaseComponent
+      {...baseProps}
+      mutationMode="pessimistic"
+      mutationOptions={{
+        onSuccess: handleSuccess,
+        onError: handleError,
+        ...mutationOptions,
+      }}
+      transform={transform}
+    >
+      <FormContent onClose={onClose} mode={mode}>
+        {children}
+      </FormContent>
+    </BaseComponent>
+  );
+};
+
+// Separate component to access form context from EditBase/CreateBase
+const FormContent = ({ onClose, mode, children }) => {
+  const record = useRecordContext();
   
   return (
     <>
       <DialogContent dividers>
         <SimpleForm
-          onSubmit={handleSave}
           record={record}
           toolbar={false}
           sx={{ p: 0 }}
@@ -81,11 +76,8 @@ export const CommonFormDialogContent = ({
         <Button
           onClick={onClose}
           label="ra.action.cancel"
-          disabled={isLoading}
         />
         <SaveButton
-          alwaysEnable={false}
-          disabled={isLoading}
           label={mode === 'edit' ? 'ra.action.save' : 'ra.action.create'}
           type="submit"
         />
