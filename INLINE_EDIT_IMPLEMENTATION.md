@@ -24,8 +24,9 @@ Created in `components/dialogs/`:
 
 #### CommonFormDialogContent (in CommonFormDialog.jsx)
 - Dialog content component that works with the existing `ActionOrDialogButton`
-- Integrates with React Admin's `useUpdate` and `useCreate` hooks
-- Handles form submission, loading states, and error notifications
+- **Uses React Admin's `EditBase` and `CreateBase`** for proper form handling
+- Leverages React Admin's data fetching, validation, and mutation logic
+- Handles form submission, loading states, and error notifications automatically
 - Automatically refreshes data on successful save
 - Renders DialogContent and DialogActions for use within a dialog
 
@@ -53,7 +54,10 @@ Added support for:
 - `dialogEditTitle`: Optional custom title for edit dialog
 - `dialogCreateTitle`: Optional custom title for create dialog
 
-The component now creates an EditButton when inline edit is enabled and passes the necessary props to CommonList for inline create support.
+**Key improvements**:
+- **EditButton defined at entity level** (outside List component) for better organization
+- Uses `readonly` flag to control row click behavior (cleaner than separate inlineEdit flag)
+- Wraps List with InlineEditProvider to provide context for inline create
 
 #### CommonList.jsx
 **ZERO CHANGES** - The CommonList component itself is completely unchanged from the original.
@@ -67,13 +71,14 @@ Updated to:
 - Simplified by removing inline create props (now provided via Context)
 
 #### CommonDatagrid
-Added parameters:
-- `inlineEdit`: Flag to enable inline editing
-- `EditButton`: The edit button component to render in each row
+**Simplified implementation**:
+- Accepts `EditButton` component to render in each row
+- Uses existing `readonly` flag to control row click behavior
+- No need for separate `inlineEdit` flag - `readonly` serves the same purpose
 
-When inline edit is enabled:
-- The EditButton is added as the last column in the datagrid
-- Row click navigation is disabled (to avoid conflicts with the edit button)
+When EditButton is provided:
+- Rendered as the last column in the datagrid
+- Row click navigation is disabled via `readonly` flag
 
 ### 3. Documentation (2 files)
 
@@ -132,21 +137,25 @@ Dialog closes + UI updates
 
 ### Key Design Decisions
 
-1. **Context API**: Uses React Context to provide inline edit configuration, eliminating prop drilling through CommonList.
+1. **React Admin Integration**: Uses `EditBase` and `CreateBase` for proper form handling, leveraging React Admin's data fetching, validation, and mutation logic.
 
-2. **Reuse Existing Components**: The dialog uses the same `Inputs` component as the full edit/create pages, avoiding code duplication. Also reuses existing `ActionOrDialogButton`.
+2. **Context API**: Uses React Context to provide inline edit configuration, eliminating prop drilling through CommonList.
 
-3. **Zero Changes to CommonList**: The main CommonList component is completely unchanged. Only CommonDatagrid (in the same file) was modified.
+3. **Reuse Existing Components**: The dialog uses the same `Inputs` component as the full edit/create pages, avoiding code duplication. Also reuses existing `ActionOrDialogButton`.
 
-4. **Smart Button Pattern**: `CommonCreateButton` is context-aware and decides internally whether to render inline or regular button.
+4. **Zero Changes to CommonList**: The main CommonList component is completely unchanged. Only CommonDatagrid (in the same file) was modified.
 
-5. **Backward Compatible**: Opt-in design means existing entities work unchanged.
+5. **Smart Button Pattern**: `CommonCreateButton` is context-aware and decides internally whether to render inline or regular button.
 
-6. **No Navigation**: Dialogs keep users on the list page, improving workflow.
+6. **EditButton at Entity Level**: Defined in `getResourceComponents` for better organization, not inside the List component.
 
-7. **Internationalization**: Uses React Admin's translation system, not hardcoded strings.
+7. **readonly Flag**: Uses existing `readonly` flag to control row click behavior, cleaner than introducing a separate `inlineEdit` flag for the datagrid.
 
-8. **Row Click Behavior**: When inline edit is enabled, row clicks are disabled to prevent conflicting navigation.
+8. **Backward Compatible**: Opt-in design means existing entities work unchanged.
+
+9. **No Navigation**: Dialogs keep users on the list page, improving workflow.
+
+10. **Internationalization**: Uses React Admin's translation system, not hardcoded strings.
 
 ## What Was NOT Implemented (As Requested)
 
