@@ -47,6 +47,7 @@ export function getResourceComponents({
             />
         ) : null;
 
+        // Only provide inline create context if both flag is enabled AND Inputs component exists
         const inlineEditContextValue = (inlineCreate && Inputs) ? {
             inlineCreate: true,
             CreateInputs: (props) => <Inputs {...props} isAdmin={isAdmin} />,
