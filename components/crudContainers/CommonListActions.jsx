@@ -2,8 +2,9 @@ import { useMemo, useContext } from 'react';
 import { CreateButton, TopToolbar, FilterButton, useListContext, useResourceContext, useResourceDefinition, FilterContext, SelectColumnsButton } from 'react-admin';
 import { ResourceImportButton } from '@shared/components/crudContainers/ResourceImportButton';
 import { ResourceExportButton } from './ResourceExportButton';
+import { CreateInDialogButton } from '@shared/components/dialogs/CreateInDialogButton';
 
-export const CommonListActions = ({ importer, configurable, children, ...props }) => {
+export const CommonListActions = ({ importer, configurable, children, inlineCreate = false, CreateInputs, dialogCreateTitle, ...props }) => {
     const {
         sort,
         filterValues,
@@ -20,7 +21,17 @@ export const CommonListActions = ({ importer, configurable, children, ...props }
         () => (
             <TopToolbar {...restProps}>
                 {filters && <FilterButton />}
-                {hasCreate && <CreateButton />}
+                {hasCreate && (
+                    inlineCreate ? (
+                        <CreateInDialogButton
+                            Inputs={CreateInputs}
+                            resource={resource}
+                            title={dialogCreateTitle}
+                        />
+                    ) : (
+                        <CreateButton />
+                    )
+                )}
                 {children}
                 {configurable && <SelectColumnsButton />}
                 {exporter !== false && (
@@ -59,6 +70,9 @@ export const CommonListActions = ({ importer, configurable, children, ...props }
             sort,
             exporter,
             hasCreate,
+            inlineCreate,
+            CreateInputs,
+            dialogCreateTitle,
         ]
     );
 }

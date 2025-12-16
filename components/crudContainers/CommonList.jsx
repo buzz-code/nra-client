@@ -21,11 +21,11 @@ const useBulkActionButtons = (readonly, additionalBulkButtons = [], deleteResour
 
 const CommonPagination = () => <Pagination rowsPerPageOptions={PAGE_SIZE_OPTIONS} />;
 
-export const CommonList = ({ children, importer, exporter, filterDefaultValues, configurable = true, additionalListActions, ...props }) => {
+export const CommonList = ({ children, importer, exporter, filterDefaultValues, configurable = true, additionalListActions, inlineCreate = false, CreateInputs, dialogCreateTitle, ...props }) => {
     const defaultPageSize = useDefaultPageSize();
     
     return (
-        <List actions={<CommonListActions importer={importer} configurable={configurable}>{additionalListActions}</CommonListActions>}
+        <List actions={<CommonListActions importer={importer} configurable={configurable} inlineCreate={inlineCreate} CreateInputs={CreateInputs} dialogCreateTitle={dialogCreateTitle}>{additionalListActions}</CommonListActions>}
             pagination={<CommonPagination />} perPage={defaultPageSize}
             exporter={exporter} filterDefaultValues={filterDefaultValues} {...props}>
             {children}
@@ -33,13 +33,14 @@ export const CommonList = ({ children, importer, exporter, filterDefaultValues, 
     );
 }
 
-export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, deleteResource, hasDelete, configurable = true, ...props }) => {
+export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, deleteResource, hasDelete, configurable = true, inlineEdit = false, EditButton, ...props }) => {
     const bulkActionButtons = useBulkActionButtons(readonly, additionalBulkButtons, deleteResource, hasDelete, props);
     const RaDataGrid = configurable ? DatagridConfigurable : Datagrid;
 
     return (
-        <RaDataGrid rowClick={!readonly && 'edit'} bulkActionButtons={bulkActionButtons} {...props}>
+        <RaDataGrid rowClick={!readonly && !inlineEdit && 'edit'} bulkActionButtons={bulkActionButtons} {...props}>
             {children}
+            {inlineEdit && EditButton}
         </RaDataGrid>
     )
 }

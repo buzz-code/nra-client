@@ -5,6 +5,7 @@ import { CommonCreate } from '@shared/components/crudContainers/CommonCreate';
 import { EmptyPage } from './EmptyPage';
 import { filterArrayByParams } from '@shared/utils/filtersUtil';
 import { usePermissions } from 'react-admin';
+import { EditInDialogButton } from '@shared/components/dialogs/EditInDialogButton';
 
 export function getResourceComponents({
     resource,
@@ -20,6 +21,10 @@ export function getResourceComponents({
     sort,
     configurable = true,
     additionalListActions,
+    inlineEdit = false,
+    inlineCreate = false,
+    dialogEditTitle,
+    dialogCreateTitle,
 }) {
     const importerDef = importer
         ? {
@@ -33,6 +38,14 @@ export function getResourceComponents({
         const { permissions } = usePermissions();
         const filtersArr = filterArrayByParams(filters, { isAdmin, permissions });
 
+        const EditButton = inlineEdit ? (
+            <EditInDialogButton 
+                Inputs={(props) => <Inputs {...props} isAdmin={isAdmin} />}
+                resource={editResource || resource}
+                title={dialogEditTitle}
+            />
+        ) : null;
+
         return (
             <CommonList resource={resource}
                 filters={filtersArr} filterDefaultValues={filterDefaultValues}
@@ -40,8 +53,11 @@ export function getResourceComponents({
                 importer={importerDef} exporter={exporter}
                 empty={<EmptyPage importer={importerDef} />}
                 sort={sort} configurable={configurable}
-                additionalListActions={additionalListActions}>
-                <Datagrid isAdmin={isAdmin} deleteResource={deleteResource} configurable={configurable} />
+                additionalListActions={additionalListActions}
+                inlineCreate={inlineCreate}
+                CreateInputs={inlineCreate ? (props) => <Inputs {...props} isAdmin={isAdmin} /> : null}
+                dialogCreateTitle={dialogCreateTitle}>
+                <Datagrid isAdmin={isAdmin} deleteResource={deleteResource} configurable={configurable} inlineEdit={inlineEdit} EditButton={EditButton} />
             </CommonList>
         );
     }
