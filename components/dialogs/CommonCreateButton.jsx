@@ -2,6 +2,15 @@ import { CreateButton } from 'react-admin';
 import { CreateInDialogButton } from './CreateInDialogButton';
 import { useInlineEditContext } from './InlineEditContext';
 
+/**
+ * Smart create button that decides between inline dialog or regular navigation
+ * based on InlineEditContext
+ * 
+ * If context provides inline create configuration, renders CreateInDialogButton
+ * Otherwise, renders standard CreateButton
+ * 
+ * @param {Object} props - Additional props passed to the button
+ */
 export const CommonCreateButton = (props) => {
     const inlineEditContext = useInlineEditContext();
     

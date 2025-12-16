@@ -9,9 +9,21 @@ import {
   useRecordContext
 } from 'react-admin';
 import { DialogContent, DialogActions } from '@mui/material';
+import { useCallback } from 'react';
 
-// Dialog content component that works with ActionOrDialogButton
-// Uses React Admin's EditBase/CreateBase for proper form handling
+/**
+ * Dialog content component that works with ActionOrDialogButton
+ * Uses React Admin's EditBase/CreateBase for proper form handling with automatic data fetching
+ * 
+ * @param {Object} props
+ * @param {'edit'|'create'} props.mode - Dialog mode
+ * @param {string} props.resource - Resource name
+ * @param {Object} props.record - Record data (id for edit, initial values for create)
+ * @param {Function} props.onClose - Callback to close the dialog
+ * @param {Object} props.mutationOptions - Additional mutation options
+ * @param {Function} props.transform - Transform function for data before save
+ * @param {React.ReactNode} props.children - Form input components
+ */
 export const CommonFormDialogContent = ({
   mode,
   resource,
@@ -24,15 +36,17 @@ export const CommonFormDialogContent = ({
   const refresh = useRefresh();
   const notify = useNotify();
   
-  const handleSuccess = () => {
-    notify(mode === 'edit' ? 'ra.notification.updated' : 'ra.notification.created', { type: 'info' });
+  const handleSuccess = useCallback(() => {
+    const message = mode === 'edit' ? 'ra.notification.updated' : 'ra.notification.created';
+    notify(message, { type: 'info' });
     refresh();
     onClose();
-  };
+  }, [mode, notify, refresh, onClose]);
   
-  const handleError = (error) => {
-    notify(error.message || 'ra.notification.http_error', { type: 'error' });
-  };
+  const handleError = useCallback((error) => {
+    const message = error?.message || 'ra.notification.http_error';
+    notify(message, { type: 'error' });
+  }, [notify]);
   
   const BaseComponent = mode === 'edit' ? EditBase : CreateBase;
   const baseProps = mode === 'edit' 
@@ -50,15 +64,18 @@ export const CommonFormDialogContent = ({
       }}
       transform={transform}
     >
-      <FormContent onClose={onClose} mode={mode}>
+      <InlineFormContent onClose={onClose} mode={mode}>
         {children}
-      </FormContent>
+      </InlineFormContent>
     </BaseComponent>
   );
 };
 
-// Separate component to access form context from EditBase/CreateBase
-const FormContent = ({ onClose, mode, children }) => {
+/**
+ * Internal component to render form content within EditBase/CreateBase context
+ * Separated to access useRecordContext from the Base component
+ */
+const InlineFormContent = ({ onClose, mode, children }) => {
   const record = useRecordContext();
   
   return (
