@@ -90,7 +90,7 @@ const getQueryJoin = (sort: QuerySort, filter: QueryFilter[]): QueryJoin[] => {
   const sortJoin = getSortJoin(sort);
   const filterJoin = getFilterJoin(filter);
   const joins = sortJoin.concat(filterJoin);
-  const uniqueJoinFields = Array.from(new Set(joins.map(j => j.field)));
+  const uniqueJoinFields = Array.from(new Set(joins.map(j => j.field))).filter(field => field !== 'extra');
   const uniqueJoins = uniqueJoinFields.map(field => joins.find(j => j.field === field));
   return uniqueJoins;
 }
