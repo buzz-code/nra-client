@@ -25,8 +25,10 @@ export const AutoPersistInStore = ({ storeKey }) => {
     // Debounce to avoid too many writes
     useEffect(() => {
         const save = debounce((val) => {
-            if (!isEqual(val, savedValue)) {
-                setSavedValue(val);
+            // Strip undefined values and convert Dates to strings to match store behavior
+            const cleanVal = JSON.parse(JSON.stringify(val));
+            if (!isEqual(cleanVal, savedValue)) {
+                setSavedValue(cleanVal);
             }
         }, 1000);
         
