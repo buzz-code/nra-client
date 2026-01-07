@@ -5,6 +5,7 @@ import { CommonCreate } from '@shared/components/crudContainers/CommonCreate';
 import { EmptyPage } from './EmptyPage';
 import { filterArrayByParams } from '@shared/utils/filtersUtil';
 import { usePermissions } from 'react-admin';
+import { useCommonRedirect } from '@shared/utils/redirectUtil';
 
 export function getResourceComponents({
     resource,
@@ -48,9 +49,10 @@ export function getResourceComponents({
 
     const Edit = Inputs && (() => {
         const isAdmin = useIsAdmin();
+        const redirect = useCommonRedirect({ resource });
 
         return (
-            <CommonEdit resource={editResource}>
+            <CommonEdit resource={editResource} redirect={redirect}>
                 <Inputs isAdmin={isAdmin} isCreate={false} />
             </CommonEdit>
         );
@@ -58,9 +60,10 @@ export function getResourceComponents({
 
     const Create = Inputs && (() => {
         const isAdmin = useIsAdmin();
+        const redirect = useCommonRedirect({ resource });
 
         return (
-            <CommonCreate resource={editResource}>
+            <CommonCreate resource={editResource} redirect={redirect}>
                 <Inputs isAdmin={isAdmin} isCreate={true} />
             </CommonCreate>
         );
