@@ -1,10 +1,14 @@
 import { useMemo } from 'react';
-import { Menu, useHasDashboard, useResourceDefinitions } from 'react-admin';
+import { Menu, useHasDashboard, useResourceDefinitions, usePermissions } from 'react-admin';
 import SubMenu from './SubMenu';
+import { useIsAdmin } from '@shared/utils/permissionsUtil';
+import { filterArrayByParams } from '@shared/utils/filtersUtil';
 
 const CustomMenu = ({ menuGroups, children }) => {
     const resources = useResourceDefinitions();
     const hasDashboard = useHasDashboard();
+    const isAdmin = useIsAdmin();
+    const { permissions } = usePermissions();
 
     const [menuGroupsArr, otherResources] = useMemo(() => {
         const groupsDict = Object.fromEntries(menuGroups.map(item => (
@@ -29,7 +33,7 @@ const CustomMenu = ({ menuGroups, children }) => {
         }
 
         for (const group of groupsArr) {
-            group.children = [...group.routes ?? []];
+            group.children = filterArrayByParams(group.routes ?? [], { isAdmin, permissions });
             group.children.unshift(...group.resources.map(name => (
                 <Menu.ResourceItem key={name} name={name} />
             )));
@@ -39,7 +43,7 @@ const CustomMenu = ({ menuGroups, children }) => {
             groupsArr,
             otherResources,
         ];
-    }, [resources, menuGroups]);
+    }, [resources, menuGroups, isAdmin, permissions]);
 
     return (
         <Menu>
