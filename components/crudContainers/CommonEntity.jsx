@@ -5,7 +5,6 @@ import { CommonCreate } from '@shared/components/crudContainers/CommonCreate';
 import { EmptyPage } from './EmptyPage';
 import { filterArrayByParams } from '@shared/utils/filtersUtil';
 import { usePermissions } from 'react-admin';
-import { useCommonRedirect } from '@shared/utils/redirectUtil';
 
 export function getResourceComponents({
     resource,
@@ -16,8 +15,6 @@ export function getResourceComponents({
     filterDefaultValues = {},
     importer = null,
     exporter = true,
-    editResource,
-    deleteResource,
     sort,
     configurable = true,
     additionalListActions,
@@ -42,17 +39,16 @@ export function getResourceComponents({
                 empty={<EmptyPage importer={importerDef} />}
                 sort={sort} configurable={configurable}
                 additionalListActions={additionalListActions}>
-                <Datagrid isAdmin={isAdmin} deleteResource={deleteResource} configurable={configurable} />
+                <Datagrid isAdmin={isAdmin} configurable={configurable} />
             </CommonList>
         );
     }
 
     const Edit = Inputs && (() => {
         const isAdmin = useIsAdmin();
-        const redirect = useCommonRedirect({ resource });
 
         return (
-            <CommonEdit resource={editResource} redirect={redirect}>
+            <CommonEdit>
                 <Inputs isAdmin={isAdmin} isCreate={false} />
             </CommonEdit>
         );
@@ -60,10 +56,9 @@ export function getResourceComponents({
 
     const Create = Inputs && (() => {
         const isAdmin = useIsAdmin();
-        const redirect = useCommonRedirect({ resource });
 
         return (
-            <CommonCreate resource={editResource} redirect={redirect}>
+            <CommonCreate>
                 <Inputs isAdmin={isAdmin} isCreate={true} />
             </CommonCreate>
         );

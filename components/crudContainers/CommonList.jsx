@@ -3,13 +3,13 @@ import { CommonListActions } from '@shared/components/crudContainers/CommonListA
 import { useDefaultPageSize } from '@shared/utils/settingsUtil';
 import { PAGE_SIZE_OPTIONS } from '@shared/config/settings';
 
-const useBulkActionButtons = (readonly, additionalBulkButtons = [], deleteResource, hasDelete, props) => {
+const useBulkActionButtons = (readonly, additionalBulkButtons = [], hasDelete, props) => {
     const { hasCreate } = useResourceDefinition(props);
     const shouldShowDelete = (!readonly && hasCreate) || hasDelete;
 
     const actionButtons = additionalBulkButtons.concat([
         // <BulkExportButton />,
-        shouldShowDelete && <BulkDeleteWithConfirmButton key='bulkDeleteWithConfirmButton' resource={deleteResource} />,
+        shouldShowDelete && <BulkDeleteWithConfirmButton key='bulkDeleteWithConfirmButton' />,
     ]).filter(Boolean);
 
     if (!actionButtons.length) {
@@ -33,8 +33,8 @@ export const CommonList = ({ children, importer, exporter, filterDefaultValues, 
     );
 }
 
-export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, deleteResource, hasDelete, configurable = true, ...props }) => {
-    const bulkActionButtons = useBulkActionButtons(readonly, additionalBulkButtons, deleteResource, hasDelete, props);
+export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, hasDelete, configurable = true, ...props }) => {
+    const bulkActionButtons = useBulkActionButtons(readonly, additionalBulkButtons, hasDelete, props);
     const RaDataGrid = configurable ? DatagridConfigurable : Datagrid;
 
     return (
