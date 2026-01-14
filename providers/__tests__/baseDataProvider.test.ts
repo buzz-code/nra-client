@@ -246,5 +246,28 @@ describe('baseDataProvider', () => {
       expect(url).toMatch(/join%5B0%5D=author/);
       expect(url).toMatch(/author\.email%7C%7C%24contL%7C%7Ctest%40example\.com/);
     });
+
+    it('handles deeply nested filters correctly', async () => {
+      const params: GetListParams = {
+        pagination: { page: 1, perPage: 10 },
+        sort: { field: 'id', order: 'ASC' } as SortPayload,
+        filter: {
+          'author.company.name': 'Company', // Deeply nested filter
+        },
+      };
+
+      httpClient.mockResolvedValueOnce({ json: { data: [], total: 0 } });
+
+      await provider.getList('posts', params);
+
+      const url = httpClient.mock.calls[0][0];
+      // Expect joins for 'author' and 'author.company'
+      // join=author
+      expect(url).toEqual(expect.stringMatching(/join%5B\d+%5D=author(&|$)/));
+      // join=author.company
+      expect(url).toEqual(expect.stringMatching(/join%5B\d+%5D=author\.company(&|$)/));
+      // filter on author.company.name
+      expect(url).toEqual(expect.stringMatching(/author\.company\.name%7C%7C%24contL%7C%7CCompany/));
+    });
   });
 });

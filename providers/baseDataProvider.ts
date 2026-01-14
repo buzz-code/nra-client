@@ -116,8 +116,13 @@ const getFilterJoin = (filter: QueryFilter[]): QueryJoin[] => {
   const filterJoin: QueryJoin[] = [];
   filter.forEach(({ field }) => {
     if (field.includes('.')) {
-      const [relation] = field.split('.');
-      filterJoin.push({ field: relation });
+      const parts = field.split('.');
+      parts.pop();
+      let path = '';
+      parts.forEach((part) => {
+        path = path ? `${path}.${part}` : part;
+        filterJoin.push({ field: path });
+      });
     }
   });
   return filterJoin;
