@@ -162,6 +162,11 @@ const validateFileResponse = (response: any) => {
   }
 }
 
+const buildUrl = (apiUrl: string, resource: string, query: string) => {
+  const separator = resource.includes('?') ? '&' : '?';
+  return `${apiUrl}/${resource}${separator}${query}`;
+}
+
 export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedDataProvider => ({
   getList: (resource, params) => {
     const { page, perPage } = params.pagination;
@@ -185,7 +190,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
     const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter, encodedQueryExtra);
 
-    const url = `${apiUrl}/${resource}?${query}`;
+    const url = buildUrl(apiUrl, resource, query);
 
     return httpClient(url).then(({ json }) => ({
       data: json.data,
@@ -211,7 +216,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
     const query = mergeEncodedQueries(encodedQueryParams, encodedMetaParams);
 
-    const url = `${apiUrl}/${resource}?${query}`;
+    const url = buildUrl(apiUrl, resource, query);
 
     return httpClient(url).then(({ json }) => ({ data: json.data || json }));
   },
@@ -242,7 +247,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
     const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter, encodedQueryExtra);
 
-    const url = `${apiUrl}/${resource}?${query}`;
+    const url = buildUrl(apiUrl, resource, query);
 
     return httpClient(url).then(({ json }) => ({
       data: json.data,
