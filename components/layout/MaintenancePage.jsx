@@ -1,22 +1,44 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Card, CardContent, Typography, Container } from '@mui/material';
 import BuildIcon from '@mui/icons-material/Build';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import authProvider from '@shared/providers/authProvider';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * MaintenancePage - Displayed when the system is under maintenance
  * 
  * This component shows a user-friendly maintenance message with RTL support
  * and follows the application's design patterns.
- * Gets maintenance data directly from authProvider.
  * 
- * Note: This component intentionally doesn't use useTranslate() to ensure
- * it works even when the i18n system isn't fully loaded during redirects.
+ * Features:
+ * - Gets maintenance data directly from authProvider
+ * - Uses plain Hebrew text (not i18n) to ensure it works during redirects
+ * - Checks once on mount if maintenance mode is still active
+ * - Auto-redirects to dashboard when refreshed and server is back online
  */
 export const MaintenancePage = () => {
     const maintenanceInfo = authProvider.getMaintenanceInfo();
     const message = maintenanceInfo?.message;
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        // Check once on mount if maintenance mode is still active
+        const checkMaintenanceStatus = async () => {
+            try {
+                // Try to get identity - if successful, server is no longer in maintenance
+                await authProvider.getIdentity(true);
+                
+                // Success - maintenance mode is over, redirect to dashboard
+                authProvider.clearMaintenanceInfo();
+                navigate('/');
+            } catch (error) {
+                // Still in maintenance mode (503 response) or network error - stay on page
+            }
+        };
+        
+        checkMaintenanceStatus();
+    }, [navigate]);
     
     return (
         <Box
