@@ -1,6 +1,12 @@
 import { fetchJson } from "@shared/utils/httpUtil";
 import { apiUrl } from "@shared/providers/constantsProvider";
 
+const maintenanceResponse = {
+    message: false,
+    logoutUser: false,
+    redirectTo: '/maintenance',
+};
+
 const authProvider = {
     login: async ({ username, password }) => {
         try {
@@ -45,8 +51,8 @@ const authProvider = {
                 return;
             }
         } catch { }
-        await fetchJson(apiUrl + '/auth/logout', { method: 'POST' });
         localStorage.removeItem('auth');
+        await fetchJson(apiUrl + '/auth/logout', { method: 'POST' });
     },
     checkAuth: ({ force = false }) => {
         if (isPublicRoute() && !force) {
@@ -56,6 +62,18 @@ const authProvider = {
     },
     checkError: async (error) => {
         const status = error.status;
+        
+        // Check for maintenance mode (503 Service Unavailable)
+        if (status === 503) {
+            // Store maintenance mode info for display
+            const maintenanceInfo = error.body || {};
+            localStorage.setItem('maintenance', JSON.stringify({
+                active: true,
+                message: maintenanceInfo.message,
+            }));
+            return Promise.reject(maintenanceResponse);
+        }
+        
         if (status === 401 || status === 403) {
             await authProvider.logout();
             return Promise.reject();
@@ -84,10 +102,24 @@ const authProvider = {
         const { permissions } = await authProvider.getIdentity();
         return permissions;
     },
+    getMaintenanceInfo: () => {
+        const maintenanceData = localStorage.getItem('maintenance');
+        if (maintenanceData) {
+            try {
+                return JSON.parse(maintenanceData);
+            } catch {
+                return null;
+            }
+        }
+        return null;
+    },
+    clearMaintenanceInfo: () => {
+        localStorage.removeItem('maintenance');
+    },
 };
 
 function isPublicRoute() {
-    return location.pathname === '/register';
+    return location.pathname === '/register' || location.pathname === '/maintenance';
 }
 
 export default authProvider;

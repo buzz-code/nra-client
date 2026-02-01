@@ -46,6 +46,11 @@ const extendedTranslation = {
         page: {
             access_denied: 'הגישה נדחתה',
             authentication_error: 'שגיאת אימות',
+            maintenance: {
+                title: 'המערכת בתחזוקה',
+                default_message: 'אנו מבצעים עבודות תחזוקה כדי לשפר את המערכת. המערכת תחזור לפעול בקרוב.',
+                thank_you: 'תודה על סבלנותך. נעשה הכל כדי להחזיר את המערכת לפעולה במהירות האפשרית.',
+            },
         },
         message: {
             auth_error: 'אירעה שגיאה בעת אימות הטוקן.',
