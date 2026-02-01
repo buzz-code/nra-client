@@ -4,6 +4,7 @@ import { DataProvider, fetchUtils } from 'ra-core';
 import { stringify } from 'query-string';
 import { GetListParams, RaRecord } from 'react-admin';
 import saveAs from 'file-saver';
+import { MAX_PAGE_SIZE } from '@shared/config/settings';
 
 /**
  * Maps react-admin queries to a nestjsx/crud powered REST API
@@ -52,6 +53,8 @@ interface ExtendedDataProvider extends DataProvider {
 
 const countDiff = (o1: Record<string, any>, o2: Record<string, any>): Record<string, any> =>
   omitBy(o1, (v, k) => o2[k] === v);
+
+const capPageSize = (perPage: number): number => Math.min(perPage, MAX_PAGE_SIZE);
 
 const composeFilter = (paramsFilter: any): QueryFilter[] => {
   const flatFilter = fetchUtils.flattenObject(paramsFilter);
@@ -170,6 +173,7 @@ const buildUrl = (apiUrl: string, resource: string, query: string) => {
 export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedDataProvider => ({
   getList: (resource, params) => {
     const { page, perPage } = params.pagination;
+    const cappedPerPage = capPageSize(perPage);
     const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
     const sort = params.sort as QuerySort;
     const queryFilter = composeFilter(filter);
@@ -179,10 +183,10 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
       filter: queryFilter,
       or: composeFilter(orFilter || {})
     })
-      .setLimit(perPage)
+      .setLimit(cappedPerPage)
       .setPage(page)
       .sortBy(sort)
-      .setOffset((page - 1) * perPage)
+      .setOffset((page - 1) * cappedPerPage)
       .setJoin(getQueryJoin(sort, queryFilter))
       .query();
 
@@ -223,6 +227,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
   getManyReference: (resource, params) => {
     const { page, perPage } = params.pagination;
+    const cappedPerPage = capPageSize(perPage);
     const { q: queryParams, extra, ...otherFilters } = params.filter || {}
     const filter: QueryFilter[] = composeFilter(otherFilters);
     const sort = params.sort as QuerySort;
@@ -238,8 +243,8 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
       filter
     })
       .sortBy(sort)
-      .setLimit(perPage)
-      .setOffset((page - 1) * perPage)
+      .setLimit(cappedPerPage)
+      .setOffset((page - 1) * cappedPerPage)
       .setJoin(getQueryJoin(sort, filter))
       .query();
 
@@ -329,6 +334,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
   export: (resource, params, format, resourceLabel) => {
     const { page, perPage } = params.pagination;
+    const cappedPerPage = capPageSize(perPage);
     const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
     const sort = params.sort as QuerySort;
     const queryFilter = composeFilter(filter);
@@ -338,10 +344,10 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
       filter: queryFilter,
       or: composeFilter(orFilter || {})
     })
-      .setLimit(perPage)
+      .setLimit(cappedPerPage)
       .setPage(page)
       .sortBy(sort)
-      .setOffset((page - 1) * perPage)
+      .setOffset((page - 1) * cappedPerPage)
       .setJoin(getQueryJoin(sort, queryFilter))
       .query();
 
