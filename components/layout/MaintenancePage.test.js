@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { MaintenancePage } from './MaintenancePage';
 import authProvider from '@shared/providers/authProvider';
 
@@ -26,7 +27,11 @@ describe('MaintenancePage', () => {
     });
 
     it('renders maintenance page with default message', () => {
-        render(<MaintenancePage />);
+        render(
+            <MemoryRouter>
+                <MaintenancePage />
+            </MemoryRouter>
+        );
         expect(screen.getByText('המערכת בתחזוקה')).toBeInTheDocument();
     });
 
@@ -37,12 +42,20 @@ describe('MaintenancePage', () => {
             message: customMessage,
         });
         
-        render(<MaintenancePage />);
+        render(
+            <MemoryRouter>
+                <MaintenancePage />
+            </MemoryRouter>
+        );
         expect(screen.getByText(customMessage)).toBeInTheDocument();
     });
 
     it('renders engineering icons', () => {
-        const { container } = render(<MaintenancePage />);
+        const { container } = render(
+            <MemoryRouter>
+                <MaintenancePage />
+            </MemoryRouter>
+        );
 
         // Check for SVG icons (MUI icons render as SVG)
         const svgs = container.querySelectorAll('svg');
@@ -50,7 +63,11 @@ describe('MaintenancePage', () => {
     });
 
     it('renders animated dots', () => {
-        const { container } = render(<MaintenancePage />);
+        const { container } = render(
+            <MemoryRouter>
+                <MaintenancePage />
+            </MemoryRouter>
+        );
 
         // Check that dots are rendered (3 divs with animation styles)
         const dots = container.querySelectorAll('div[class*="css-"]');
