@@ -64,6 +64,13 @@ const composeFilter = (paramsFilter: any): QueryFilter[] => {
 
     let field = splitKey[0];
     let ops = splitKey[1];
+
+    if (ops === CondOperator.IS_NULL && String(flatFilter[key]) === 'false') {
+      ops = CondOperator.NOT_NULL;
+    } else if (ops === CondOperator.NOT_NULL && String(flatFilter[key]) === 'false') {
+      ops = CondOperator.IS_NULL;
+    }
+
     if (!ops) {
       if (flatFilter[key] === null) {
         ops = CondOperator.IS_NULL;
