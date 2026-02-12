@@ -11,6 +11,8 @@ jobs:
   test:
     name: Run unit and e2e tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
