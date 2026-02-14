@@ -17,6 +17,9 @@ import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 import CommentIcon from '@mui/icons-material/Comment';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PeopleIcon from '@mui/icons-material/People';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import SchoolIcon from '@mui/icons-material/School';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 const iconMap = {
     List: ListIcon,
@@ -25,7 +28,10 @@ const iconMap = {
     Gift: CardGiftcardIcon,
     Comment: CommentIcon,
     Location: LocationOnIcon,
-    People: PeopleIcon
+    People: PeopleIcon,
+    Assignment: AssignmentIcon,
+    School: SchoolIcon,
+    Assessment: AssessmentIcon,
 };
 
 export default ({ dashboardItems = [], children }) => {
