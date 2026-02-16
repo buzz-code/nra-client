@@ -1,4 +1,4 @@
-import { getJewishMonthByIndex, getJewishMonthInHebrew } from 'jewish-date';
+import { getIndexByJewishMonth, getJewishMonthByIndex, getJewishMonthInHebrew, getJewishMonthsInOrder } from 'jewish-date';
 
 export function getHebrewMonthName(year, monthIndex) {
     if (!year || !monthIndex) return '';
@@ -9,4 +9,17 @@ export function getHebrewMonthName(year, monthIndex) {
         console.error('Error getting Hebrew month name', e);
         return monthIndex;
     }
+}
+
+export function getHebrewMonthsList(year) {
+    if (!year) return [];
+
+    return getJewishMonthsInOrder(year)
+        .map(month => ({ month, index: getIndexByJewishMonth(month) }))
+        .filter(({ index }) => index > 0)
+        .map(({ month, index }) => ({
+            id: index,
+            name: getJewishMonthInHebrew(month),
+            index,
+        }));
 }
