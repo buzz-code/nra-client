@@ -36,6 +36,10 @@ export const isEditPaymentTracksData = (permissions) =>
     isAdmin(permissions) || hasPermissionLogic(permissions, permissionKeys.editPaymentTracksData);
 export const useIsEditPaymentTracksData = () => useHasPermission(permissionKeys.editPaymentTracksData) || useIsAdmin();
 
-export const isGenericImageUpload = (permissions) => 
+export const isGenericImageUpload = (permissions) =>
     isAdmin(permissions) || hasPermissionLogic(permissions, permissionKeys.genericImageUpload);
 export const useIsGenericImageUpload = () => useHasPermission(permissionKeys.genericImageUpload) || useIsAdmin();
+
+export const hasPhoneCampaignPermission = (permissions) =>
+    isAdmin(permissions) || hasPermissionLogic(permissions, permissionKeys.phoneCampaign);
+export const useHasPhoneCampaignPermission = () => useHasPermission(permissionKeys.phoneCampaign) || useIsAdmin();
