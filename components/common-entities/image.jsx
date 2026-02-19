@@ -11,10 +11,52 @@ import CommonAutocompleteInput from '@shared/components/fields/CommonAutocomplet
 import { useUnique } from '@shared/utils/useUnique';
 import { adminUserFilter } from '@shared/components/fields/PermissionFilter';
 import { useIsGenericImageUpload } from '@shared/utils/permissionsUtil';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 
 const filters = [
     adminUserFilter,
 ];
+
+const ImageDownloadButton = () => {
+    const record = useRecordContext();
+    const src = record?.fileData?.src;
+    const title = record?.fileData?.title || 'image';
+
+    const handleDownload = React.useCallback(
+        (event) => {
+            if (!src) {
+                return;
+            }
+            event.stopPropagation();
+            event.preventDefault();
+
+            const link = document.createElement('a');
+            link.href = src;
+            link.download = title;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        },
+        [src, title]
+    );
+
+    return (
+        <Tooltip title="הורד קובץ">
+            <span>
+                <IconButton
+                    aria-label="הורד קובץ"
+                    onClick={handleDownload}
+                    disabled={!src}
+                    size="small"
+                >
+                    <GetAppIcon fontSize="small" />
+                </IconButton>
+            </span>
+        </Tooltip>
+    );
+};
 
 const Datagrid = ({ isAdmin, children, ...props }) => {
     return (
@@ -24,6 +66,7 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
             {isAdmin && <ReferenceField source="userId" reference="user" />}
             {/* <CommonJsonField source="fileData" /> */}
             <ImageField source="fileData.src" title="fileData.title" />
+            <ImageDownloadButton label="הורד קובץ" />
             <TextField source="imageTarget" />
             {isAdmin && <DateField showDate showTime source="createdAt" />}
             {isAdmin && <DateField showDate showTime source="updatedAt" />}
