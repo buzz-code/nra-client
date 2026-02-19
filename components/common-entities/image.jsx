@@ -1,5 +1,6 @@
 import React from 'react';
-import { DateField, DateTimeInput, ImageField, maxLength, ReferenceField, required, TextField, TextInput, useRecordContext } from 'react-admin';
+import { useFormContext } from 'react-hook-form';
+import { DateField, DateTimeInput, maxLength, ReferenceField, required, TextField, TextInput, useRecordContext } from 'react-admin';
 import get from 'lodash/get';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
@@ -8,6 +9,8 @@ import CommonReferenceInput from '@shared/components/fields/CommonReferenceInput
 import { CommonJsonField, CommonJsonInput } from '@shared/components/fields/CommonJsonItem';
 import { CommonImageInput } from '@shared/components/fields/CommonImageInput';
 import CommonAutocompleteInput from '@shared/components/fields/CommonAutocompleteInput';
+import CommonFileField from '@shared/components/fields/CommonFileField';
+import { unwrapFileDataValue, getMimeTypeFromFileData } from '@shared/utils/fileField.util';
 import { useUnique } from '@shared/utils/useUnique';
 import { adminUserFilter } from '@shared/components/fields/PermissionFilter';
 import { useIsGenericImageUpload } from '@shared/utils/permissionsUtil';
@@ -65,7 +68,7 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
             {isAdmin && <TextField source="id" />}
             {isAdmin && <ReferenceField source="userId" reference="user" />}
             {/* <CommonJsonField source="fileData" /> */}
-            <ImageField source="fileData.src" title="fileData.title" />
+            <CommonFileField source="fileData" />
             <ImageDownloadButton label="הורד קובץ" />
             <TextField source="imageTarget" />
             {isAdmin && <DateField showDate showTime source="createdAt" />}
@@ -76,8 +79,30 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
 
 const imageTargetEnum = ['לוגו לתעודה', 'לוגו לתחתית התעודה'];
 
-const ImageTargetInput = ({ source, validate }) => {
-    const canUseGenericUpload = useIsGenericImageUpload();
+const validateImageTargetFileType = (value, allValues) => {
+    const target = allValues?.imageTarget;
+    if (!target || !imageTargetEnum.includes(target)) {
+        return undefined;
+    }
+
+    const fileDataValue = unwrapFileDataValue(value);
+    if (!fileDataValue) {
+        return undefined;
+    }
+
+    const mimeType = getMimeTypeFromFileData(fileDataValue);
+    if (!mimeType) {
+        return undefined;
+    }
+
+    if (!mimeType.startsWith('image/')) {
+        return 'דרוש קובץ מסוג תמונה';
+    }
+
+    return undefined;
+};
+
+const ImageTargetInput = ({ source, validate, canUseGenericUpload }) => {
     const record = useRecordContext();
     const currentValue = get(record, source);
 
@@ -116,13 +141,17 @@ const ImageTargetInput = ({ source, validate }) => {
 
 const Inputs = ({ isCreate, isAdmin }) => {
     const unique = useUnique();
+    const canUseGenericUpload = useIsGenericImageUpload();
+    const { watch } = useFormContext();
+    const selectedTarget = watch('imageTarget');
+    const shouldAllowAnyFile = canUseGenericUpload && !imageTargetEnum.includes(selectedTarget);
 
     return <>
         {!isCreate && isAdmin && <TextInput source="id" disabled />}
         {isAdmin && <CommonReferenceInput source="userId" reference="user" validate={required()} />}
         {/* <CommonJsonInput source="fileData" /> */}
-        <CommonImageInput source="fileData" validate={required()} />
-        <ImageTargetInput source="imageTarget" validate={[required(), maxLength(255), unique()]} />
+        <CommonImageInput source="fileData" validate={[required(), validateImageTargetFileType]} accept={shouldAllowAnyFile ? '*/*' : undefined} />
+        <ImageTargetInput source="imageTarget" validate={[required(), maxLength(255), unique()]} canUseGenericUpload={canUseGenericUpload} />
         {!isCreate && isAdmin && <DateTimeInput source="createdAt" disabled />}
         {!isCreate && isAdmin && <DateTimeInput source="updatedAt" disabled />}
     </>;

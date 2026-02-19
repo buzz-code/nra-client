@@ -1,7 +1,9 @@
-import { ImageInput, ImageField } from "react-admin";
+import { ImageInput } from "react-admin";
 import { useFormContext } from 'react-hook-form';
 import { useEffect } from 'react';
 import { readAsDataURL } from "@shared/utils/fileUtil";
+import CommonFileField from './CommonFileField';
+import { unwrapFileDataValue } from '@shared/utils/fileField.util';
 
 const defaultImageAccept = {
     'image/jpeg': ['jpg', 'jpeg'],
@@ -19,16 +21,20 @@ export const CommonImageInput = ({ source, accept = defaultImageAccept, maxSize 
     const value = watch(source);
 
     useEffect(() => {
-        if (value?.src?.includes('blob') && value.rawFile) {
-            readAsDataURL(value.rawFile)
-                .then(src => setValue(source, { ...value, src }))
+        const fileValue = unwrapFileDataValue(value);
+        if (fileValue?.src?.includes('blob') && fileValue.rawFile) {
+            readAsDataURL(fileValue.rawFile)
+                .then(src => {
+                    const updatedFile = { ...fileValue, src };
+                    setValue(source, updatedFile);
+                })
                 .catch(err => setError(source, err));
         };
     }, [value, setValue]);
 
     return (
         <ImageInput source={source} accept={accept} maxSize={maxSize} {...props}>
-            <ImageField source="src" title="title" />
+            <CommonFileField />
         </ImageInput>
     );
 }
