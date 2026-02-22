@@ -5,6 +5,7 @@ import { getResourceComponents } from '@shared/components/crudContainers/CommonE
 import CommonReferenceInput from '@shared/components/fields/CommonReferenceInput';
 import CommonFileField from '@shared/components/fields/CommonFileField';
 import { CommonFileInput } from '@shared/components/fields/CommonFileInput';
+import CommonFilePreviewButton, { CommonFileDownloadButton } from '@shared/components/fields/CommonFilePreviewButton';
 import { commonAdminFilters } from '@shared/components/fields/PermissionFilter';
 
 const filters = [
@@ -21,6 +22,8 @@ const Datagrid = ({ isAdmin, children, ...props }) => (
         <TextField source="title" label="כותרת" />
         <TextField source="description" label="תיאור" />
         <CommonFileField source="fileData" label="קובץ" />
+        <CommonFilePreviewButton source="fileData" label=" " />
+        <CommonFileDownloadButton source="fileData" label=" " />
         {isAdmin && <DateField source="createdAt" label="תאריך יצירה" showTime />}
         {isAdmin && <DateField source="updatedAt" label="תאריך עדכון" showTime />}
     </CommonDatagrid>
