@@ -1,16 +1,13 @@
 import React from 'react';
-import { useFormContext } from 'react-hook-form';
 import { DateField, DateTimeInput, maxLength, ReferenceField, required, TextField, TextInput, useRecordContext } from 'react-admin';
 import get from 'lodash/get';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import CommonReferenceInput from '@shared/components/fields/CommonReferenceInput';
-import { CommonJsonField, CommonJsonInput } from '@shared/components/fields/CommonJsonItem';
 import { CommonImageInput } from '@shared/components/fields/CommonImageInput';
 import CommonAutocompleteInput from '@shared/components/fields/CommonAutocompleteInput';
 import CommonFileField from '@shared/components/fields/CommonFileField';
-import { unwrapFileDataValue, getMimeTypeFromFileData } from '@shared/utils/fileField.util';
 import { useUnique } from '@shared/utils/useUnique';
 import { adminUserFilter } from '@shared/components/fields/PermissionFilter';
 import { useIsGenericImageUpload } from '@shared/utils/permissionsUtil';
@@ -79,29 +76,6 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
 
 const imageTargetEnum = ['לוגו לתעודה', 'לוגו לתחתית התעודה'];
 
-const validateImageTargetFileType = (value, allValues) => {
-    const target = allValues?.imageTarget;
-    if (!target || !imageTargetEnum.includes(target)) {
-        return undefined;
-    }
-
-    const fileDataValue = unwrapFileDataValue(value);
-    if (!fileDataValue) {
-        return undefined;
-    }
-
-    const mimeType = getMimeTypeFromFileData(fileDataValue);
-    if (!mimeType) {
-        return undefined;
-    }
-
-    if (!mimeType.startsWith('image/')) {
-        return 'דרוש קובץ מסוג תמונה';
-    }
-
-    return undefined;
-};
-
 const ImageTargetInput = ({ source, validate, canUseGenericUpload }) => {
     const record = useRecordContext();
     const currentValue = get(record, source);
@@ -142,15 +116,11 @@ const ImageTargetInput = ({ source, validate, canUseGenericUpload }) => {
 const Inputs = ({ isCreate, isAdmin }) => {
     const unique = useUnique();
     const canUseGenericUpload = useIsGenericImageUpload();
-    const { watch } = useFormContext();
-    const selectedTarget = watch('imageTarget');
-    const shouldAllowAnyFile = canUseGenericUpload && !imageTargetEnum.includes(selectedTarget);
 
     return <>
         {!isCreate && isAdmin && <TextInput source="id" disabled />}
         {isAdmin && <CommonReferenceInput source="userId" reference="user" validate={required()} />}
-        {/* <CommonJsonInput source="fileData" /> */}
-        <CommonImageInput source="fileData" validate={[required(), validateImageTargetFileType]} accept={shouldAllowAnyFile ? '*/*' : undefined} />
+        <CommonImageInput source="fileData" validate={[required()]} />
         <ImageTargetInput source="imageTarget" validate={[required(), maxLength(255), unique()]} canUseGenericUpload={canUseGenericUpload} />
         {!isCreate && isAdmin && <DateTimeInput source="createdAt" disabled />}
         {!isCreate && isAdmin && <DateTimeInput source="updatedAt" disabled />}
