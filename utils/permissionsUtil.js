@@ -39,3 +39,7 @@ export const useIsEditPaymentTracksData = () => useHasPermission(permissionKeys.
 export const isGenericImageUpload = (permissions) => 
     isAdmin(permissions) || hasPermissionLogic(permissions, permissionKeys.genericImageUpload);
 export const useIsGenericImageUpload = () => useHasPermission(permissionKeys.genericImageUpload) || useIsAdmin();
+
+export const isUploadedFiles = (permissions) => 
+    isAdmin(permissions) || hasPermissionLogic(permissions, permissionKeys.uploadedFiles);
+export const useIsUploadedFiles = () => useHasPermission(permissionKeys.uploadedFiles) || useIsAdmin();
