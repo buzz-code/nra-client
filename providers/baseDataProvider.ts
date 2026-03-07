@@ -341,7 +341,6 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
   export: (resource, params, format, resourceLabel) => {
     const { page, perPage } = params.pagination;
-    const cappedPerPage = capPageSize(perPage);
     const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
     const sort = params.sort as QuerySort;
     const queryFilter = composeFilter(filter);
@@ -351,10 +350,10 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
       filter: queryFilter,
       or: composeFilter(orFilter || {})
     })
-      .setLimit(cappedPerPage)
+      .setLimit(perPage)
       .setPage(page)
       .sortBy(sort)
-      .setOffset((page - 1) * cappedPerPage)
+      .setOffset((page - 1) * perPage)
       .setJoin(getQueryJoin(sort, queryFilter))
       .query();
 
