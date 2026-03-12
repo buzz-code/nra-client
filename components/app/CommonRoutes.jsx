@@ -18,16 +18,14 @@ import { isAdmin } from '@shared/utils/permissionsUtil';
  *  - permissions     {*}         React-Admin permissions object
  *  - roadmapFeatures {Array}     Features list passed to <Roadmap>
  *  - settingsPage    {ReactNode} Settings component instance; omit to skip the /settings route
- *  - extraRoutes     {ReactNode} Additional <Route> elements to place inside the main CustomRoutes block
  */
-const CommonRoutes = ({ permissions, roadmapFeatures, settingsPage, extraRoutes }) => (
+const CommonRoutes = ({ permissions, roadmapFeatures, settingsPage }) => (
     <>
         <CustomRoutes>
             <Route path="/yemot-simulator" element={<YemotSimulator />} />
             <Route path="/tutorial" element={<Tutorial />} />
             <Route path="/pages-view" element={<PageList />} />
             <Route path="/roadmap" element={<Roadmap features={roadmapFeatures} />} />
-            {extraRoutes}
         </CustomRoutes>
 
         <CustomRoutes noLayout>
