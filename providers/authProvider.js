@@ -51,8 +51,10 @@ const authProvider = {
                 return;
             }
         } catch { }
+        try {
+            await fetchJson(apiUrl + '/auth/logout', { method: 'POST', keepalive: true });
+        } catch { }
         localStorage.removeItem('auth');
-        await fetchJson(apiUrl + '/auth/logout', { method: 'POST' });
     },
     checkAuth: ({ force = false }) => {
         if (isPublicRoute() && !force) {

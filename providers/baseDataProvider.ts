@@ -30,6 +30,7 @@ import { MAX_PAGE_SIZE } from '@shared/config/settings';
  */
 
 interface ExtendedDataProvider extends DataProvider {
+  supportAbortSignal?: boolean;
   createMany: (
     resource: string,
     bulk: RaRecord[],
@@ -178,6 +179,7 @@ const buildUrl = (apiUrl: string, resource: string, query: string) => {
 }
 
 export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedDataProvider => ({
+  supportAbortSignal: true,
   getList: (resource, params) => {
     const { page, perPage } = params.pagination;
     const cappedPerPage = capPageSize(perPage);
@@ -203,14 +205,14 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
     const url = buildUrl(apiUrl, resource, query);
 
-    return httpClient(url).then(({ json }) => ({
+    return httpClient(url, { signal: params.signal }).then(({ json }) => ({
       data: json.data,
       total: json.total,
     }));
   },
 
   getOne: (resource, params) =>
-    httpClient(`${apiUrl}/${resource}/${params.id}`).then(({ json }) => ({
+    httpClient(`${apiUrl}/${resource}/${params.id}`, { signal: params.signal }).then(({ json }) => ({
       data: json,
     })),
 
@@ -229,7 +231,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
     const url = buildUrl(apiUrl, resource, query);
 
-    return httpClient(url).then(({ json }) => ({ data: json.data || json }));
+    return httpClient(url, { signal: params.signal }).then(({ json }) => ({ data: json.data || json }));
   },
 
   getManyReference: (resource, params) => {
@@ -261,7 +263,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
     const url = buildUrl(apiUrl, resource, query);
 
-    return httpClient(url).then(({ json }) => ({
+    return httpClient(url, { signal: params.signal }).then(({ json }) => ({
       data: json.data,
       total: json.total,
     }));

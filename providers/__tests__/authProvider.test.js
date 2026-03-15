@@ -118,7 +118,7 @@ describe('authProvider', () => {
 
       await authProvider.logout();
 
-      expect(fetchJson).toHaveBeenCalledWith(`${apiUrl}/auth/logout`, { method: 'POST' });
+      expect(fetchJson).toHaveBeenCalledWith(`${apiUrl}/auth/logout`, { method: 'POST', keepalive: true });
       expect(localStorage.removeItem).toHaveBeenCalledWith('auth');
     });
 
@@ -160,7 +160,7 @@ describe('authProvider', () => {
       localStorageMock.getItem.mockReturnValueOnce(JSON.stringify({ impersonated: false }));
       fetchJson.mockResolvedValueOnce({}); // logout request
       await expect(authProvider.checkError({ status: 401 })).rejects.toBeUndefined();
-      expect(fetchJson).toHaveBeenCalledWith(`${apiUrl}/auth/logout`, { method: 'POST' });
+      expect(fetchJson).toHaveBeenCalledWith(`${apiUrl}/auth/logout`, { method: 'POST', keepalive: true });
     });
 
     it('ignores non-auth errors', async () => {

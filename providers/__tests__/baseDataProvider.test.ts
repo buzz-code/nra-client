@@ -47,7 +47,8 @@ describe('baseDataProvider', () => {
       await provider.getList('posts', params);
 
       expect(httpClient).toHaveBeenCalledWith(
-        expect.stringMatching(/http:\/\/api\.test\/posts\?.*filter%5B0%5D=name%7C%7C%24contL%7C%7Ctest/)
+        expect.stringMatching(/http:\/\/api\.test\/posts\?.*filter%5B0%5D=name%7C%7C%24contL%7C%7Ctest/),
+        expect.objectContaining({ signal: undefined })
       );
     });
 
@@ -71,7 +72,7 @@ describe('baseDataProvider', () => {
 
       const result = await provider.getOne('posts', { id: 1 });
 
-      expect(httpClient).toHaveBeenCalledWith('http://api.test/posts/1');
+      expect(httpClient).toHaveBeenCalledWith('http://api.test/posts/1', expect.objectContaining({ signal: undefined }));
       expect(result).toEqual({ data: response });
     });
   });
@@ -84,7 +85,8 @@ describe('baseDataProvider', () => {
       const result = await provider.getMany('posts', { ids: [1, 2] });
 
       expect(httpClient).toHaveBeenCalledWith(
-        expect.stringMatching(/filter%5B0%5D=id%7C%7C%24in%7C%7C1%2C2/)
+        expect.stringMatching(/filter%5B0%5D=id%7C%7C%24in%7C%7C1%2C2/),
+        expect.objectContaining({ signal: undefined })
       );
       expect(result).toEqual({ data: response.data });
     });
