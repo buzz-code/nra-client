@@ -1,18 +1,42 @@
+// These jest.mock() calls are hoisted to the top of THIS file by Babel.
+// Because entities.test.js imports createResourceTests before importing App,
+// these mocks are registered before App.jsx (and its provider imports) load.
+jest.mock('@shared/providers/dataProvider', () => ({
+  getList: () => Promise.resolve({ data: [], total: 0 }),
+  getOne: () => Promise.resolve({ data: {} }),
+  getMany: () => Promise.resolve({ data: [] }),
+  getManyReference: () => Promise.resolve({ data: [], total: 0 }),
+  create: () => Promise.resolve({ data: {} }),
+  update: () => Promise.resolve({ data: {} }),
+  updateMany: () => Promise.resolve({ data: [] }),
+  delete: () => Promise.resolve({ data: {} }),
+  deleteMany: () => Promise.resolve({ data: [] }),
+}));
+
+jest.mock('@shared/providers/authProvider', () => ({
+  checkAuth: () => Promise.resolve(),
+  // Return { admin: true } so permissionsUtil.isAdmin() returns true,
+  // which gates the admin view and shows all resources in the sidebar.
+  getPermissions: () => Promise.resolve({ admin: true }),
+  getIdentity: () => Promise.resolve({ id: 1, fullName: 'Test User' }),
+  login: () => Promise.resolve(),
+  logout: () => Promise.resolve(),
+  checkError: () => Promise.resolve(),
+}));
+
 import { render, screen, cleanup } from '@testing-library/react';
 
 /**
  * createResourceTests(App, options)
  *
- * Generates a Jest describe block that:
+ * Smoke-tests every React Admin resource page in the given App:
  *   1. Renders the App at the root URL and discovers all resource paths
- *      by reading sidebar nav link hrefs (role="menuitem" → <a href>).
- *   2. Smoke-tests each resource's list page by rendering the App at that
- *      URL and waiting for a <table> element (React Admin Datagrid).
+ *      via sidebar nav link hrefs (role="menuitem" → <a href>).
+ *   2. Renders the App at each resource path and verifies the admin shell
+ *      loads (auth passed, layout rendered, no crash).
  *
- * IMPORTANT: Call this from your project's entities.test.js AFTER setting
- * up jest.mock() for @shared/providers/dataProvider and
- * @shared/providers/authProvider. Those two mocks MUST be declared in the
- * test file (not here) because jest.mock() calls are hoisted.
+ * Provider mocks (dataProvider + authProvider) are defined above and are
+ * active because this file is imported before App in entities.test.js.
  *
  * @param {React.ComponentType} App
  * @param {{ timeout?: number }} [options]
