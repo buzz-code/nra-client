@@ -65,9 +65,12 @@ export function createResourceTests(App, options = {}) {
       try {
         items = await screen.findAllByRole('menuitem', {}, { timeout });
       } catch (_e) {
-        // No menuitems found — auth may have failed or there are no list views
         cleanup();
-        return;
+        throw new Error(
+          'Resource discovery failed: no sidebar menuitems found within timeout. ' +
+          'This usually means auth mocks are not working or the App has no listable resources. ' +
+          'Original error: ' + _e.message
+        );
       }
 
       // Each menuitem contains an <a> whose href is the resource path
@@ -224,7 +227,7 @@ export function createResourceTests(App, options = {}) {
         // multiple matches) — having ≥2 matches means both sidebar and page
         // content rendered the text.
         const roadmapTexts = await screen.findAllByText(/פיתוחים עתידיים/i, {}, { timeout });
-        expect(roadmapTexts.length).toBeGreaterThan(0);
+        expect(roadmapTexts.length).toBeGreaterThanOrEqual(2);
         assertNoErrors();
         cleanup();
       },
