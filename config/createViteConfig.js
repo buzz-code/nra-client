@@ -15,7 +15,6 @@ export function createViteConfig(options = {}) {
 
   return ({ mode }) => {
     const port = Number(process.env.PORT || 3000);
-    const hmrPort = Number(process.env.HMR_PORT || port);
 
     return defineConfig({
       envPrefix: 'REACT_APP',
@@ -25,10 +24,8 @@ export function createViteConfig(options = {}) {
         port,
         hmr: {
           overlay: true,
-          port: hmrPort,
-          timeout: 1000,
-          clientPort: hmrPort,
-          host: 'localhost',
+          // In Vite 2.x the HMR WebSocket shares the main HTTP server port.
+          // Setting a separate hmr.port/clientPort breaks the WS connection.
         },
       },
       define: {
