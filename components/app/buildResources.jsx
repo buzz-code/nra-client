@@ -1,16 +1,20 @@
 import React from 'react';
 import { Resource } from 'react-admin';
+import { filterArrayByParams } from '@shared/utils/filtersUtil';
 
 /**
  * Converts a declarative resource definitions array into React-Admin <Resource> elements.
  *
- * @param {Array<{ name, config, icon, menuGroup, label?, hide?, condition? }>} definitions
+ * Each item can be:
+ *  - A plain object `{ name, config, icon, menuGroup, label?, hide? }`
+ *  - A function `permissions => object | null` (return falsy to exclude)
+ *
+ * @param {Array<object|Function>} definitions
  * @param {object} permissions — the permissions object from React Admin
  * @returns {JSX.Element[]}
  */
 export function buildResources(definitions, permissions) {
-  return definitions
-    .filter(({ condition }) => !condition || condition(permissions))
+  return filterArrayByParams(definitions, permissions)
     .map(({ name, config, icon, menuGroup, hide, label }) => (
       <Resource
         key={name}

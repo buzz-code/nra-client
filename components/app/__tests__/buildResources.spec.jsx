@@ -4,13 +4,17 @@ import { buildResources } from '../buildResources';
 jest.mock('react-admin', () => ({
   Resource: 'Resource',
 }));
+jest.mock('@shared/utils/filtersUtil', () => ({
+  filterArrayByParams: (items, params) =>
+    items.map(item => typeof item === 'function' ? item(params) : item).filter(item => item),
+}));
 
 describe('buildResources', () => {
   const mockConfig = { list: () => null, edit: () => null };
 
   const definitions = [
     { name: 'always', config: mockConfig, icon: null, menuGroup: 'data' },
-    { name: 'admin-only', config: mockConfig, icon: null, menuGroup: 'admin', condition: p => p.isAdmin },
+    p => p.isAdmin && { name: 'admin-only', config: mockConfig, icon: null, menuGroup: 'admin' },
     { name: 'no-config', icon: null, menuGroup: 'data' },
   ];
 
