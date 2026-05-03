@@ -19,6 +19,9 @@ export function createViteConfig(options = {}) {
     return defineConfig({
       envPrefix: 'REACT_APP',
       plugins: [react()],
+      // Use a project-local cache dir so multiple projects sharing the same
+      // node_modules directory don't overwrite each other's Vite pre-bundle cache.
+      cacheDir: path.resolve(process.cwd(), '.vite-cache'),
       server: {
         host: '0.0.0.0',
         port,
