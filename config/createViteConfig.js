@@ -4,8 +4,8 @@ import path from 'path';
 
 /**
  * Creates a standard Vite config for NRA client applications.
- * Port and HMR port are read from environment variables (PORT, HMR_PORT)
- * so each project can be assigned a unique block in docker-compose.override.yml.
+ * Port is read from the PORT environment variable so each project
+ * can be assigned a unique port in docker-compose.override.yml.
  *
  * @param {object} [options]
  * @param {string} [options.apiUrlEnvKey='REACT_APP_API_URL'] - env key for the API URL
