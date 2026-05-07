@@ -84,11 +84,15 @@ const composeFilter = (paramsFilter: any): QueryFilter[] => {
       }
     }
 
-    if (field.startsWith('_') && field.includes('.')) {
-      field = field.split(/\.(.+)/)[1];
+    if (field.startsWith('_')) {
+      if (field.includes('.')) {
+        field = field.split(/\.(.+)/)[1];
+      } else {
+        return null; // client-only field
+      }
     }
     return { field, operator: ops, value: flatFilter[key] } as QueryFilter;
-  });
+  }).filter(Boolean) as QueryFilter[];
 };
 
 const composeQueryParams = (queryParams: any = {}): string => {
