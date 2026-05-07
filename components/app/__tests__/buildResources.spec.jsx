@@ -1,4 +1,3 @@
-import React from 'react';
 import { buildResources } from '../buildResources';
 
 jest.mock('react-admin', () => ({

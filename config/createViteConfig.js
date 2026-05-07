@@ -13,8 +13,9 @@ import path from 'path';
 export function createViteConfig(options = {}) {
   const { apiUrlEnvKey = 'REACT_APP_API_URL' } = options;
 
-  return ({ mode }) => {
+  return ({ mode, command }) => {
     const port = Number(process.env.PORT || 3000);
+    const nodeEnv = command === 'build' ? 'production' : 'development';
 
     return defineConfig({
       envPrefix: 'REACT_APP',
@@ -32,8 +33,8 @@ export function createViteConfig(options = {}) {
         },
       },
       define: {
-        'process.env.NODE_ENV': `"${mode}"`,
-        [`process.env.${apiUrlEnvKey}`]: `"${process.env[apiUrlEnvKey] ?? ''}"`,
+        'process.env.NODE_ENV': JSON.stringify(nodeEnv),
+        [`process.env.${apiUrlEnvKey}`]: JSON.stringify(process.env[apiUrlEnvKey] ?? ''),
       },
       resolve: {
         alias: {

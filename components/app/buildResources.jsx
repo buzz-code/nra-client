@@ -1,4 +1,3 @@
-import React from 'react';
 import { Resource } from 'react-admin';
 import { filterArrayByParams } from '@shared/utils/filtersUtil';
 
@@ -14,14 +13,14 @@ import { filterArrayByParams } from '@shared/utils/filtersUtil';
  * @returns {JSX.Element[]}
  */
 export function buildResources(definitions, permissions) {
-  return filterArrayByParams(definitions, permissions)
-    .map(({ name, config, icon, menuGroup, hide, label }) => (
-      <Resource
-        key={name}
-        name={name}
-        {...(config || {})}
-        icon={icon}
-        options={{ menuGroup, hide, label }}
-      />
-    ));
+    return filterArrayByParams(definitions, permissions)
+        .map(({ name, config, icon, menuGroup, hide, label }) => (
+            <Resource
+                key={name}
+                {...(config || {})}
+                name={name}
+                icon={icon}
+                options={{ ...(config && config.options ? config.options : {}), menuGroup, hide, label }}
+            />
+        ));
 }
