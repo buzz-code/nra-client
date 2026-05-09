@@ -13,7 +13,7 @@ import path from 'path';
 export function createViteConfig(options = {}) {
   const { apiUrlEnvKey = 'REACT_APP_API_URL' } = options;
 
-  return ({ mode, command }) => {
+  return ({ command }) => {
     const port = Number(process.env.PORT || 3000);
     const nodeEnv = command === 'build' ? 'production' : 'development';
 
