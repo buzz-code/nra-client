@@ -20,7 +20,12 @@ export function buildResources(definitions, permissions) {
                 {...(config || {})}
                 name={name}
                 icon={icon}
-                options={{ ...(config && config.options ? config.options : {}), menuGroup, hide, label }}
+                options={{
+                    ...(config && config.options ? config.options : {}),
+                    ...(menuGroup !== undefined && { menuGroup }),
+                    ...(hide !== undefined && { hide }),
+                    ...(label !== undefined && { label }),
+                }}
             />
         ));
 }
