@@ -9,3 +9,7 @@ export const useDefaultPageSize = () => {
 export function getDefaultPageSize(identity) {
     return identity?.additionalData?.defaultPageSize || DEFAULT_PAGE_SIZE;
 }
+
+export function getYemotApiKey(identity) {
+    return identity?.additionalData?.yemotApiKey || '';
+}
