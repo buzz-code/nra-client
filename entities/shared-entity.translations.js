@@ -135,4 +135,70 @@ export const sharedEntityTranslations = {
       studentNumberLimit: 'מספר תלמידות',
     }
   },
+  phone_template: {
+    name: 'תבנית שיחה |||| תבניות שיחות',
+    fields: {
+      ...generalResourceFieldsTranslation,
+      name: 'שם',
+      description: 'תיאור',
+      messageType: 'סוג הודעה',
+      messageText: 'טקסט ההודעה',
+      callerId: 'מספר מזהה שיחה',
+      isActive: 'פעיל',
+      yemotTemplateId: 'מזהה תבנית ימות',
+      test_phone: 'מספר טלפון לבדיקה',
+      select_template: 'בחר תבנית הודעה',
+    },
+    messageTypes: {
+      text: 'טקסט להקראה (TTS)',
+    },
+    actions: {
+      test: 'שלח שיחת בדיקה',
+      send_campaign: 'שליחת הודעות טלפון',
+    },
+    dialogs: {
+      test_title: 'שלח שיחת בדיקה',
+    },
+    notifications: {
+      test_sent: 'שיחת הבדיקה נשלחה בהצלחה',
+      test_failed: 'שליחת שיחת הבדיקה נכשלה',
+    },
+  },
+  phone_campaign: {
+    name: 'משלוח שיחות |||| משלוחי שיחות',
+    fields: {
+      ...generalResourceFieldsTranslation,
+      phoneTemplateId: 'תבנית',
+      status: 'סטטוס',
+      yemotCampaignId: 'מזהה קמפיין ימות',
+      totalPhones: 'סה"כ שיחות',
+      successfulCalls: 'שיחות מוצלחות',
+      failedCalls: 'שיחות כושלות',
+      errorMessage: 'הודעת שגיאה',
+      completedAt: 'הושלם ב',
+      dateFrom: 'מתאריך',
+      dateTo: 'עד תאריך',
+      'createdAt:$gte': 'נוצר אחרי',
+      'createdAt:$lte': 'נוצר לפני',
+    },
+    statuses: {
+      pending: 'ממתין',
+      running: 'בביצוע',
+      completed: 'הושלם',
+      failed: 'נכשל',
+      cancelled: 'בוטל',
+    },
+    actions: {
+      refresh: 'רענן סטטוס',
+    },
+    notifications: {
+      status_refreshed: 'הסטטוס עודכן בהצלחה',
+      refresh_failed: 'עדכון הסטטוס נכשל',
+    },
+  },
+  settings: {
+    fields: {
+      yemotApiKey: 'מפתח API של Yemot',
+    },
+  },
 };

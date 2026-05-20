@@ -43,3 +43,7 @@ export const useIsGenericImageUpload = () => useHasPermission(permissionKeys.gen
 export const isUploadedFiles = (permissions) => 
     isAdmin(permissions) || hasPermissionLogic(permissions, permissionKeys.uploadedFiles);
 export const useIsUploadedFiles = () => useHasPermission(permissionKeys.uploadedFiles) || useIsAdmin();
+
+export const isPhoneCampaign = (permissions) =>
+    isAdmin(permissions) || hasPermissionLogic(permissions, permissionKeys.phoneCampaign);
+export const useIsPhoneCampaign = () => useHasPermission(permissionKeys.phoneCampaign) || useIsAdmin();
