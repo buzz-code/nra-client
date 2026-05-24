@@ -17,6 +17,7 @@ import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { ActionOrDialogButton } from '@shared/components/crudContainers/ActionOrDialogButton';
+import { handleError } from '@shared/utils/notifyUtil';
 import PhoneIcon from '@mui/icons-material/Phone';
 import { commonAdminFilters } from '@shared/components/fields/PermissionFilter';
 
@@ -44,7 +45,7 @@ const TestCallButton = () => {
             notify('resources.phone_template.notifications.test_sent', { type: 'success' });
             onClose?.();
         } catch (error) {
-            notify(error.message || 'resources.phone_template.notifications.test_failed', { type: 'error' });
+            handleError(notify)(error);
         }
     };
 
