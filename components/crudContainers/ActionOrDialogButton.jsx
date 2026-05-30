@@ -1,5 +1,5 @@
 import { useState, cloneElement, isValidElement, createContext, useContext } from 'react';
-import { Button } from 'react-admin';
+import { Button, useTranslate } from 'react-admin';
 import { Dialog, DialogTitle } from '@mui/material';
 
 const DialogContext = createContext({ onClose: () => { } });
@@ -15,6 +15,7 @@ export const ActionOrDialogButton = ({
     onClick,
     ...props // Button props
 }) => {
+    const translate = useTranslate();
     const [open, setOpen] = useState(false);
 
     const handleClick = (e) => {
@@ -44,7 +45,7 @@ export const ActionOrDialogButton = ({
                     {...dialogProps}
                     onClick={e => e.stopPropagation()}
                 >
-                    {title && <DialogTitle>{title}</DialogTitle>}
+                    {title && <DialogTitle>{translate(title)}</DialogTitle>}
                     <DialogContext.Provider value={{ onClose: handleClose }}>
                         {typeof dialogContent === 'function'
                             ? dialogContent({ onClose: handleClose })
