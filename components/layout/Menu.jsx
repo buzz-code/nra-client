@@ -23,9 +23,9 @@ const CustomMenu = ({ menuGroups, children }) => {
 
         for (const resource of Object.values(resources)) {
             if (resource.hasList) {
-                if (resource.options?.menuGroup) {
-                    const arr = groupsDict[resource.options?.menuGroup].resources ?? otherResources;
-                    arr.push(resource.name);
+                const group = resource.options?.menuGroup && groupsDict[resource.options.menuGroup];
+                if (group) {
+                    group.resources.push(resource.name);
                 } else {
                     otherResources.push(<Menu.ResourceItem key={resource.name} name={resource.name} />);
                 }
