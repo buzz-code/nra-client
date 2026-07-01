@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 
 jest.mock('react-admin', () => ({
     usePermissions: () => ({ permissions: {} }),
+    useResourceContext: () => 'payment_track',
 }));
 
 jest.mock('@shared/utils/permissionsUtil', () => ({
@@ -60,6 +61,15 @@ describe('getResourceComponents inline edit wiring', () => {
         const inlineEditButton = screen.getByTestId('inline-edit-button');
         expect(inlineEditButton).toHaveAttribute('data-resource', 'payment_track');
         expect(screen.getByTestId('inputs')).toHaveTextContent('edit');
+    });
+
+    it('falls back to the ambient resource context when the entity does not set `resource` (the common case)', () => {
+        // Real entity files (e.g. payment-track.jsx) never set `resource` - they rely on
+        // the <Resource name="..."> wrapper. useUpdate/useCreate need an explicit resource
+        // string, so InlineEdit must fall back to useResourceContext().
+        const { list: List } = getResourceComponents({ Datagrid, Inputs, inlineEdit: true });
+        render(<List />);
+        expect(screen.getByTestId('inline-edit-button')).toHaveAttribute('data-resource', 'payment_track');
     });
 
     it('forwards inlineEdit overrides (e.g. getUpdateId) to InlineEditButton', () => {

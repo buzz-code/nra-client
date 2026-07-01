@@ -5,7 +5,7 @@ import { CommonCreate } from '@shared/components/crudContainers/CommonCreate';
 import { InlineEditButton } from '@shared/components/fields/InlineEditButton';
 import { EmptyPage } from './EmptyPage';
 import { filterArrayByParams } from '@shared/utils/filtersUtil';
-import { usePermissions } from 'react-admin';
+import { usePermissions, useResourceContext } from 'react-admin';
 
 export function getResourceComponents({
     resource,
@@ -30,9 +30,11 @@ export function getResourceComponents({
 
     const InlineEdit = inlineEdit && Inputs && (() => {
         const isAdmin = useIsAdmin();
+        const contextResource = useResourceContext();
+        const { resource: overrideResource, ...inlineEditProps } = inlineEdit === true ? {} : inlineEdit;
 
         return (
-            <InlineEditButton resource={resource} {...(inlineEdit === true ? {} : inlineEdit)}>
+            <InlineEditButton resource={overrideResource ?? resource ?? contextResource} {...inlineEditProps}>
                 <Inputs isAdmin={isAdmin} isCreate={false} />
             </InlineEditButton>
         );
