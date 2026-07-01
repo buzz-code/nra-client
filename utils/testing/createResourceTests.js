@@ -173,8 +173,7 @@ export function createResourceTests(App, options = {}) {
         render(<App />);
         await screen.findAllByRole('menuitem', {}, { timeout });
         // Keep this broad so the test survives minor wording updates around call text in the simulator UI.
-        const callRelatedControls = await screen.findAllByLabelText(/שיחה/i, {}, { timeout });
-        expect(callRelatedControls.length).toBeGreaterThan(0);
+        await screen.findAllByLabelText(/שיחה/i, {}, { timeout });
         assertNoErrors();
         cleanup();
       },
