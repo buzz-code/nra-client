@@ -1,6 +1,6 @@
 import { Card, CardContent, Chip, Box, Paper, Typography } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { SimpleForm, TextInput, Title, useDataProvider, useNotify, useTranslate, Toolbar, SaveButton, RefreshButton } from 'react-admin';
+import { SimpleForm, TextInput, Title, useDataProvider, useGetIdentity, useNotify, useTranslate, Toolbar, SaveButton, RefreshButton } from 'react-admin';
 import { useMutation } from '@tanstack/react-query';
 import { useFormContext } from 'react-hook-form';
 import CallEndIcon from '@mui/icons-material/CallEnd'
@@ -183,6 +183,22 @@ const ConversationTranscript = ({ history }) => {
     );
 };
 
+const PhonePrefill = ({ phase }) => {
+    const { identity } = useGetIdentity();
+    const form = useFormContext();
+
+    useEffect(() => {
+        if (phase !== 'setup' || !identity?.phoneNumber) {
+            return;
+        }
+        if (!form.getValues('ApiPhone')) {
+            form.setValue('ApiPhone', identity.phoneNumber);
+        }
+    }, [phase, identity?.phoneNumber, form]);
+
+    return null;
+};
+
 const CallSetupSummary = ({ values }) => {
     if (!values) return null;
 
@@ -227,12 +243,17 @@ const HangupButton = ({ params, phase, handleSubmit, ...props }) => {
 };
 
 const NewCallButton = ({ onNewCall, ...props }) => {
+    const { identity } = useGetIdentity();
     const form = useFormContext();
 
     const handleClick = useCallback(() => {
-        form.reset({ ...DEFAULT_VALUES, ApiCallId: String(Math.random()).slice(2) });
+        form.reset({
+            ...DEFAULT_VALUES,
+            ApiCallId: String(Math.random()).slice(2),
+            ApiPhone: identity?.phoneNumber || DEFAULT_VALUES.ApiPhone,
+        });
         onNewCall();
-    }, [form, onNewCall]);
+    }, [form, identity?.phoneNumber, onNewCall]);
 
     return (
         <RefreshButton
@@ -310,6 +331,7 @@ const HangupMessage = ({ phase }) => {
 // Main Component
 const YemotSimulator = () => {
     const dataProvider = useDataProvider();
+    const { identity } = useGetIdentity();
     const [history, setHistory] = useState([]);
     const [params, setParams] = useState([]);
     const [phase, setPhase] = useState('setup');
@@ -374,6 +396,10 @@ const YemotSimulator = () => {
     }, []);
 
     const activeLabel = history.length ? getPromptText(history[history.length - 1].prompt) : '';
+    const initialDefaultValues = {
+        ...DEFAULT_VALUES,
+        ApiPhone: identity?.phoneNumber || DEFAULT_VALUES.ApiPhone,
+    };
 
     return (
         <Card>
@@ -381,7 +407,7 @@ const YemotSimulator = () => {
             <CardContent>
                 <SimpleForm
                     onSubmit={handleSubmit}
-                    defaultValues={DEFAULT_VALUES}
+                    defaultValues={initialDefaultValues}
                     toolbar={
                         <SimulatorToolbar
                             phase={phase}
@@ -391,6 +417,7 @@ const YemotSimulator = () => {
                         />
                     }
                 >
+                    <PhonePrefill phase={phase} />
                     <CallSetupSummary values={phase !== 'setup' ? setupValues : null} />
                     <ConversationTranscript history={history} />
                     <CallInputs phase={phase} params={params} activeLabel={activeLabel} />
