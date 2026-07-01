@@ -155,6 +155,7 @@ const extendedTranslation = {
             send: 'שליחה',
             new_call: 'שיחה חדשה',
             hangup_message: 'השיחה נותקה, אפשר להתחיל שיחה חדשה',
+            answer_label: 'תשובה',
         }
     }
 }

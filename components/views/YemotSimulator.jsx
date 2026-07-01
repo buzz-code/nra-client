@@ -276,37 +276,41 @@ const SimulatorToolbar = ({ phase, params, onNewCall }) => (
     </Toolbar>
 );
 
-const CallInputs = ({ phase, params, activeLabel }) => (
-    <>
-        <TextInput source="ApiCallId" validate={required()} readOnly sx={{ display: 'none' }} />
-        <TextInput source="ApiExtension" validate={required()} readOnly sx={{ display: 'none' }} />
-        <TextInput
-            source="ApiDID"
-            label="מספר מערכת"
-            validate={required()}
-            sx={{ display: phase === 'setup' ? undefined : 'none' }}
-        />
-        <TextInput
-            source="ApiPhone"
-            label="מאת מס׳ טלפון"
-            validate={required()}
-            sx={{ display: phase === 'setup' ? undefined : 'none' }}
-        />
-        <TextInput
-            source="ApiEnterID"
-            label="מספר זיהוי"
-            sx={{ display: phase === 'setup' ? undefined : 'none' }}
-        />
-        {phase === 'in-call' && params.map(param => (
+const CallInputs = ({ phase, params, activeLabel }) => {
+    const translate = useTranslate();
+
+    return (
+        <>
+            <TextInput source="ApiCallId" validate={required()} readOnly sx={{ display: 'none' }} />
+            <TextInput source="ApiExtension" validate={required()} readOnly sx={{ display: 'none' }} />
             <TextInput
-                source={param}
-                key={param}
-                label={activeLabel || undefined}
+                source="ApiDID"
+                label="מספר מערכת"
                 validate={required()}
+                sx={{ display: phase === 'setup' ? undefined : 'none' }}
             />
-        ))}
-    </>
-);
+            <TextInput
+                source="ApiPhone"
+                label="מאת מס׳ טלפון"
+                validate={required()}
+                sx={{ display: phase === 'setup' ? undefined : 'none' }}
+            />
+            <TextInput
+                source="ApiEnterID"
+                label="מספר זיהוי"
+                sx={{ display: phase === 'setup' ? undefined : 'none' }}
+            />
+            {phase === 'in-call' && params.map(param => (
+                <TextInput
+                    source={param}
+                    key={param}
+                    label={activeLabel || translate('ra.yemot_simulator.answer_label')}
+                    validate={required()}
+                />
+            ))}
+        </>
+    );
+};
 
 const HangupMessage = ({ phase }) => {
     const translate = useTranslate();
@@ -329,10 +333,16 @@ const YemotSimulator = () => {
     const [phase, setPhase] = useState('setup');
     const [setupValues, setSetupValues] = useState(null);
     const notify = useNotify();
+    const sessionRef = useRef(0);
 
     const { mutate } = useMutation({
         mutationFn: (body) => dataProvider.simulateYemotCall(body),
-        onSuccess: (data, variables) => {
+        onMutate: () => ({ session: sessionRef.current }),
+        onSuccess: (data, variables, context) => {
+            if (context.session !== sessionRef.current) {
+                return;
+            }
+
             const parsedData = parseYemotResponse(data.body);
 
             if (phase === 'setup') {
@@ -359,7 +369,10 @@ const YemotSimulator = () => {
 
             notify('ra.yemot_simulator.step_success', { type: 'info' });
         },
-        onError: () => {
+        onError: (error, variables, context) => {
+            if (context.session !== sessionRef.current) {
+                return;
+            }
             notify('ra.message.error', { type: 'error' });
         }
     });
@@ -381,6 +394,7 @@ const YemotSimulator = () => {
     }, [mutate, params]);
 
     const handleNewCall = useCallback(() => {
+        sessionRef.current += 1;
         setHistory([]);
         setParams([]);
         setPhase('setup');
