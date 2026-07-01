@@ -261,11 +261,12 @@ const NewCallButton = ({ onNewCall, ...props }) => {
 
 const SimulatorToolbar = ({ phase, params, onNewCall }) => (
     <Toolbar>
-        <SaveButton
-            label={phase === 'setup' ? 'ra.yemot_simulator.start_call' : 'ra.yemot_simulator.send'}
-            disabled={phase === 'hangup'}
-            alwaysEnable={true}
-        />
+        {phase !== 'hangup' && (
+            <SaveButton
+                label={phase === 'setup' ? 'ra.yemot_simulator.start_call' : 'ra.yemot_simulator.send'}
+                alwaysEnable={true}
+            />
+        )}
         <NewCallButton onNewCall={onNewCall} />
         <HangupButton
             params={params}
