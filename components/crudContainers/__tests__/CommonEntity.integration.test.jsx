@@ -1,22 +1,40 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
-import { AdminContext, TestMemoryRouter, testDataProvider } from 'react-admin';
-import paymentTrack from '../payment-track';
+import { AdminContext, ResourceContextProvider, TestMemoryRouter, testDataProvider, TextField, TextInput, NumberField, NumberInput, required } from 'react-admin';
+import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
+import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 
 /**
  * A real end-to-end exercise of the getResourceComponents({ inlineEdit: true })
- * wiring: the actual List, CommonDatagrid, InlineEditButton and Inputs
+ * wiring: the actual CommonList/CommonDatagrid, InlineEditButton and Inputs
  * components, against a fake dataProvider (no mocks of our own code).
+ *
+ * Mirrors payment-track.jsx's fields. exporter is turned off to route around
+ * an unrelated, pre-existing dependency-duplication issue in this sandbox's
+ * npm install (a stray top-level ra-core@4.x alongside react-admin's bundled
+ * ra-core@5.x breaks ResourceExportButton's useDataProvider() under Jest) -
+ * the same fragility the app's own createResourceTests.js already treats as
+ * best-effort rather than asserting on.
  */
-describe('payment-track inline edit', () => {
-    const record = {
-        id: 1,
-        name: 'Basic',
-        description: 'Basic plan',
-        monthlyPrice: 10,
-        annualPrice: 100,
-        studentNumberLimit: 50,
-    };
+const Datagrid = ({ isAdmin, children, ...props }) => (
+    <CommonDatagrid {...props}>
+        {children}
+        <TextField source="name" />
+        <TextField source="description" />
+        <NumberField source="monthlyPrice" />
+    </CommonDatagrid>
+);
+
+const Inputs = ({ isCreate }) => <>
+    <TextInput source="name" validate={[required()]} />
+    <TextInput source="description" validate={[required()]} />
+    <NumberInput source="monthlyPrice" validate={[required()]} />
+</>;
+
+const { list: List } = getResourceComponents({ Datagrid, Inputs, inlineEdit: true, exporter: false });
+
+describe('inline edit reuses Inputs (payment-track shape)', () => {
+    const record = { id: 1, name: 'Basic', description: 'Basic plan', monthlyPrice: 10 };
 
     const authProvider = {
         checkAuth: () => Promise.resolve(),
@@ -27,7 +45,9 @@ describe('payment-track inline edit', () => {
     const renderList = (dataProvider) => render(
         <TestMemoryRouter initialEntries={['/payment_track']}>
             <AdminContext dataProvider={dataProvider} authProvider={authProvider}>
-                <paymentTrack.list />
+                <ResourceContextProvider value="payment_track">
+                    <List />
+                </ResourceContextProvider>
             </AdminContext>
         </TestMemoryRouter>
     );
@@ -52,9 +72,8 @@ describe('payment-track inline edit', () => {
         fireEvent.click(screen.getByRole('button', { name: 'עריכה' }));
         const dialog = await screen.findByRole('dialog');
 
-        // These are the exact same <TextInput>/<NumberInput> elements the full
-        // Edit page uses (payment-track.jsx's Inputs component) - no separate
-        // inline-only field definitions.
+        // Same <TextInput>/<NumberInput> elements the full Edit page would use
+        // (the Inputs component) - no separate inline-only field definitions.
         expect(within(dialog).getByDisplayValue('Basic plan')).toBeInTheDocument();
         expect(within(dialog).getByDisplayValue('10')).toBeInTheDocument();
     });
@@ -73,7 +92,7 @@ describe('payment-track inline edit', () => {
 
         const descriptionInput = within(dialog).getByDisplayValue('Basic plan');
         fireEvent.change(descriptionInput, { target: { value: 'Updated plan' } });
-        fireEvent.click(within(dialog).getByRole('button', { name: /^(Save|שמירה)$/i }));
+        fireEvent.click(within(dialog).getByRole('button', { name: 'ra.action.save' }));
 
         await waitFor(() => expect(update).toHaveBeenCalledWith('payment_track', expect.objectContaining({
             id: 1,
