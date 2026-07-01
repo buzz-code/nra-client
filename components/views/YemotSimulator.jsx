@@ -156,7 +156,7 @@ const ConversationTranscript = ({ history }) => {
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ block: 'nearest' });
-    }, [history.length]);
+    }, [history]);
 
     if (!history.length) {
         return null;
@@ -213,19 +213,12 @@ const CallSetupSummary = ({ values }) => {
     );
 };
 
-const HangupButton = ({ params, phase, handleSubmit, ...props }) => {
+const HangupButton = ({ params, phase, ...props }) => {
     const form = useFormContext();
 
     const handleClick = useCallback(() => {
         form.setValue('hangup', 'yes');
     }, [form]);
-
-    useEffect(() => {
-        if (phase === 'hangup') {
-            form.setValue('hangup', 'yes');
-            form.handleSubmit(handleSubmit);
-        }
-    }, [phase, form, handleSubmit]);
 
     if (phase === 'hangup') {
         return null;
@@ -266,7 +259,7 @@ const NewCallButton = ({ onNewCall, ...props }) => {
     );
 };
 
-const SimulatorToolbar = ({ phase, params, handleSubmit, onNewCall }) => (
+const SimulatorToolbar = ({ phase, params, onNewCall }) => (
     <Toolbar>
         <SaveButton
             label={phase === 'setup' ? 'ra.yemot_simulator.start_call' : 'ra.yemot_simulator.send'}
@@ -277,7 +270,6 @@ const SimulatorToolbar = ({ phase, params, handleSubmit, onNewCall }) => (
         <HangupButton
             params={params}
             phase={phase}
-            handleSubmit={handleSubmit}
             alwaysEnable={true}
             formNoValidate
         />
@@ -412,7 +404,6 @@ const YemotSimulator = () => {
                         <SimulatorToolbar
                             phase={phase}
                             params={params}
-                            handleSubmit={handleSubmit}
                             onNewCall={handleNewCall}
                         />
                     }
