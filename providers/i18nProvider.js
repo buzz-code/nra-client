@@ -151,6 +151,10 @@ const extendedTranslation = {
         },
         yemot_simulator: {
             step_success: 'התקבל בהצלחה, אפשר להמשיך בתהליך',
+            start_call: 'התחל שיחה',
+            send: 'שליחה',
+            new_call: 'שיחה חדשה',
+            hangup_message: 'השיחה נותקה, אפשר להתחיל שיחה חדשה',
         }
     }
 }
