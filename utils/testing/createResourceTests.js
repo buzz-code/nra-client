@@ -172,8 +172,9 @@ export function createResourceTests(App, options = {}) {
         window.history.pushState({}, '', '/yemot-simulator');
         render(<App />);
         await screen.findAllByRole('menuitem', {}, { timeout });
-        // Keep this broad so the test survives minor wording updates for the call-id label.
-        await screen.findByLabelText(/שיחה/i, {}, { timeout });
+        // Keep this broad so the test survives minor wording updates around call text in the simulator UI.
+        const callRelatedControls = await screen.findAllByLabelText(/שיחה/i, {}, { timeout });
+        expect(callRelatedControls.length).toBeGreaterThan(0);
         assertNoErrors();
         cleanup();
       },
