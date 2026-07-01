@@ -1,14 +1,8 @@
-import { Button, Form, maxLength, ReferenceField, required, SaveButton, TextField, TextInput, useCreate, useNotify, useRecordContext, useRefresh, useTranslate, useUpdate } from 'react-admin';
+import { DateField, DateTimeInput, maxLength, ReferenceField, required, TextField, TextInput, useRecordContext } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
+import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
-import { useState, useCallback } from 'react';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import Stack from '@mui/material/Stack';
-import EditIcon from '@mui/icons-material/Edit';
-import CircularProgress from '@mui/material/CircularProgress';
-import { handleError } from '@shared/utils/notifyUtil';
+import CommonReferenceInput from '@shared/components/fields/CommonReferenceInput';
 import { adminUserFilter } from '@shared/components/fields/PermissionFilter';
 
 const filters = [
@@ -29,98 +23,40 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
             <TextField source="description" />
             <TextField source="value" />
             <TextField source="filepath" />
-            <EditTextButton label='עריכה' icon={<EditIcon />} loader={<CircularProgress size={16} />} />
+            {isAdmin && <DateField showDate showTime source="createdAt" />}
+            {isAdmin && <DateField showDate showTime source="updatedAt" />}
         </CommonDatagrid>
     );
 }
 
-const resource = 'text';
-const EditTextButton = ({ label, icon, loader }) => {
+const Inputs = ({ isCreate, isAdmin }) => {
     const record = useRecordContext();
-    const notify = useNotify();
-    const refresh = useRefresh();
-    const translate = useTranslate();
-    const [showDialog, setShowDialog] = useState(false);
-
-    const handleSuccess = () => {
-        notify('ra.notification.updated', {
-            type: 'info',
-            messageArgs: { smart_count: 1 },
-        });
-        refresh();
-    };
-    const [create, createResponse] = useCreate(undefined, undefined, {
-        onSuccess: handleSuccess,
-        onError: handleError(notify),
-    });
-    const [update, updateResponse] = useUpdate(undefined, undefined, {
-        onSuccess: handleSuccess,
-        onError: handleError(notify),
-    });
-    const handleSave = (data) => {
-        if (record.overrideTextId) {
-            update(resource, {
-                id: record.overrideTextId,
-                data: {
-                    value: data.value,
-                    filepath: data.filepath,
-                },
-                previousData: {}
-            });
-        } else {
-            create(resource, {
-                data: {
-                    userId: record.userId,
-                    name: record.name,
-                    description: record.description,
-                    value: data.value,
-                    filepath: data.filepath,
-                }
-            });
-        }
-    }
-
-    const handleButtonClick = useCallback(() => {
-        setShowDialog(true);
-    }, [setShowDialog]);
-    const handleDialogClose = useCallback(() => {
-        setShowDialog(false);
-    }, [setShowDialog]);
-    const handleSubmit = useCallback(({ value, filepath }) => {
-        handleDialogClose();
-        handleSave({ value, filepath });
-    }, [handleDialogClose, handleSave]);
-
-    const isLoading = createResponse.isLoading || updateResponse.isLoading;
+    const isSystemText = record?.userId === 0;
 
     return <>
-        <Button label={label} onClick={handleButtonClick} disabled={isLoading}>
-            {isLoading ? loader : icon}
-        </Button>
-
-        <Dialog onClose={handleDialogClose} open={showDialog}>
-            <Form onSubmit={handleSubmit}>
-                <DialogContent>
-                    <Stack>
-                        <TextInput source='value' label='ערך' validate={[required(), maxLength(10000)]} />
-                        <TextInput 
-                            source='filepath' 
-                            validate={[maxLength(255)]} 
-                            helperText="אופציונלי - אם מלא, ישלח קובץ במקום טקסט"
-                        />
-                    </Stack>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleDialogClose} label={translate('ra.action.cancel')} />
-                    <SaveButton alwaysEnable autoFocus variant='text' icon={null} />
-                </DialogActions>
-            </Form>
-        </Dialog>
+        {!isCreate && isAdmin && <TextInput source="id" disabled />}
+        {isAdmin && <CommonReferenceInput source="userId" reference="user" emptyValue={0} emptyText='system' />}
+        <TextInput source="name" disabled={!isCreate} validate={[required(), maxLength(100)]} />
+        <TextInput source="description" disabled={!isCreate} validate={[required(), maxLength(500)]} />
+        <TextInput source="value" validate={[required(), maxLength(10000)]} />
+        {!isSystemText && (
+            <TextInput
+                source="filepath"
+                validate={[maxLength(255)]}
+                helperText="אופציונלי - אם מלא, ישלח קובץ במקום טקסט"
+            />
+        )}
+        {!isCreate && isAdmin && <DateTimeInput source="createdAt" disabled />}
+        {!isCreate && isAdmin && <DateTimeInput source="updatedAt" disabled />}
     </>
 }
 
+const Representation = CommonRepresentation;
+
 const entity = {
     Datagrid,
+    Inputs,
+    Representation,
     filters,
 };
 
