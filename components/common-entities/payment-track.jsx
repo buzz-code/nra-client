@@ -44,6 +44,7 @@ const entity = {
     Inputs,
     Representation,
     filters,
+    inlineEdit: true,
 };
 
 export default getResourceComponents(entity);
