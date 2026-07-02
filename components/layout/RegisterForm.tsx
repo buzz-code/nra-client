@@ -9,8 +9,8 @@ import {
     useTranslate,
     useNotify,
     useSafeSetState,
-} from 'ra-core';
-import { TextInput } from 'react-admin';
+    TextInput,
+} from 'react-admin';
 
 import useRegister from '../../utils/useRegister';
 
