@@ -12,7 +12,7 @@ import YemotSimulator from '../YemotSimulator';
  * number must therefore prefill ApiDID, otherwise they have to type it in
  * manually on every call.
  *
- * ApiPhone (hidden, but a required field) must also still end up populated
+ * ApiDID (hidden, but a required field) must also still end up populated
  * once identity resolves, otherwise the form can't be submitted.
  */
 describe('YemotSimulator setup prefill', () => {
@@ -23,7 +23,7 @@ describe('YemotSimulator setup prefill', () => {
         checkError: () => Promise.resolve(),
     };
 
-    it('prefills the system number (ApiDID) field with the user\'s own phone number', async () => {
+    it('prefills the system number (ApiPhone) field with the user\'s own phone number', async () => {
         const dataProvider = testDataProvider();
         const { container } = render(
             <TestMemoryRouter initialEntries={['/yemot-simulator']}>
@@ -36,7 +36,7 @@ describe('YemotSimulator setup prefill', () => {
         const systemNumberInput = await screen.findByLabelText('מספר מערכת');
         await waitFor(() => expect(systemNumberInput).toHaveValue('0501234567'));
 
-        const apiPhoneInput = container.querySelector('input[name="ApiPhone"]');
-        await waitFor(() => expect(apiPhoneInput).toHaveValue('0501234567'));
+        const apiDidInput = container.querySelector('input[name="ApiDID"]');
+        await waitFor(() => expect(apiDidInput).toHaveValue('0501234567'));
     });
 });
