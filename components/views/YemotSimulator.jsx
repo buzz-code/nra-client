@@ -1,10 +1,12 @@
 import { Card, CardContent, Chip, Box, Paper, Typography } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { SimpleForm, TextInput, Title, useDataProvider, useGetIdentity, useNotify, useTranslate, Toolbar, SaveButton, RefreshButton } from 'react-admin';
+import { SimpleForm, TextInput, Title, useDataProvider, useGetIdentity, useGetOne, useNotify, useTranslate, Toolbar, SaveButton, RefreshButton } from 'react-admin';
 import { useMutation } from '@tanstack/react-query';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import CallEndIcon from '@mui/icons-material/CallEnd'
 import AudioFileIcon from '@mui/icons-material/AudioFile'
+import CommonReferenceInput from '@shared/components/fields/CommonReferenceInput';
+import { useIsAdmin } from '@shared/utils/permissionsUtil';
 
 // Constants
 const DEFAULT_VALUES = {
@@ -179,20 +181,57 @@ const ConversationTranscript = ({ history }) => {
     );
 };
 
-const PhonePrefill = ({ phase }) => {
+const PhonePrefill = ({ phase, isAdmin }) => {
     const { identity } = useGetIdentity();
     const form = useFormContext();
 
     useEffect(() => {
-        if (phase !== 'setup' || !identity?.phoneNumber) {
+        if (isAdmin || phase !== 'setup' || !identity?.phoneNumber) {
             return;
         }
         if (!form.getValues('ApiPhone')) {
             form.setValue('ApiPhone', identity.phoneNumber);
         }
-    }, [phase, identity?.phoneNumber, form]);
+    }, [isAdmin, phase, identity?.phoneNumber, form]);
 
     return null;
+};
+
+const UserPhoneSelector = ({ phase }) => {
+    const form = useFormContext();
+    const selectedUserId = useWatch({ name: 'selectedUserId' });
+    const { data: selectedUser } = useGetOne(
+        'user',
+        { id: selectedUserId },
+        { enabled: !!selectedUserId }
+    );
+
+    useEffect(() => {
+        form.setValue('ApiPhone', selectedUser?.phoneNumber || '');
+    }, [selectedUser, form]);
+
+    return (
+        <Box
+            sx={{
+                display: phase === 'setup' ? 'flex' : 'none',
+                alignItems: 'center',
+                gap: 1,
+                width: '100%',
+            }}
+        >
+            <CommonReferenceInput
+                source="selectedUserId"
+                reference="user"
+                label="מאת משתמש"
+                filter={{ 'phoneNumber||$ne': '' }}
+                validate={required()}
+                sx={{ flexGrow: 1 }}
+            />
+            {selectedUser?.phoneNumber && (
+                <Chip label={selectedUser.phoneNumber} size="small" variant="outlined" />
+            )}
+        </Box>
+    );
 };
 
 const CallSetupSummary = ({ values }) => {
@@ -231,7 +270,7 @@ const HangupButton = ({ params, phase, ...props }) => {
     );
 };
 
-const NewCallButton = ({ onNewCall, ...props }) => {
+const NewCallButton = ({ onNewCall, isAdmin, ...props }) => {
     const { identity } = useGetIdentity();
     const form = useFormContext();
 
@@ -239,10 +278,11 @@ const NewCallButton = ({ onNewCall, ...props }) => {
         form.reset({
             ...DEFAULT_VALUES,
             ApiCallId: String(Math.random()).slice(2),
-            ApiPhone: identity?.phoneNumber || DEFAULT_VALUES.ApiPhone,
+            ApiPhone: !isAdmin && identity?.phoneNumber ? identity.phoneNumber : DEFAULT_VALUES.ApiPhone,
+            selectedUserId: null,
         });
         onNewCall();
-    }, [form, identity?.phoneNumber, onNewCall]);
+    }, [form, isAdmin, identity?.phoneNumber, onNewCall]);
 
     return (
         <RefreshButton
@@ -255,7 +295,7 @@ const NewCallButton = ({ onNewCall, ...props }) => {
     );
 };
 
-const SimulatorToolbar = ({ phase, params, onNewCall }) => (
+const SimulatorToolbar = ({ phase, params, onNewCall, isAdmin }) => (
     <Toolbar>
         {phase !== 'hangup' && (
             <SaveButton
@@ -263,7 +303,7 @@ const SimulatorToolbar = ({ phase, params, onNewCall }) => (
                 alwaysEnable={true}
             />
         )}
-        <NewCallButton onNewCall={onNewCall} />
+        <NewCallButton onNewCall={onNewCall} isAdmin={isAdmin} />
         <HangupButton
             params={params}
             phase={phase}
@@ -273,7 +313,7 @@ const SimulatorToolbar = ({ phase, params, onNewCall }) => (
     </Toolbar>
 );
 
-const CallInputs = ({ phase, params, activeLabel }) => {
+const CallInputs = ({ phase, params, activeLabel, isAdmin }) => {
     const translate = useTranslate();
 
     return (
@@ -286,12 +326,8 @@ const CallInputs = ({ phase, params, activeLabel }) => {
                 validate={required()}
                 sx={{ display: phase === 'setup' ? undefined : 'none' }}
             />
-            <TextInput
-                source="ApiPhone"
-                label="מאת מס׳ טלפון"
-                validate={required()}
-                sx={{ display: phase === 'setup' ? undefined : 'none' }}
-            />
+            <TextInput source="ApiPhone" validate={required()} readOnly sx={{ display: 'none' }} />
+            {isAdmin && <UserPhoneSelector phase={phase} />}
             <TextInput
                 source="ApiEnterID"
                 label="מספר זיהוי"
@@ -321,10 +357,21 @@ const HangupMessage = ({ phase }) => {
     );
 };
 
+const NoPhoneMessage = () => {
+    const translate = useTranslate();
+
+    return (
+        <Box sx={{ padding: 2, textAlign: 'center' }}>
+            <Typography>{translate('ra.yemot_simulator.no_phone_message')}</Typography>
+        </Box>
+    );
+};
+
 // Main Component
 const YemotSimulator = () => {
     const dataProvider = useDataProvider();
-    const { identity } = useGetIdentity();
+    const { identity, isPending: identityLoading } = useGetIdentity();
+    const isAdmin = useIsAdmin();
     const [history, setHistory] = useState([]);
     const [params, setParams] = useState([]);
     const [phase, setPhase] = useState('setup');
@@ -401,30 +448,38 @@ const YemotSimulator = () => {
     const activeLabel = history.length ? getPromptText(history[history.length - 1].prompt) : '';
     const initialDefaultValues = {
         ...DEFAULT_VALUES,
-        ApiPhone: identity?.phoneNumber || DEFAULT_VALUES.ApiPhone,
+        ApiPhone: !isAdmin && identity?.phoneNumber ? identity.phoneNumber : DEFAULT_VALUES.ApiPhone,
     };
+    const canUseSimulator = isAdmin || !!identity?.phoneNumber;
 
     return (
         <Card>
             <Title title="סימולטור" />
             <CardContent>
-                <SimpleForm
-                    onSubmit={handleSubmit}
-                    defaultValues={initialDefaultValues}
-                    toolbar={
-                        <SimulatorToolbar
-                            phase={phase}
-                            params={params}
-                            onNewCall={handleNewCall}
-                        />
-                    }
-                >
-                    <PhonePrefill phase={phase} />
-                    <CallSetupSummary values={phase !== 'setup' ? setupValues : null} />
-                    <ConversationTranscript history={history} />
-                    <CallInputs phase={phase} params={params} activeLabel={activeLabel} />
-                </SimpleForm>
-                <HangupMessage phase={phase} />
+                {!identityLoading && !canUseSimulator ? (
+                    <NoPhoneMessage />
+                ) : (
+                    <>
+                        <SimpleForm
+                            onSubmit={handleSubmit}
+                            defaultValues={initialDefaultValues}
+                            toolbar={
+                                <SimulatorToolbar
+                                    phase={phase}
+                                    params={params}
+                                    onNewCall={handleNewCall}
+                                    isAdmin={isAdmin}
+                                />
+                            }
+                        >
+                            <PhonePrefill phase={phase} isAdmin={isAdmin} />
+                            <CallSetupSummary values={phase !== 'setup' ? setupValues : null} />
+                            <ConversationTranscript history={history} />
+                            <CallInputs phase={phase} params={params} activeLabel={activeLabel} isAdmin={isAdmin} />
+                        </SimpleForm>
+                        <HangupMessage phase={phase} />
+                    </>
+                )}
             </CardContent>
         </Card>
     );
