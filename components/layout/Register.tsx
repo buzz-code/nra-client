@@ -5,7 +5,7 @@ import { Card, Avatar, SxProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LockIcon from '@mui/icons-material/Lock';
 import { useNavigate } from 'react-router-dom';
-import { useCheckAuth, useBasename, removeDoubleSlashes } from 'ra-core';
+import { useCheckAuth, useBasename, removeDoubleSlashes } from 'react-admin';
 
 import { RegisterForm as DefaultRegisterForm } from './RegisterForm';
 

@@ -12,8 +12,9 @@ import {
     useResourceContext,
     useGetResourceLabel,
     useTranslate,
-} from 'ra-core';
-import { Button, ButtonProps } from 'react-admin';
+    Button,
+    ButtonProps,
+} from 'react-admin';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useIsAdmin } from '@shared/utils/permissionsUtil';

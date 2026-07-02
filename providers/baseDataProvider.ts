@@ -1,8 +1,7 @@
 import { CondOperator, QueryFilter, QueryJoin, QuerySort, RequestQueryBuilder } from '@nestjsx/crud-request';
 import omitBy from 'lodash.omitby';
-import { DataProvider, fetchUtils } from 'ra-core';
 import { stringify } from 'query-string';
-import { GetListParams, RaRecord } from 'react-admin';
+import { DataProvider, fetchUtils, GetListParams, RaRecord } from 'react-admin';
 import saveAs from 'file-saver';
 import { MAX_PAGE_SIZE } from '@shared/config/settings';
 
