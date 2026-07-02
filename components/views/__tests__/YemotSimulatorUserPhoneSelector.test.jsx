@@ -8,7 +8,11 @@ import YemotSimulator from '../YemotSimulator';
  * Regression test for the admin "מאת משתמש" (from user) selector.
  *
  * Selecting a user must prefill ApiDID (the system/DID number, matched
- * server-side against User.phoneNumber) - not ApiPhone (the caller number).
+ * server-side against User.phoneNumber). ApiPhone is a required hidden
+ * field that PhonePrefill never sets for admins, so it must also be
+ * prefilled here (mirroring PhonePrefill's own behavior for non-admins,
+ * which sets both ApiDID and ApiPhone to the same number) - otherwise
+ * the form can never pass validation for admins using this selector.
  * The reference input's filter must also use an operator crud-request
  * accepts without a value (`$notnull`), since `$ne` with an empty string
  * value is silently dropped from the query string and the API returns
@@ -24,7 +28,7 @@ describe('YemotSimulator admin user selector', () => {
 
     const user = { id: 7, name: 'Test User', phoneNumber: '0521112222' };
 
-    it('prefills ApiDID (not ApiPhone) with the selected user\'s phone number', async () => {
+    it('prefills ApiDID and ApiPhone with the selected user\'s phone number', async () => {
         const dataProvider = testDataProvider({
             getList: () => Promise.resolve({ data: [user], total: 1 }),
             getOne: () => Promise.resolve({ data: user }),
@@ -46,6 +50,6 @@ describe('YemotSimulator admin user selector', () => {
         await waitFor(() => expect(apiDidInput).toHaveValue('0521112222'));
 
         const apiPhoneInput = container.querySelector('input[name="ApiPhone"]');
-        expect(apiPhoneInput).toHaveValue('');
+        await waitFor(() => expect(apiPhoneInput).toHaveValue('0521112222'));
     });
 });

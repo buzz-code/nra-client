@@ -221,6 +221,7 @@ const UserPhoneSelector = ({ phase }) => {
 
     useEffect(() => {
         form.setValue('ApiDID', selectedUser?.phoneNumber || '');
+        form.setValue('ApiPhone', selectedUser?.phoneNumber || '');
     }, [selectedUser, form]);
 
     return (
