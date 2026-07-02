@@ -1,13 +1,13 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { AdminContext, Notification, RecordContextProvider, ResourceContextProvider, required, testDataProvider } from 'react-admin';
 import { InlineEditCell } from '../InlineEditCell';
 
 /**
- * Uses the real Form/TextInput/react-hook-form stack (only the dataProvider
- * is faked) - InlineEditCell renders <TextInput> outside of an Edit/Create
- * page, so it needs its own <Form> wrapper to work at all; mocking TextInput
- * away (as the previous version of this test did) would hide that.
+ * Uses the real Dialog/Form/TextInput/react-hook-form stack (only the
+ * dataProvider is faked) - same pattern as InlineEditButton: Enter-to-submit
+ * and Escape-to-close come from Form/Dialog themselves, not custom key
+ * handling, so there's nothing bespoke here to mock away or get wrong.
  */
 describe('InlineEditCell', () => {
     const record = { id: 1, name: 'greeting', value: 'hello' };
@@ -20,6 +20,7 @@ describe('InlineEditCell', () => {
                 <ResourceContextProvider value="payment_track">
                     <RecordContextProvider value={record}>
                         <InlineEditCell source="value" {...props} />
+                        <Notification />
                     </RecordContextProvider>
                 </ResourceContextProvider>
             </AdminContext>
@@ -27,16 +28,17 @@ describe('InlineEditCell', () => {
         return { ...utils, update };
     };
 
-    it('renders a read-only field by default', () => {
+    it('renders a read-only field by default, with no dialog open', () => {
         renderCell();
         expect(screen.getByText('hello')).toBeInTheDocument();
-        expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
-    it('switches to a real text input on click, pre-filled with the current value', () => {
+    it('opens a dialog with the field pre-filled on click', async () => {
         renderCell();
         fireEvent.click(screen.getByText('hello'));
-        expect(screen.getByRole('textbox')).toHaveValue('hello');
+        const dialog = await screen.findByRole('dialog');
+        expect(within(dialog).getByDisplayValue('hello')).toBeInTheDocument();
     });
 
     it('stops propagation on click (does not trigger a row click handler)', () => {
@@ -56,63 +58,38 @@ describe('InlineEditCell', () => {
         expect(onRowClick).not.toHaveBeenCalled();
     });
 
-    it('saves on Enter, sending the resource context and record id', async () => {
+    it('saves via the Save button, sending the resource context and record id', async () => {
         const { update } = renderCell();
         fireEvent.click(screen.getByText('hello'));
-        const input = screen.getByRole('textbox');
-        fireEvent.change(input, { target: { value: 'new value' } });
-        fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+        const dialog = await screen.findByRole('dialog');
+        fireEvent.change(within(dialog).getByDisplayValue('hello'), { target: { value: 'new value' } });
+        fireEvent.click(within(dialog).getByRole('button', { name: 'ra.action.save' }));
 
         await waitFor(() => expect(update).toHaveBeenCalledWith('payment_track', expect.objectContaining({
             id: 1,
             data: { value: 'new value' },
         })));
-        // InlineEditCell's own job ends at calling update() + refresh(); a real
-        // Datagrid re-fetching is what would show the new value. Here we just
-        // confirm it closed back to read-only mode.
-        await waitFor(() => expect(screen.queryByRole('textbox')).not.toBeInTheDocument());
+        await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
     });
 
     it('uses an explicit resource prop over the ambient context when given', async () => {
         const { update } = renderCell({ resource: 'text' });
         fireEvent.click(screen.getByText('hello'));
-        const input = screen.getByRole('textbox');
-        fireEvent.change(input, { target: { value: 'new value' } });
-        fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+        const dialog = await screen.findByRole('dialog');
+        fireEvent.change(within(dialog).getByDisplayValue('hello'), { target: { value: 'new value' } });
+        fireEvent.click(within(dialog).getByRole('button', { name: 'ra.action.save' }));
 
         await waitFor(() => expect(update).toHaveBeenCalledWith('text', expect.objectContaining({ id: 1 })));
     });
 
-    it('cancels on Escape without saving, reverting to the read-only field', () => {
+    it('closes without saving on Cancel', async () => {
         const { update } = renderCell();
         fireEvent.click(screen.getByText('hello'));
-        const input = screen.getByRole('textbox');
-        fireEvent.change(input, { target: { value: 'changed' } });
-        fireEvent.keyDown(input, { key: 'Escape' });
+        const dialog = await screen.findByRole('dialog');
+        fireEvent.change(within(dialog).getByDisplayValue('hello'), { target: { value: 'changed' } });
+        fireEvent.click(within(dialog).getByRole('button', { name: 'ra.action.cancel' }));
 
-        expect(update).not.toHaveBeenCalled();
-        expect(screen.getByText('hello')).toBeInTheDocument();
-        expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
-    });
-
-    it('saves on blur when the value changed', async () => {
-        const { update } = renderCell();
-        fireEvent.click(screen.getByText('hello'));
-        const input = screen.getByRole('textbox');
-        fireEvent.change(input, { target: { value: 'blurred value' } });
-        fireEvent.blur(input);
-
-        await waitFor(() => expect(update).toHaveBeenCalledWith('payment_track', expect.objectContaining({
-            id: 1,
-            data: { value: 'blurred value' },
-        })));
-    });
-
-    it('does not save on blur when the value is unchanged', () => {
-        const { update } = renderCell();
-        fireEvent.click(screen.getByText('hello'));
-        fireEvent.blur(screen.getByRole('textbox'));
-
+        await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
         expect(update).not.toHaveBeenCalled();
         expect(screen.getByText('hello')).toBeInTheDocument();
     });
@@ -121,9 +98,9 @@ describe('InlineEditCell', () => {
         const transform = (value, rec) => ({ value, name: rec.name, custom: true });
         const { update } = renderCell({ transform });
         fireEvent.click(screen.getByText('hello'));
-        const input = screen.getByRole('textbox');
-        fireEvent.change(input, { target: { value: 'custom' } });
-        fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+        const dialog = await screen.findByRole('dialog');
+        fireEvent.change(within(dialog).getByDisplayValue('hello'), { target: { value: 'custom' } });
+        fireEvent.click(within(dialog).getByRole('button', { name: 'ra.action.save' }));
 
         await waitFor(() => expect(update).toHaveBeenCalledWith('payment_track', expect.objectContaining({
             data: { value: 'custom', name: 'greeting', custom: true },
@@ -133,32 +110,21 @@ describe('InlineEditCell', () => {
     it('shows a validation error and does not save on invalid input', async () => {
         const { update } = renderCell({ validate: [required()] });
         fireEvent.click(screen.getByText('hello'));
-        const input = screen.getByRole('textbox');
-        fireEvent.change(input, { target: { value: '' } });
-        fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+        const dialog = await screen.findByRole('dialog');
+        fireEvent.change(within(dialog).getByDisplayValue('hello'), { target: { value: '' } });
+        fireEvent.click(within(dialog).getByRole('button', { name: 'ra.action.save' }));
 
-        await screen.findByText('ra.validation.required');
+        await within(dialog).findByText('ra.validation.required');
         expect(update).not.toHaveBeenCalled();
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
     });
 
     it('notifies on successful save', async () => {
-        const dataProvider = testDataProvider({
-            update: (_resource, params) => Promise.resolve({ data: { ...record, ...params.data, id: params.id } }),
-        });
-        render(
-            <AdminContext dataProvider={dataProvider}>
-                <ResourceContextProvider value="payment_track">
-                    <RecordContextProvider value={record}>
-                        <InlineEditCell source="value" />
-                        <Notification />
-                    </RecordContextProvider>
-                </ResourceContextProvider>
-            </AdminContext>
-        );
+        renderCell();
         fireEvent.click(screen.getByText('hello'));
-        const input = screen.getByRole('textbox');
-        fireEvent.change(input, { target: { value: 'new' } });
-        fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+        const dialog = await screen.findByRole('dialog');
+        fireEvent.change(within(dialog).getByDisplayValue('hello'), { target: { value: 'new' } });
+        fireEvent.click(within(dialog).getByRole('button', { name: 'ra.action.save' }));
 
         expect(await screen.findByText('ra.notification.updated')).toBeInTheDocument();
     });
