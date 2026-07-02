@@ -227,7 +227,7 @@ const UserPhoneSelector = ({ phase }) => {
                 source="selectedUserId"
                 reference="user"
                 label="מאת משתמש"
-                filter={{ 'phoneNumber||$notnull': true, 'phoneNumber||$ne': '' }}
+                filter={{ 'phoneNumber||$ne': '' }}
                 validate={required()}
                 sx={{ flexGrow: 1 }}
             />
