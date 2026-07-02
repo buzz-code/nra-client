@@ -93,7 +93,7 @@ export const InlineEditButton = ({
             {isLoading ? (loader || <CircularProgress size={16} />) : (icon || <EditIcon />)}
         </Button>
 
-        <Dialog onClose={handleDialogClose} open={showDialog}>
+        <Dialog onClose={handleDialogClose} open={showDialog} fullWidth maxWidth="md">
             <Form record={record} onSubmit={handleSubmit}>
                 <DialogContent>
                     <Stack>
