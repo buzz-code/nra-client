@@ -220,7 +220,7 @@ const UserPhoneSelector = ({ phase }) => {
     );
 
     useEffect(() => {
-        form.setValue('ApiPhone', selectedUser?.phoneNumber || '');
+        form.setValue('ApiDID', selectedUser?.phoneNumber || '');
     }, [selectedUser, form]);
 
     return (
@@ -236,7 +236,7 @@ const UserPhoneSelector = ({ phase }) => {
                 source="selectedUserId"
                 reference="user"
                 label="מאת משתמש"
-                filter={{ 'phoneNumber||$ne': '' }}
+                filter={{ 'phoneNumber||$notnull': true }}
                 validate={required()}
                 sx={{ flexGrow: 1 }}
             />
