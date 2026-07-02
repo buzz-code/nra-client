@@ -156,6 +156,7 @@ const extendedTranslation = {
             new_call: 'שיחה חדשה',
             hangup_message: 'השיחה נותקה, אפשר להתחיל שיחה חדשה',
             answer_label: 'תשובה',
+            no_phone_message: 'יש להגדיר מספר טלפון בהגדרות המשתמש כדי להשתמש בסימולטור',
         }
     }
 }
