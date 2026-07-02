@@ -136,4 +136,16 @@ describe('parseYemotResponse', () => {
     ]);
     expect(result.param).toBe('val_1');
   });
+
+  it('resolves the param correctly when message text contains embedded "=" (e.g. [[KEY=VALUE]] markup)', () => {
+    const body = 'read=t-[[SEGMENT_ID=SEG_3B]].t-[[TITLE=רמה 3  מקטע ב2  בית הכנסת החורבה]].t-דלת בית הכנסת החורבה פתוחה=val_3,no,1,1,7,No,no,no,,,,,None,';
+    const result = parseYemotResponse(body);
+    expect(result.lines).toEqual([
+      { type: 'text', content: '[[SEGMENT_ID=SEG_3B]]' },
+      { type: 'text', content: '[[TITLE=רמה 3  מקטע ב2  בית הכנסת החורבה]]' },
+      { type: 'text', content: 'דלת בית הכנסת החורבה פתוחה' },
+    ]);
+    expect(result.param).toBe('val_3');
+    expect(result.hangup).toBe(false);
+  });
 });

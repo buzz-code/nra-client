@@ -18,25 +18,35 @@ const DEFAULT_VALUES = {
 };
 
 const REGEX_PATTERNS = {
-    TEXT: /[=.]t-([^=.]*)/g,
-    FILE: /[=.]f-([^=.]*)/g,
-    PARAM: /read=t-[^=]*=([^,\.]*)/
+    TEXT: /[=.]t-((?:(?!\.[tf]-|=[tf]-)[\s\S])*)/g,
+    FILE: /[=.]f-((?:(?!\.[tf]-|=[tf]-)[\s\S])*)/g,
 };
 
 // Utility Functions
 const required = (message = 'ra.validation.required') =>
     (value, allValues) => (value || allValues.hangup) ? undefined : message;
 
+// A "read" line is `read=<message>=<param>,<flag1>,<flag2>,...` (see server's getReadDef).
+// The message itself may legitimately contain "=" (e.g. embedded "[[KEY=VALUE]]" markup in
+// the read-aloud text), so the only reliable boundary is the *last* "=" in the line.
+const stripTrailingParamDef = (line) => {
+    if (line.startsWith('read') && (line.split('=').length - 1) >= 2) {
+        return line.slice(0, line.lastIndexOf('='));
+    }
+    return line;
+};
+
 export const parseResponseLine = (line) => {
     const messages = [];
+    const content = stripTrailingParamDef(line);
 
     // Collect all text messages (a single line may contain multiple =t- segments)
-    for (const match of line.matchAll(REGEX_PATTERNS.TEXT)) {
+    for (const match of content.matchAll(REGEX_PATTERNS.TEXT)) {
         messages.push({ type: 'text', content: match[1] });
     }
 
     // Collect all file messages
-    for (const match of line.matchAll(REGEX_PATTERNS.FILE)) {
+    for (const match of content.matchAll(REGEX_PATTERNS.FILE)) {
         messages.push({ type: 'file', content: match[1] });
     }
 
@@ -45,10 +55,10 @@ export const parseResponseLine = (line) => {
 
 const parseParameterFromLine = (line) => {
     if (line.startsWith('read')) {
-        const paramMatch = REGEX_PATTERNS.PARAM.exec(line);
-        if (paramMatch) {
-            const [, param] = paramMatch;
-            return param;
+        const lastEquals = line.lastIndexOf('=');
+        if (lastEquals !== -1) {
+            const [param] = line.slice(lastEquals + 1).split(',');
+            return param || null;
         }
     }
     return null;
