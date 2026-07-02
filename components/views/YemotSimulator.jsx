@@ -199,8 +199,8 @@ const PhonePrefill = ({ phase, isAdmin }) => {
         if (isAdmin || phase !== 'setup' || !identity?.phoneNumber) {
             return;
         }
-        if (!form.getValues('ApiPhone')) {
-            form.setValue('ApiPhone', identity.phoneNumber);
+        if (!form.getValues('ApiDID')) {
+            form.setValue('ApiDID', identity.phoneNumber);
         }
     }, [isAdmin, phase, identity?.phoneNumber, form]);
 
