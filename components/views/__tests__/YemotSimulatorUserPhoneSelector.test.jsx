@@ -19,37 +19,37 @@ import YemotSimulator from '../YemotSimulator';
  * 400 "Invalid filter value".
  */
 describe('YemotSimulator admin user selector', () => {
-    const authProvider = {
-        checkAuth: () => Promise.resolve(),
-        getIdentity: () => Promise.resolve({ id: 1 }),
-        getPermissions: () => Promise.resolve({ admin: true }),
-        checkError: () => Promise.resolve(),
-    };
+  const authProvider = {
+    checkAuth: () => Promise.resolve(),
+    getIdentity: () => Promise.resolve({ id: 1 }),
+    getPermissions: () => Promise.resolve({ admin: true }),
+    checkError: () => Promise.resolve(),
+  };
 
-    const user = { id: 7, name: 'Test User', phoneNumber: '0521112222' };
+  const user = { id: 7, name: 'Test User', phoneNumber: '0521112222' };
 
-    it('prefills ApiDID and ApiPhone with the selected user\'s phone number', async () => {
-        const dataProvider = testDataProvider({
-            getList: () => Promise.resolve({ data: [user], total: 1 }),
-            getOne: () => Promise.resolve({ data: user }),
-        });
-        const { container } = render(
-            <TestMemoryRouter initialEntries={['/yemot-simulator']}>
-                <AdminContext dataProvider={dataProvider} authProvider={authProvider}>
-                    <YemotSimulator />
-                </AdminContext>
-            </TestMemoryRouter>
-        );
-
-        const selector = await screen.findByLabelText('מאת משתמש');
-        await userEvent.type(selector, 'Test');
-        const option = await screen.findByText('Test User');
-        await userEvent.click(option);
-
-        const apiDidInput = await screen.findByLabelText('מספר מערכת');
-        await waitFor(() => expect(apiDidInput).toHaveValue('0521112222'));
-
-        const apiPhoneInput = container.querySelector('input[name="ApiPhone"]');
-        await waitFor(() => expect(apiPhoneInput).toHaveValue('0521112222'));
+  it('prefills ApiDID and ApiPhone with the selected user\'s phone number', async () => {
+    const dataProvider = testDataProvider({
+      getList: () => Promise.resolve({ data: [user], total: 1 }),
+      getOne: () => Promise.resolve({ data: user }),
     });
+    const { container } = render(
+      <TestMemoryRouter initialEntries={['/yemot-simulator']}>
+        <AdminContext dataProvider={dataProvider} authProvider={authProvider}>
+          <YemotSimulator />
+        </AdminContext>
+      </TestMemoryRouter>
+    );
+
+    const selector = await screen.findByLabelText('מאת משתמש');
+    await userEvent.type(selector, 'Test');
+    const option = await screen.findByText('Test User');
+    await userEvent.click(option);
+
+    const apiDidInput = await screen.findByLabelText('מספר מערכת');
+    await waitFor(() => expect(apiDidInput).toHaveValue('0521112222'));
+
+    const apiPhoneInput = container.querySelector('input[name="ApiPhone"]');
+    await waitFor(() => expect(apiPhoneInput).toHaveValue('0521112222'));
+  });
 });

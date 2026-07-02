@@ -334,13 +334,13 @@ const CallInputs = ({ phase, params, activeLabel, isAdmin }) => {
         <>
             <TextInput source="ApiCallId" validate={required()} readOnly sx={{ display: 'none' }} />
             <TextInput source="ApiExtension" validate={required()} readOnly sx={{ display: 'none' }} />
+            <TextInput source="ApiDID" validate={required()} readOnly sx={{ display: 'none' }} />
             <TextInput
-                source="ApiDID"
+                source="ApiPhone"
                 label="מספר מערכת"
                 validate={required()}
                 sx={{ display: phase === 'setup' ? undefined : 'none' }}
             />
-            <TextInput source="ApiPhone" validate={required()} readOnly sx={{ display: 'none' }} />
             {isAdmin && <UserPhoneSelector phase={phase} />}
             <TextInput
                 source="ApiEnterID"
