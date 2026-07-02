@@ -1,186 +1,165 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { AdminContext, Notification, RecordContextProvider, ResourceContextProvider, required, testDataProvider } from 'react-admin';
+import { InlineEditCell } from '../InlineEditCell';
 
-const mockNotify = jest.fn();
-const mockRefresh = jest.fn();
-const mockUpdate = jest.fn();
-
-jest.mock('react-admin', () => ({
-    TextField: ({ source }) => <span data-testid={`text-${source}`}>text-value</span>,
-    TextInput: ({ source, defaultValue, onChange, onKeyDown, onBlur, autoFocus, error, helperText, label }) => (
-        <input
-            data-testid={`input-${source}`}
-            defaultValue={defaultValue}
-            onChange={onChange}
-            onKeyDown={onKeyDown}
-            onBlur={onBlur}
-            autoFocus={autoFocus}
-            aria-label={label || source}
-            aria-invalid={!!error}
-        />
-    ),
-    useUpdate: (_resource, _id, options) => {
-        const fn = (...args) => {
-            mockUpdate(...args);
-            if (options && options.onSuccess) options.onSuccess();
-        };
-        return [fn, { isLoading: false }];
-    },
-    useNotify: () => mockNotify,
-    useRefresh: () => mockRefresh,
-    useResourceContext: () => 'payment_track',
-    useRecordContext: () => ({
-        id: 1,
-        name: 'greeting',
-        value: 'hello',
-    }),
-}));
-
-jest.mock('@mui/material/CircularProgress', () => () => <span>loading</span>);
-jest.mock('@mui/material/Box', () => ({ children, onClick, sx, component, ...props }) => (
-    <span onClick={onClick} data-testid="box" {...props}>{children}</span>
-));
-
-jest.mock('@shared/utils/notifyUtil', () => ({
-    handleError: (notify) => (error) => notify('error', { type: 'error' }),
-}));
-
-const { InlineEditCell } = require('../InlineEditCell');
-
+/**
+ * Uses the real Form/TextInput/react-hook-form stack (only the dataProvider
+ * is faked) - InlineEditCell renders <TextInput> outside of an Edit/Create
+ * page, so it needs its own <Form> wrapper to work at all; mocking TextInput
+ * away (as the previous version of this test did) would hide that.
+ */
 describe('InlineEditCell', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
+    const record = { id: 1, name: 'greeting', value: 'hello' };
+
+    const renderCell = (props = {}, dataProviderOverrides = {}) => {
+        const update = jest.fn((_resource, params) => Promise.resolve({ data: { ...record, ...params.data, id: params.id } }));
+        const dataProvider = testDataProvider({ update, ...dataProviderOverrides });
+        const utils = render(
+            <AdminContext dataProvider={dataProvider}>
+                <ResourceContextProvider value="payment_track">
+                    <RecordContextProvider value={record}>
+                        <InlineEditCell source="value" {...props} />
+                    </RecordContextProvider>
+                </ResourceContextProvider>
+            </AdminContext>
+        );
+        return { ...utils, update };
+    };
+
+    it('renders a read-only field by default', () => {
+        renderCell();
+        expect(screen.getByText('hello')).toBeInTheDocument();
+        expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
     });
 
-    it('renders read-only TextField by default', () => {
-        render(<InlineEditCell source="value" />);
-        expect(screen.getByTestId('text-value')).toBeInTheDocument();
-        expect(screen.queryByTestId('input-value')).not.toBeInTheDocument();
+    it('switches to a real text input on click, pre-filled with the current value', () => {
+        renderCell();
+        fireEvent.click(screen.getByText('hello'));
+        expect(screen.getByRole('textbox')).toHaveValue('hello');
     });
 
-    it('switches to input on click', () => {
-        render(<InlineEditCell source="value" />);
-        fireEvent.click(screen.getByTestId('box'));
-        expect(screen.getByTestId('input-value')).toBeInTheDocument();
-    });
-
-    it('stops propagation on click (prevents row click)', () => {
+    it('stops propagation on click (does not trigger a row click handler)', () => {
         const onRowClick = jest.fn();
         render(
             <div onClick={onRowClick}>
-                <InlineEditCell source="value" />
+                <AdminContext dataProvider={testDataProvider()}>
+                    <ResourceContextProvider value="payment_track">
+                        <RecordContextProvider value={record}>
+                            <InlineEditCell source="value" />
+                        </RecordContextProvider>
+                    </ResourceContextProvider>
+                </AdminContext>
             </div>
         );
-        fireEvent.click(screen.getByTestId('box'));
+        fireEvent.click(screen.getByText('hello'));
         expect(onRowClick).not.toHaveBeenCalled();
     });
 
-    it('saves on Enter key, using the ambient resource context and the record id', async () => {
-        render(<InlineEditCell source="value" />);
-        fireEvent.click(screen.getByTestId('box'));
-        const input = screen.getByTestId('input-value');
+    it('saves on Enter, sending the resource context and record id', async () => {
+        const { update } = renderCell();
+        fireEvent.click(screen.getByText('hello'));
+        const input = screen.getByRole('textbox');
         fireEvent.change(input, { target: { value: 'new value' } });
-        fireEvent.keyDown(input, { key: 'Enter' });
+        fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
 
-        await waitFor(() => {
-            expect(mockUpdate).toHaveBeenCalledWith('payment_track', {
-                id: 1,
-                data: { value: 'new value' },
-                previousData: { id: 1, name: 'greeting', value: 'hello' },
-            });
-        });
+        await waitFor(() => expect(update).toHaveBeenCalledWith('payment_track', expect.objectContaining({
+            id: 1,
+            data: { value: 'new value' },
+        })));
+        // InlineEditCell's own job ends at calling update() + refresh(); a real
+        // Datagrid re-fetching is what would show the new value. Here we just
+        // confirm it closed back to read-only mode.
+        await waitFor(() => expect(screen.queryByRole('textbox')).not.toBeInTheDocument());
     });
 
     it('uses an explicit resource prop over the ambient context when given', async () => {
-        render(<InlineEditCell source="value" resource="text" />);
-        fireEvent.click(screen.getByTestId('box'));
-        const input = screen.getByTestId('input-value');
+        const { update } = renderCell({ resource: 'text' });
+        fireEvent.click(screen.getByText('hello'));
+        const input = screen.getByRole('textbox');
         fireEvent.change(input, { target: { value: 'new value' } });
-        fireEvent.keyDown(input, { key: 'Enter' });
+        fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
 
-        await waitFor(() => {
-            expect(mockUpdate).toHaveBeenCalledWith('text', expect.objectContaining({ id: 1 }));
-        });
+        await waitFor(() => expect(update).toHaveBeenCalledWith('text', expect.objectContaining({ id: 1 })));
     });
 
-    it('reverts on Escape key without saving', () => {
-        render(<InlineEditCell source="value" />);
-        fireEvent.click(screen.getByTestId('box'));
-        const input = screen.getByTestId('input-value');
+    it('cancels on Escape without saving, reverting to the read-only field', () => {
+        const { update } = renderCell();
+        fireEvent.click(screen.getByText('hello'));
+        const input = screen.getByRole('textbox');
         fireEvent.change(input, { target: { value: 'changed' } });
         fireEvent.keyDown(input, { key: 'Escape' });
 
-        expect(mockUpdate).not.toHaveBeenCalled();
-        expect(screen.getByTestId('text-value')).toBeInTheDocument();
+        expect(update).not.toHaveBeenCalled();
+        expect(screen.getByText('hello')).toBeInTheDocument();
+        expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
     });
 
-    it('saves on blur when value changed', async () => {
-        render(<InlineEditCell source="value" />);
-        fireEvent.click(screen.getByTestId('box'));
-        const input = screen.getByTestId('input-value');
+    it('saves on blur when the value changed', async () => {
+        const { update } = renderCell();
+        fireEvent.click(screen.getByText('hello'));
+        const input = screen.getByRole('textbox');
         fireEvent.change(input, { target: { value: 'blurred value' } });
         fireEvent.blur(input);
 
-        await waitFor(() => {
-            expect(mockUpdate).toHaveBeenCalledWith('payment_track', {
-                id: 1,
-                data: { value: 'blurred value' },
-                previousData: { id: 1, name: 'greeting', value: 'hello' },
-            });
-        });
+        await waitFor(() => expect(update).toHaveBeenCalledWith('payment_track', expect.objectContaining({
+            id: 1,
+            data: { value: 'blurred value' },
+        })));
     });
 
-    it('does not save on blur when value unchanged', () => {
-        render(<InlineEditCell source="value" />);
-        fireEvent.click(screen.getByTestId('box'));
-        const input = screen.getByTestId('input-value');
-        fireEvent.blur(input);
+    it('does not save on blur when the value is unchanged', () => {
+        const { update } = renderCell();
+        fireEvent.click(screen.getByText('hello'));
+        fireEvent.blur(screen.getByRole('textbox'));
 
-        expect(mockUpdate).not.toHaveBeenCalled();
+        expect(update).not.toHaveBeenCalled();
+        expect(screen.getByText('hello')).toBeInTheDocument();
     });
 
-    it('uses custom transform function for update data', async () => {
-        const transform = (value, record) => ({ value, name: record.name, custom: true });
-        render(<InlineEditCell source="value" transform={transform} />);
-        fireEvent.click(screen.getByTestId('box'));
-        const input = screen.getByTestId('input-value');
+    it('uses a custom transform function for the update payload', async () => {
+        const transform = (value, rec) => ({ value, name: rec.name, custom: true });
+        const { update } = renderCell({ transform });
+        fireEvent.click(screen.getByText('hello'));
+        const input = screen.getByRole('textbox');
         fireEvent.change(input, { target: { value: 'custom' } });
-        fireEvent.keyDown(input, { key: 'Enter' });
+        fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
 
-        await waitFor(() => {
-            expect(mockUpdate).toHaveBeenCalledWith('payment_track', {
-                id: 1,
-                data: { value: 'custom', name: 'greeting', custom: true },
-                previousData: { id: 1, name: 'greeting', value: 'hello' },
-            });
+        await waitFor(() => expect(update).toHaveBeenCalledWith('payment_track', expect.objectContaining({
+            data: { value: 'custom', name: 'greeting', custom: true },
+        })));
+    });
+
+    it('shows a validation error and does not save on invalid input', async () => {
+        const { update } = renderCell({ validate: [required()] });
+        fireEvent.click(screen.getByText('hello'));
+        const input = screen.getByRole('textbox');
+        fireEvent.change(input, { target: { value: '' } });
+        fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+
+        await screen.findByText('ra.validation.required');
+        expect(update).not.toHaveBeenCalled();
+    });
+
+    it('notifies on successful save', async () => {
+        const dataProvider = testDataProvider({
+            update: (_resource, params) => Promise.resolve({ data: { ...record, ...params.data, id: params.id } }),
         });
-    });
-
-    it('shows validation error and does not save on invalid input', async () => {
-        const validate = (value) => value.length < 3 ? 'Too short' : undefined;
-        render(<InlineEditCell source="value" validate={validate} />);
-        fireEvent.click(screen.getByTestId('box'));
-        const input = screen.getByTestId('input-value');
-        fireEvent.change(input, { target: { value: 'ab' } });
-        fireEvent.keyDown(input, { key: 'Enter' });
-
-        expect(mockUpdate).not.toHaveBeenCalled();
-        expect(input).toHaveAttribute('aria-invalid', 'true');
-    });
-
-    it('notifies and refreshes on successful save', async () => {
-        render(<InlineEditCell source="value" />);
-        fireEvent.click(screen.getByTestId('box'));
-        const input = screen.getByTestId('input-value');
+        render(
+            <AdminContext dataProvider={dataProvider}>
+                <ResourceContextProvider value="payment_track">
+                    <RecordContextProvider value={record}>
+                        <InlineEditCell source="value" />
+                        <Notification />
+                    </RecordContextProvider>
+                </ResourceContextProvider>
+            </AdminContext>
+        );
+        fireEvent.click(screen.getByText('hello'));
+        const input = screen.getByRole('textbox');
         fireEvent.change(input, { target: { value: 'new' } });
-        fireEvent.keyDown(input, { key: 'Enter' });
+        fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
 
-        await waitFor(() => {
-            expect(mockNotify).toHaveBeenCalledWith('ra.notification.updated', {
-                type: 'info',
-                messageArgs: { smart_count: 1 },
-            });
-            expect(mockRefresh).toHaveBeenCalled();
-        });
+        expect(await screen.findByText('ra.notification.updated')).toBeInTheDocument();
     });
 });
