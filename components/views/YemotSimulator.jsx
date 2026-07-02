@@ -16,8 +16,8 @@ const DEFAULT_VALUES = {
 };
 
 const REGEX_PATTERNS = {
-    TEXT: /\=t-([^=\.]*)/,
-    FILE: /\=f-([^=\.]*)/,
+    TEXT: /[=.]t-([^=.]*)/g,
+    FILE: /[=.]f-([^=.]*)/g,
     PARAM: /read=t-[^=]*=([^,\.]*)/
 };
 
@@ -25,22 +25,20 @@ const REGEX_PATTERNS = {
 const required = (message = 'ra.validation.required') =>
     (value, allValues) => (value || allValues.hangup) ? undefined : message;
 
-const parseResponseLine = (line) => {
-    // Check for text messages
-    const textMatch = REGEX_PATTERNS.TEXT.exec(line);
-    if (textMatch) {
-        const [, text] = textMatch;
-        return { type: 'text', content: text };
+export const parseResponseLine = (line) => {
+    const messages = [];
+
+    // Collect all text messages (a single line may contain multiple =t- segments)
+    for (const match of line.matchAll(REGEX_PATTERNS.TEXT)) {
+        messages.push({ type: 'text', content: match[1] });
     }
 
-    // Check for file messages
-    const fileMatch = REGEX_PATTERNS.FILE.exec(line);
-    if (fileMatch) {
-        const [, filename] = fileMatch;
-        return { type: 'file', content: filename };
+    // Collect all file messages
+    for (const match of line.matchAll(REGEX_PATTERNS.FILE)) {
+        messages.push({ type: 'file', content: match[1] });
     }
 
-    return null;
+    return messages;
 };
 
 const parseParameterFromLine = (line) => {
@@ -54,16 +52,14 @@ const parseParameterFromLine = (line) => {
     return null;
 };
 
-const parseYemotResponse = (responseBody) => {
+export const parseYemotResponse = (responseBody) => {
     const parsedData = { lines: [], param: '', hangup: false };
     const lines = responseBody.split('&');
 
     for (const line of lines) {
 
-        const messageResult = parseResponseLine(line);
-        if (messageResult) {
-            parsedData.lines.push(messageResult);
-        }
+        const messages = parseResponseLine(line);
+        parsedData.lines.push(...messages);
 
         const param = parseParameterFromLine(line);
         if (param) {
