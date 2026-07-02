@@ -202,6 +202,9 @@ const PhonePrefill = ({ phase, isAdmin }) => {
         if (!form.getValues('ApiDID')) {
             form.setValue('ApiDID', identity.phoneNumber);
         }
+        if (!form.getValues('ApiPhone')) {
+            form.setValue('ApiPhone', identity.phoneNumber);
+        }
     }, [isAdmin, phase, identity?.phoneNumber, form]);
 
     return null;
