@@ -43,6 +43,10 @@ export function createViteConfig(options = {}) {
         },
       },
       build: {
+        // mui-material-vendor and react-admin-core-vendor are the frameworks
+        // themselves (all of MUI core, all of react-admin/ra-core); they sit
+        // just over the default 500 KiB limit and can't be split further.
+        chunkSizeWarningLimit: 600,
         rollupOptions: {
           output: {
             manualChunks: {
