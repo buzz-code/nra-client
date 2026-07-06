@@ -44,6 +44,13 @@ export function createViteConfig(options = {}) {
       },
       build: {
         rollupOptions: {
+          output: {
+            manualChunks: {
+              'react-vendor': ['react', 'react-dom'],
+              'mui-vendor': ['@mui/material', '@mui/icons-material'],
+              'react-admin-vendor': ['react-admin', 'ra-core', 'ra-ui-materialui'],
+            },
+          },
           onwarn(warning, warn) {
             if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
             warn(warning);
