@@ -49,6 +49,9 @@ export function createViteConfig(options = {}) {
               'react-vendor': ['react', 'react-dom'],
               'mui-vendor': ['@mui/material', '@mui/icons-material'],
               'react-admin-vendor': ['react-admin', 'ra-core', 'ra-ui-materialui'],
+              'xlsx-vendor': ['xlsx'],
+              'openobserve-vendor': ['@openobserve/browser-rum', '@openobserve/browser-logs'],
+              'rich-text-vendor': ['ra-input-rich-text'],
             },
           },
           onwarn(warning, warn) {
