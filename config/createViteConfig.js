@@ -51,7 +51,7 @@ export function createViteConfig(options = {}) {
         // default vendor chunk. Only xlsx and the openobserve telemetry SDKs
         // have no dependency on that framework stack, so they're safe to
         // split out on their own.
-        chunkSizeWarningLimit: 2500,
+        chunkSizeWarningLimit: 2700,
         rollupOptions: {
           output: {
             manualChunks: {
