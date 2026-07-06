@@ -43,30 +43,20 @@ export function createViteConfig(options = {}) {
         },
       },
       build: {
-        // mui-material-vendor and react-admin-core-vendor are the frameworks
-        // themselves (all of MUI core, all of react-admin/ra-core); they sit
-        // just over the default 500 KiB limit and can't be split further.
-        chunkSizeWarningLimit: 600,
+        // react, MUI, react-admin/ra-core, and ra-ui-materialui are tightly
+        // interdependent (MUI depends on react, react-admin depends on both,
+        // etc.) — splitting them into separate chunks broke module init order
+        // (circular chunk loading -> "Cannot read properties of undefined
+        // (reading '__esModule')" at runtime). Keep them together in the
+        // default vendor chunk. Only xlsx and the openobserve telemetry SDKs
+        // have no dependency on that framework stack, so they're safe to
+        // split out on their own.
+        chunkSizeWarningLimit: 2500,
         rollupOptions: {
           output: {
             manualChunks: {
-              'react-vendor': ['react', 'react-dom'],
-              'mui-material-vendor': ['@mui/material'],
-              'mui-icons-vendor': ['@mui/icons-material'],
-              'react-admin-core-vendor': ['react-admin', 'ra-core'],
-              'ra-ui-materialui-vendor': ['ra-ui-materialui'],
               'xlsx-vendor': ['xlsx'],
               'openobserve-vendor': ['@openobserve/browser-rum', '@openobserve/browser-logs'],
-              'rich-text-vendor': ['ra-input-rich-text'],
-              'misc-vendor': [
-                'ra-data-nestjsx-crud',
-                '@nestjsx/crud-request',
-                'jewish-date',
-                'react-admin-json-view',
-                'stylis',
-                'stylis-plugin-rtl',
-                'file-saver',
-              ],
             },
           },
           onwarn(warning, warn) {
