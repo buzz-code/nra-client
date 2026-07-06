@@ -122,6 +122,24 @@ describe('dataProvider', () => {
     });
   });
 
+  describe('updateProfile', () => {
+    it('updates profile', async () => {
+      const profile = { phoneNumber: '0501234567' };
+      fetchJson.mockResolvedValueOnce({ json: { success: true } });
+
+      await dataProvider.updateProfile({ data: profile });
+
+      // Use expect.stringMatching to handle potential trailing slash
+      expect(fetchJson).toHaveBeenCalledWith(
+        expect.stringMatching(new RegExp(`${apiUrl}/profile/?$`)),
+        expect.objectContaining({
+          method: 'PATCH',
+          body: JSON.stringify(profile),
+        })
+      );
+    });
+  });
+
   describe('action', () => {
     it('executes action with query params and body', async () => {
       const queryParams = { filter: 'active' };

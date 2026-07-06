@@ -41,6 +41,12 @@ dataProvider.updateSettings = async ({ data }) =>
         body: JSON.stringify(data)
     });
 
+dataProvider.updateProfile = async ({ data }) =>
+    dataProvider.exec('profile', '', {
+        method: 'PATCH',
+        body: JSON.stringify(data)
+    });
+
 const createQueryParamsStrWithAction = (queryParams, action) => {
     return new URLSearchParams({
         ...queryParams,
