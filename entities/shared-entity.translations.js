@@ -199,6 +199,7 @@ export const sharedEntityTranslations = {
   settings: {
     fields: {
       yemotApiKey: 'מפתח API של Yemot',
+      phoneNumber: 'מספר טלפון',
     },
   },
 };
