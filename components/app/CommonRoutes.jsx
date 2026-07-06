@@ -6,7 +6,7 @@ import PageList from '@shared/components/views/PageList';
 import Roadmap from '@shared/components/views/Roadmap';
 import { RegisterPage } from '@shared/components/layout/RegisterPage';
 import { MaintenancePage } from '@shared/components/layout/MaintenancePage';
-import { isAdmin } from '@shared/utils/permissionsUtil';
+import { isAdmin, isYemotSimulator } from '@shared/utils/permissionsUtil';
 
 /**
  * Renders the set of routes that are identical across all NRA apps:
@@ -22,7 +22,9 @@ import { isAdmin } from '@shared/utils/permissionsUtil';
 const CommonRoutes = ({ permissions, roadmapFeatures, settingsPage }) => (
     <>
         <CustomRoutes>
-            <Route path="/yemot-simulator" element={<YemotSimulator />} />
+            {isYemotSimulator(permissions) && (
+                <Route path="/yemot-simulator" element={<YemotSimulator />} />
+            )}
             <Route path="/tutorial" element={<Tutorial />} />
             <Route path="/pages-view" element={<PageList />} />
             <Route path="/roadmap" element={<Roadmap features={roadmapFeatures} />} />

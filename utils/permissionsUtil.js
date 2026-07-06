@@ -47,3 +47,7 @@ export const useIsUploadedFiles = () => useHasPermission(permissionKeys.uploaded
 export const isPhoneCampaign = (permissions) =>
     isAdmin(permissions) || hasPermissionLogic(permissions, permissionKeys.phoneCampaign);
 export const useIsPhoneCampaign = () => useHasPermission(permissionKeys.phoneCampaign) || useIsAdmin();
+
+export const isYemotSimulator = (permissions) =>
+    isAdmin(permissions) || hasPermissionLogic(permissions, permissionKeys.yemotSimulator);
+export const useIsYemotSimulator = () => useHasPermission(permissionKeys.yemotSimulator) || useIsAdmin();

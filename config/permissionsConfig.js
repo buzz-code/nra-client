@@ -8,6 +8,7 @@ export const permissionKeys = {
     genericImageUpload: 'genericImageUpload',
     uploadedFiles: 'uploadedFiles',
     phoneCampaign: 'phoneCampaign',
+    yemotSimulator: 'yemotSimulator',
     // Keys for permissions like 'inLessonReport', 'scannerUpload', etc.,
     // are intentionally omitted here as they are for a different app.
     // The generic permission checker will still function if these keys are
