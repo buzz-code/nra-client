@@ -44,19 +44,39 @@ export function createViteConfig(options = {}) {
       },
       build: {
         // react, MUI, react-admin/ra-core, and ra-ui-materialui are tightly
-        // interdependent (MUI depends on react, react-admin depends on both,
-        // etc.) — splitting them into separate chunks broke module init order
-        // (circular chunk loading -> "Cannot read properties of undefined
-        // (reading '__esModule')" at runtime). Keep them together in the
-        // default vendor chunk. Only xlsx and the openobserve telemetry SDKs
-        // have no dependency on that framework stack, so they're safe to
-        // split out on their own.
-        chunkSizeWarningLimit: 2700,
+        // interdependent (MUI depends on react, react-admin depends on both
+        // ra-core and ra-ui-materialui, and ra-ui-materialui depends back on
+        // ra-core) — splitting them into separate chunks broke module init
+        // order (circular chunk loading -> "Cannot read properties of
+        // undefined (reading '__esModule')" at runtime). Keep them together
+        // in the default vendor chunk. Everything below is only ever
+        // depended on by that framework chunk, never the other way around,
+        // so splitting these out on their own can't introduce a cycle.
+        chunkSizeWarningLimit: 1700,
         rollupOptions: {
           output: {
             manualChunks: {
+              'react-admin-vendor': [
+                'react',
+                'react-dom',
+                '@mui/material',
+                '@mui/icons-material',
+                'react-admin',
+                'ra-core',
+                'ra-ui-materialui',
+              ],
               'xlsx-vendor': ['xlsx'],
               'openobserve-vendor': ['@openobserve/browser-rum', '@openobserve/browser-logs'],
+              'rich-text-vendor': ['ra-input-rich-text'],
+              'misc-vendor': [
+                'ra-data-nestjsx-crud',
+                '@nestjsx/crud-request',
+                'jewish-date',
+                'react-admin-json-view',
+                'stylis',
+                'stylis-plugin-rtl',
+                'file-saver',
+              ],
             },
           },
           onwarn(warning, warn) {
