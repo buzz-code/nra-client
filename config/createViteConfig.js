@@ -47,11 +47,22 @@ export function createViteConfig(options = {}) {
           output: {
             manualChunks: {
               'react-vendor': ['react', 'react-dom'],
-              'mui-vendor': ['@mui/material', '@mui/icons-material'],
-              'react-admin-vendor': ['react-admin', 'ra-core', 'ra-ui-materialui'],
+              'mui-material-vendor': ['@mui/material'],
+              'mui-icons-vendor': ['@mui/icons-material'],
+              'react-admin-core-vendor': ['react-admin', 'ra-core'],
+              'ra-ui-materialui-vendor': ['ra-ui-materialui'],
               'xlsx-vendor': ['xlsx'],
               'openobserve-vendor': ['@openobserve/browser-rum', '@openobserve/browser-logs'],
               'rich-text-vendor': ['ra-input-rich-text'],
+              'misc-vendor': [
+                'ra-data-nestjsx-crud',
+                '@nestjsx/crud-request',
+                'jewish-date',
+                'react-admin-json-view',
+                'stylis',
+                'stylis-plugin-rtl',
+                'file-saver',
+              ],
             },
           },
           onwarn(warning, warn) {
