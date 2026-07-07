@@ -13,6 +13,7 @@ export const ActionOrDialogButton = ({
     onClose,
     onOpen,
     onClick,
+    icon,
     ...props // Button props
 }) => {
     const translate = useTranslate();
@@ -35,7 +36,7 @@ export const ActionOrDialogButton = ({
 
     return (
         <>
-            <Button onClick={handleClick} {...props} />
+            <Button onClick={handleClick} {...props}>{icon}</Button>
             {dialogContent && (
                 <Dialog
                     open={open}
