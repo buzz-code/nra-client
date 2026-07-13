@@ -101,6 +101,13 @@ const authProvider = {
         if (isPublicRoute()) {
             return { guest: true };
         }
+        if (!localStorage.getItem('auth')) {
+            // No local session: skip the network round-trip (it would just 401),
+            // so anonymous visitors aren't stuck on a loading spinner waiting for
+            // react-query's retry backoff before "/" can decide to show the
+            // public homepage instead of the dashboard.
+            throw new Error('Not authenticated');
+        }
         const { permissions } = await authProvider.getIdentity();
         return permissions;
     },

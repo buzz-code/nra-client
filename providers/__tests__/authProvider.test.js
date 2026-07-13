@@ -211,10 +211,21 @@ describe('authProvider', () => {
     it('returns user permissions for authenticated routes', async () => {
       window.location.pathname = '/admin';
       const identityData = { permissions: ['admin', 'user'] };
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify(identityData));
+      // mockReturnValue (not mockReturnValueOnce): getPermissions reads 'auth' itself
+      // before delegating to getIdentity, which reads it again - real localStorage
+      // returns the same value on every read.
+      localStorageMock.getItem.mockReturnValue(JSON.stringify(identityData));
 
       const permissions = await authProvider.getPermissions();
       expect(permissions).toEqual(identityData.permissions);
+    });
+
+    it('rejects without a network call when there is no local session', async () => {
+      window.location.pathname = '/admin';
+      localStorageMock.getItem.mockReturnValue(null);
+
+      await expect(authProvider.getPermissions()).rejects.toThrow();
+      expect(fetchJson).not.toHaveBeenCalled();
     });
   });
 });
