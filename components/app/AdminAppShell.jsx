@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Admin, CustomRoutes } from 'react-admin';
+import { QueryClient } from '@tanstack/react-query';
 import { BrowserRouter, Route } from 'react-router-dom';
 import RTLStyle from '@shared/components/layout/RTLStyle';
 import dataProvider from '@shared/providers/dataProvider';
@@ -35,6 +36,16 @@ import { HomePage } from '@shared/components/layout/HomePage';
 const AdminAppShell = ({ title, themeOptions, domainTranslations, dashboard, layout, homeContent, children }) => {
     const theme = useMemo(() => createTheme({ ...themeOptions, isRtl: true }), [themeOptions]);
     const i18nProvider = useMemo(() => getI18nProvider(domainTranslations), [domainTranslations]);
+    // Anonymous visitors always fail the permissions check (no session yet); without this,
+    // react-query's default retry backoff (~1s+2s+4s) delays the public homepage from
+    // appearing at "/" by several seconds. Scoped to just this query key so every other
+    // query in the app (resource lists, etc.) keeps its normal retry behaviour.
+    const queryClient = useMemo(() => {
+        if (!homeContent) return undefined;
+        const client = new QueryClient();
+        client.setQueryDefaults(['auth', 'getPermissions'], { retry: false });
+        return client;
+    }, [homeContent]);
 
     return (
         <BrowserRouter>
@@ -43,6 +54,7 @@ const AdminAppShell = ({ title, themeOptions, domainTranslations, dashboard, lay
                     dataProvider={dataProvider}
                     i18nProvider={i18nProvider}
                     authProvider={authProvider}
+                    queryClient={queryClient}
                     theme={theme}
                     title={title}
                     dashboard={dashboard}
