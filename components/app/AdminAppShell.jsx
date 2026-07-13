@@ -18,11 +18,17 @@ import { LoginPage } from '@shared/components/layout/LoginPage';
  *  - domainTranslations {object} Project-specific translation object
  *  - dashboard      {Component}
  *  - layout         {Component}
+ *  - homeContent    {object}   Optional public landing-page content (appTitle, tagline,
+ *                              description, features, ctaLabel) shown at "/" instead of
+ *                              the login form for anonymous visitors. Omit to keep the
+ *                              login form at "/" (previous behaviour). Define at module
+ *                              level so the reference is stable, like themeOptions.
  *  - children       {function} permissions => JSX  (React-Admin children-as-function)
  */
-const AdminAppShell = ({ title, themeOptions, domainTranslations, dashboard, layout, children }) => {
+const AdminAppShell = ({ title, themeOptions, domainTranslations, dashboard, layout, homeContent, children }) => {
     const theme = useMemo(() => createTheme({ ...themeOptions, isRtl: true }), [themeOptions]);
     const i18nProvider = useMemo(() => getI18nProvider(domainTranslations), [domainTranslations]);
+    const loginPage = useMemo(() => () => <LoginPage homeContent={homeContent} />, [homeContent]);
 
     return (
         <BrowserRouter>
@@ -35,7 +41,7 @@ const AdminAppShell = ({ title, themeOptions, domainTranslations, dashboard, lay
                     title={title}
                     dashboard={dashboard}
                     layout={layout}
-                    loginPage={LoginPage}
+                    loginPage={loginPage}
                     requireAuth
                 >
                     {children}
