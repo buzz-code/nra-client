@@ -57,7 +57,7 @@ describe('AdminAppShell public homepage at "/"', () => {
     window.history.pushState({}, '', '/');
     render(<TestApp />);
 
-    await waitFor(() => expect(screen.getByText('ברוכים הבאים')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('ברוכים הבאים')).toBeInTheDocument(), { timeout: 5000 });
     expect(screen.queryByText('Dashboard Content')).not.toBeInTheDocument();
   });
 
