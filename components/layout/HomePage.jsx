@@ -85,8 +85,15 @@ export const HomePage = ({
 
             {features.length > 0 && (
                 <Grid container spacing={3}>
+                    {/* Avoid a single orphaned card on its own row (e.g. 4 features in 3 columns) */}
                     {features.map((feature) => (
-                        <Grid item xs={12} sm={6} md={4} key={feature.title}>
+                        <Grid
+                            item
+                            xs={12}
+                            sm={6}
+                            md={features.length % 3 === 1 ? 6 : 4}
+                            key={feature.title}
+                        >
                             <Card
                                 variant="outlined"
                                 sx={{
