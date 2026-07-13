@@ -31,7 +31,8 @@ import { HomePage } from '@shared/components/layout/HomePage';
  *                              exactly as before; no existing route or behaviour changes.
  *                              Define at module level so the reference is stable, like
  *                              themeOptions.
- *  - children       {function} permissions => JSX  (React-Admin children-as-function)
+ *  - children       {function|node} permissions => JSX, or plain JSX (React-Admin
+ *                              supports both children patterns; both are preserved here)
  */
 const AdminAppShell = ({ title, themeOptions, domainTranslations, dashboard, layout, homeContent, children }) => {
     const theme = useMemo(() => createTheme({ ...themeOptions, isRtl: true }), [themeOptions]);
@@ -69,7 +70,7 @@ const AdminAppShell = ({ title, themeOptions, domainTranslations, dashboard, lay
                                     <Route path="/" element={<HomePage {...homeContent} />} />
                                 </CustomRoutes>
                             )}
-                            {children(permissions)}
+                            {typeof children === 'function' ? children(permissions) : children}
                         </>
                     )}
                 </Admin>
