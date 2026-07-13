@@ -105,8 +105,9 @@ const authProvider = {
             // No local session: skip the network round-trip (it would just 401),
             // so anonymous visitors aren't stuck on a loading spinner waiting for
             // react-query's retry backoff before "/" can decide to show the
-            // public homepage instead of the dashboard.
-            throw new Error('Not authenticated');
+            // public homepage instead of the dashboard. No message: this only
+            // short-circuits a retry, it isn't a user-facing error.
+            throw new Error();
         }
         const { permissions } = await authProvider.getIdentity();
         return permissions;

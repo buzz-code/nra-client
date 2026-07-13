@@ -71,4 +71,27 @@ describe('AdminAppShell public homepage at "/"', () => {
     await waitFor(() => expect(screen.getByText('Dashboard Content')).toBeInTheDocument());
     expect(screen.queryByText('ברוכים הבאים')).not.toBeInTheDocument();
   });
+
+  it('accepts plain JSX children (not just children-as-a-function), per React-Admin', async () => {
+    mockAuthProvider.checkAuth.mockReturnValue(Promise.resolve());
+    mockAuthProvider.getPermissions.mockReturnValue(Promise.resolve({ admin: true }));
+
+    const PlainChildrenApp = () => (
+      <AdminAppShell
+        title="Test"
+        themeOptions={{ primary: '#000', secondary: '#000' }}
+        domainTranslations={{}}
+        dashboard={Dashboard}
+        layout={({ children }) => <div>{children}</div>}
+        homeContent={homeContent}
+      >
+        <div>Plain Node Children</div>
+      </AdminAppShell>
+    );
+
+    window.history.pushState({}, '', '/');
+    expect(() => render(<PlainChildrenApp />)).not.toThrow();
+
+    await waitFor(() => expect(screen.getByText('Dashboard Content')).toBeInTheDocument());
+  });
 });

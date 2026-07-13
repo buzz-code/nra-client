@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 
 /**
  * Public marketing/explainer page shown at "/" to anonymous visitors,
- * in place of the login form. Content is per-project (see LoginPage's
- * `homeContent` prop, threaded from AdminAppShell).
+ * in place of the login form. Content is per-project - AdminAppShell's
+ * `homeContent` prop is spread directly into this component's props.
  *
  * Props:
  *  - eyebrow     {string}  Small badge above the title (e.g. "מערכת ניהול בית ספרית")
