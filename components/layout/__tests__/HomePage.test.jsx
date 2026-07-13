@@ -20,7 +20,7 @@ describe('HomePage', () => {
     });
     expect(screen.getByText('תכונה')).toBeInTheDocument();
     expect(screen.getByText('תיאור תכונה')).toBeInTheDocument();
-    expect(document.querySelector('[data-testid="CheckIcon"]')).toBeInTheDocument();
+    expect(screen.getByTestId('CheckIcon')).toBeInTheDocument();
   });
 
   it('omits the "how it works" and closing sections when not provided', () => {

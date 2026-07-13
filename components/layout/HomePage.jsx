@@ -18,6 +18,16 @@ import { Link } from 'react-router-dom';
  *  - ctaLabel    {string}  Login button label
  *  - closingTitle {string} Optional heading for the closing call-to-action band
  */
+const getFeatureColumnWidth = (index, total) => {
+    if (total === 1) return 12;
+    if (total % 3 === 1) {
+        // Switch only the last 4 cards to 2 columns, so counts like 4, 7 or 10
+        // never leave a single card alone on the final row.
+        return index >= total - 4 ? 6 : 4;
+    }
+    return 4;
+};
+
 export const HomePage = ({
     eyebrow,
     appTitle,
@@ -85,13 +95,17 @@ export const HomePage = ({
 
             {features.length > 0 && (
                 <Grid container spacing={3}>
-                    {/* Avoid a single orphaned card on its own row (e.g. 4 features in 3 columns) */}
-                    {features.map((feature) => (
+                    {/*
+                        3 columns by default; avoid a single orphaned card on its own row
+                        (e.g. 4 or 7 features) by switching only the last 4 cards to 2
+                        columns, and a lone feature gets the full row.
+                    */}
+                    {features.map((feature, index) => (
                         <Grid
                             item
                             xs={12}
                             sm={6}
-                            md={features.length % 3 === 1 ? 6 : 4}
+                            md={getFeatureColumnWidth(index, features.length)}
                             key={feature.title}
                         >
                             <Card
