@@ -32,6 +32,6 @@ export const CommonJsonField = ({ source }) => {
     )
 };
 
-export const CommonJsonInput = ({ source }) => (
-    <JsonInput source={source} reactJsonOptions={reactJsonEditOptions} />
+export const CommonJsonInput = ({ source, ...rest }) => (
+    <JsonInput source={source} reactJsonOptions={reactJsonEditOptions} {...rest} />
 );
