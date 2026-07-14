@@ -21,4 +21,18 @@ describe('YearSelector', () => {
         expect(localStorage.getItem('year')).toBe(otherChoice.id.toString());
         expect(reload).toHaveBeenCalled();
     });
+
+    // localStorage only ever stores strings, but yearChoices use numeric ids -
+    // a previously-saved year must be coerced back to a number on load, or
+    // every `choice.id === defaultYearFilter.year` comparison silently fails
+    // (button shows no year, menu highlights nothing).
+    it('coerces a previously-saved year (stored as a string) back to a number', () => {
+        jest.resetModules();
+        localStorage.setItem('year', '5784');
+
+        const { defaultYearFilter: reloadedFilter, yearChoices: reloadedChoices } = require('@shared/utils/yearFilter');
+
+        expect(reloadedFilter.year).toBe(5784);
+        expect(reloadedChoices.some((choice) => choice.id === reloadedFilter.year)).toBe(true);
+    });
 });

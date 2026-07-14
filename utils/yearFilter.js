@@ -66,7 +66,7 @@ const getYearChoices = () => {
 export const yearChoices = getYearChoices();
 
 export const defaultYearFilter = {
-    year: savedYear ?? getCurrentHebrewYear(),
+    year: savedYear ? Number(savedYear) : getCurrentHebrewYear(),
 };
 
 export const updateDefaultYear = (year) => {
