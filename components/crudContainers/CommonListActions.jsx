@@ -2,6 +2,7 @@ import { useMemo, useContext } from 'react';
 import { CreateButton, TopToolbar, FilterButton, useListContext, useResourceContext, useResourceDefinition, FilterContext, SelectColumnsButton } from 'react-admin';
 import { ResourceImportButton } from '@shared/components/crudContainers/ResourceImportButton';
 import { ResourceExportButton } from './ResourceExportButton';
+import { AddToDashboardButton } from './AddToDashboardButton';
 
 export const CommonListActions = ({ importer, configurable, children, ...props }) => {
     const {
@@ -23,6 +24,7 @@ export const CommonListActions = ({ importer, configurable, children, ...props }
                 {hasCreate && <CreateButton />}
                 {children}
                 {configurable && <SelectColumnsButton />}
+                <AddToDashboardButton />
                 {exporter !== false && (
                     <ResourceExportButton
                         disabled={total === 0}
