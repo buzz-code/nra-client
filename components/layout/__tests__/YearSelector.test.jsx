@@ -13,7 +13,7 @@ describe('YearSelector', () => {
 
         render(<YearSelector />);
         const select = screen.getByRole('combobox');
-        expect(select).toHaveTextContent(defaultYearFilter.year.toString());
+        expect(select).toHaveValue(defaultYearFilter.year.toString());
 
         const otherYear = defaultYearFilter.year - 1;
         fireEvent.change(select, { target: { value: otherYear } });
