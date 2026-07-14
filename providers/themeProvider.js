@@ -113,6 +113,41 @@ export const createTheme = (options = {}) => {
                     }),
                 },
             },
+            MuiTableCell: {
+                styleOverrides: {
+                    head: {
+                        fontWeight: 700,
+                    },
+                    root: {
+                        borderBottom: '1px solid rgba(0, 0, 0, 0.06)',
+                    },
+                },
+            },
+            // Datagrid hardcodes its own `.RaDatagrid-headerCell { backgroundColor:
+            // background.paper }` (needed to keep the sticky header opaque), which
+            // has higher specificity than a plain MuiTableCell override - target
+            // the same class so the tint actually wins.
+            RaDatagrid: {
+                styleOverrides: {
+                    root: ({ theme }) => ({
+                        '& .RaDatagrid-headerCell': {
+                            backgroundColor: alpha(theme.palette.text.primary, 0.03),
+                        },
+                    }),
+                },
+            },
+            // The default RaLayout-content has no top padding at all, so page
+            // content sits flush against the AppBar - add breathing room here
+            // once, instead of on every page.
+            RaLayout: {
+                styleOverrides: {
+                    root: ({ theme }) => ({
+                        '& .RaLayout-content': {
+                            paddingTop: theme.spacing(3),
+                        },
+                    }),
+                },
+            },
         },
     };
 };

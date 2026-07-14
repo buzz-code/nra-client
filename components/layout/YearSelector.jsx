@@ -18,12 +18,20 @@ const YearSelector = () => {
     return (
         <TextField
             select
+            variant="standard"
             SelectProps={{ native: true }}
+            InputProps={{ disableUnderline: true }}
             size="small"
             fullWidth={false}
             value={year}
             onChange={handleChange}
-            sx={{ width: 92, mx: 1, flexShrink: 0, '& .MuiInputBase-root': { bgcolor: 'background.paper' } }}
+            sx={{
+                width: 76,
+                mx: 1.5,
+                flexShrink: 0,
+                '& .MuiInputBase-input': { color: 'inherit', fontWeight: 600 },
+                '& .MuiNativeSelect-icon': { color: 'inherit' },
+            }}
         >
             {yearChoices.map((choice) => (
                 <option key={choice.id} value={choice.id}>

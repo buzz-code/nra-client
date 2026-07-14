@@ -20,6 +20,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import SchoolIcon from '@mui/icons-material/School';
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import AddIcon from '@mui/icons-material/Add';
 
 const iconMap = {
     List: ListIcon,
@@ -47,9 +48,47 @@ export default ({ dashboardItems = [], children }) => {
                 <DashboardItem {...item} />
             </Grid>
         ))}
+        <Grid item xs={6} md={3}>
+            <AddCardHint />
+        </Grid>
         {children}
     </Grid>
 }
+
+// dashboardItems is admin-configurable (Settings -> dashboardItems), so
+// adding another card is already possible without any code change - this
+// just points users at where to do it instead of leaving the empty grid
+// space unexplained.
+const AddCardHint = () => (
+    <Card
+        component={Link}
+        to="/settings"
+        sx={{
+            minHeight: 52,
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 1,
+            border: '1px dashed',
+            borderColor: 'divider',
+            boxShadow: 'none',
+            color: 'text.secondary',
+            textDecoration: 'none',
+            transition: 'border-color 0.2s ease, color 0.2s ease',
+            '&:hover': {
+                borderColor: 'primary.main',
+                color: 'primary.main',
+                boxShadow: 'none',
+            },
+        }}
+    >
+        <AddIcon fontSize="small" />
+        <Typography variant="body2" fontWeight={600}>
+            הוספת כרטיס · דרך הגדרות
+        </Typography>
+    </Card>
+);
 
 const DashboardItem = ({ resource, icon = 'List', title, filter = {}, yearFilterType = 'year' }) => {
     const getResourceLabel = useGetResourceLabel();
