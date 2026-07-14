@@ -1,6 +1,6 @@
 import * as React from 'react';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMoreOutlined';
+import ExpandLessIcon from '@mui/icons-material/ExpandLessOutlined';
 import { List, ListItem, ListItemText, Collapse } from '@mui/material';
 import { useTranslate, useSidebarState, useStore } from 'react-admin';
 

@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Menu, useHasDashboard, useResourceDefinitions, usePermissions } from 'react-admin';
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import SubMenu from './SubMenu';
 import { useIsAdmin } from '@shared/utils/permissionsUtil';
 import { filterArrayByParams } from '@shared/utils/filtersUtil';
@@ -48,7 +49,7 @@ const CustomMenu = ({ menuGroups, children }) => {
     return (
         <Menu>
             {hasDashboard && (
-                <Menu.DashboardItem key="default-dashboard-menu-item" />
+                <Menu.DashboardItem key="default-dashboard-menu-item" leftIcon={<DashboardOutlinedIcon />} />
             )}
             {menuGroupsArr.map(group =>
                 group.children.length > 0 && (

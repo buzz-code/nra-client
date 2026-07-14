@@ -106,7 +106,13 @@ export const createTheme = (options = {}) => {
             },
             MuiTableRow: {
                 styleOverrides: {
+                    // nth-of-type is scoped to siblings within the same parent, so
+                    // this only strikes <tbody> rows - the header row is the sole
+                    // child of <thead> and never matches "even".
                     root: ({ theme }) => ({
+                        '&:nth-of-type(even)': {
+                            backgroundColor: alpha(theme.palette.text.primary, 0.02),
+                        },
                         '&.MuiTableRow-hover:hover': {
                             backgroundColor: alpha(theme.palette.primary.main, 0.04),
                         },

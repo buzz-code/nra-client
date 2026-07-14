@@ -10,17 +10,17 @@ import { Title, useDataProvider, useGetResourceLabel, useCreatePath } from 'reac
 import { Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { defaultYearFilter } from '@shared/utils/yearFilter';
-import ListIcon from '@mui/icons-material/List';
-import PersonIcon from '@mui/icons-material/Person';
-import EventIcon from '@mui/icons-material/Event';
-import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
-import CommentIcon from '@mui/icons-material/Comment';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import PeopleIcon from '@mui/icons-material/People';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import SchoolIcon from '@mui/icons-material/School';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import AddIcon from '@mui/icons-material/Add';
+import ListIcon from '@mui/icons-material/ListOutlined';
+import PersonIcon from '@mui/icons-material/PersonOutlined';
+import EventIcon from '@mui/icons-material/EventOutlined';
+import CardGiftcardIcon from '@mui/icons-material/CardGiftcardOutlined';
+import CommentIcon from '@mui/icons-material/CommentOutlined';
+import LocationOnIcon from '@mui/icons-material/LocationOnOutlined';
+import PeopleIcon from '@mui/icons-material/PeopleOutlined';
+import AssignmentIcon from '@mui/icons-material/AssignmentOutlined';
+import SchoolIcon from '@mui/icons-material/SchoolOutlined';
+import AssessmentIcon from '@mui/icons-material/AssessmentOutlined';
+import AddIcon from '@mui/icons-material/AddOutlined';
 
 const iconMap = {
     List: ListIcon,
