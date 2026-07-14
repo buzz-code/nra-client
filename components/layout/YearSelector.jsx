@@ -20,9 +20,10 @@ const YearSelector = () => {
             select
             SelectProps={{ native: true }}
             size="small"
+            fullWidth={false}
             value={year}
             onChange={handleChange}
-            sx={{ minWidth: 92, mx: 1, '& .MuiInputBase-root': { bgcolor: 'background.paper' } }}
+            sx={{ width: 92, mx: 1, flexShrink: 0, '& .MuiInputBase-root': { bgcolor: 'background.paper' } }}
         >
             {yearChoices.map((choice) => (
                 <option key={choice.id} value={choice.id}>
