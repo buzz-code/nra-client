@@ -36,13 +36,8 @@ const iconMap = {
 };
 
 export default ({ dashboardItems = [], children }) => {
-    return <Grid container spacing={2} mt={1}>
-        <Grid item xs={12}>
-            <Title title={"לוח המחוונים"} />
-        </Grid>
-        <Grid item xs={12}>
-            <Divider />
-        </Grid>
+    return <Grid container spacing={2}>
+        <Title title={"לוח המחוונים"} />
         {dashboardItems.map((item, index) => (
             <Grid item xs={6} md={3} key={index}>
                 <DashboardItem {...item} />
@@ -117,7 +112,7 @@ const DashboardItem = ({ resource, icon = 'List', title, filter = {}, yearFilter
             to={{ pathname: resourcePath, search: filter && Object.keys(filter).length ? 'filter=' + JSON.stringify(mergedFilter) : undefined }}
             icon={IconComponent}
             title={title || getResourceLabel(resource)}
-            subtitle={isPending ? <Loading /> : data}
+            subtitle={isPending ? <Loading /> : typeof data === 'number' ? data.toLocaleString() : data}
         />
     )
 }

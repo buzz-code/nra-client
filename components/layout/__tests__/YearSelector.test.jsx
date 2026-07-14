@@ -1,24 +1,24 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import YearSelector from '../YearSelector';
-import { defaultYearFilter } from '@shared/utils/yearFilter';
+import { defaultYearFilter, yearChoices } from '@shared/utils/yearFilter';
 
 describe('YearSelector', () => {
     afterEach(() => {
         localStorage.removeItem('year');
     });
 
-    it('shows the current default year and switches it on change', () => {
+    it('shows the current year as a button, and switches it via the menu like LocalesMenuButton', () => {
         const reload = jest.fn();
         Object.defineProperty(window, 'location', { value: { reload }, writable: true });
 
+        const currentChoice = yearChoices.find((choice) => choice.id === defaultYearFilter.year);
+        const otherChoice = yearChoices.find((choice) => choice.id !== defaultYearFilter.year);
+
         render(<YearSelector />);
-        const select = screen.getByRole('combobox');
-        expect(select).toHaveValue(defaultYearFilter.year.toString());
+        fireEvent.click(screen.getByRole('button', { name: currentChoice.name }));
+        fireEvent.click(screen.getByRole('menuitem', { name: otherChoice.name }));
 
-        const otherYear = defaultYearFilter.year - 1;
-        fireEvent.change(select, { target: { value: otherYear } });
-
-        expect(localStorage.getItem('year')).toBe(otherYear.toString());
+        expect(localStorage.getItem('year')).toBe(otherChoice.id.toString());
         expect(reload).toHaveBeenCalled();
     });
 });
