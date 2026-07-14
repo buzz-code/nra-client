@@ -50,14 +50,11 @@ export default ({ dashboardItems = [], children }) => {
     </Grid>
 }
 
-// dashboardItems is admin-configurable (Settings -> dashboardItems), so
-// adding another card is already possible without any code change - this
-// just points users at where to do it instead of leaving the empty grid
-// space unexplained.
+// Cards are added from a list's own toolbar (AddToDashboardButton), not from
+// Settings anymore - this just points users there instead of leaving the
+// empty grid space unexplained.
 const AddCardHint = () => (
     <Card
-        component={Link}
-        to="/settings"
         sx={{
             minHeight: 52,
             height: '100%',
@@ -69,18 +66,13 @@ const AddCardHint = () => (
             borderColor: 'divider',
             boxShadow: 'none',
             color: 'text.secondary',
-            textDecoration: 'none',
-            transition: 'border-color 0.2s ease, color 0.2s ease',
-            '&:hover': {
-                borderColor: 'primary.main',
-                color: 'primary.main',
-                boxShadow: 'none',
-            },
+            textAlign: 'center',
+            px: 2,
         }}
     >
         <AddIcon fontSize="small" />
         <Typography variant="body2" fontWeight={600}>
-            הוספת כרטיס · דרך הגדרות
+            סננו כל רשימה ולחצו על "הוסף ללוח מחוונים"
         </Typography>
     </Card>
 );
