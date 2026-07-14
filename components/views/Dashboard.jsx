@@ -37,7 +37,7 @@ const iconMap = {
 
 export default ({ dashboardItems = [], children }) => {
     return <Grid container spacing={2}>
-        <Title title={"לוח המחוונים"} />
+        <Title title={"תמונת מצב"} />
         {dashboardItems.map((item, index) => (
             <Grid item xs={6} md={3} key={index}>
                 <DashboardItem {...item} />
@@ -72,7 +72,7 @@ const AddCardHint = () => (
     >
         <AddIcon fontSize="small" />
         <Typography variant="body2" fontWeight={600}>
-            סננו כל רשימה ולחצו על "הוסף ללוח מחוונים"
+            סננו כל רשימה ולחצו על "הוסף לתמונת מצב"
         </Typography>
     </Card>
 );

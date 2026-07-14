@@ -50,7 +50,7 @@ export const AddToDashboardButton = () => {
 
             await dataProvider.updateSettings({ data: { dashboardItems: [...existingItems, newItem] } });
             await authProvider.getIdentity(true);
-            notify('נוסף ללוח המחוונים', { type: 'info' });
+            notify('נוסף לתמונת המצב', { type: 'info' });
         } catch (e) {
             notify('ההוספה נכשלה', { type: 'error' });
         } finally {
@@ -59,7 +59,7 @@ export const AddToDashboardButton = () => {
     };
 
     return (
-        <Button label="הוסף ללוח מחוונים" onClick={handleClick} disabled={loading}>
+        <Button label="הוסף לתמונת מצב" onClick={handleClick} disabled={loading}>
             <DashboardCustomizeOutlinedIcon />
         </Button>
     );
