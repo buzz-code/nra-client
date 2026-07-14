@@ -119,14 +119,7 @@ export const createTheme = (options = {}) => {
                         fontWeight: 700,
                     },
                     root: {
-                        // Dense-but-not-cramped: default "medium" cells run 16px
-                        // top/bottom (tall rows); "small" runs 6px (too tight to
-                        // read comfortably). This lands the row height around
-                        // 34-38px while keeping single-line text vertically
-                        // centered.
-                        padding: '10px 16px',
                         borderBottom: '1px solid rgba(0, 0, 0, 0.06)',
-                        fontVariantNumeric: 'tabular-nums',
                     },
                 },
             },
