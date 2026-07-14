@@ -4,12 +4,11 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import { createElement, useCallback, useEffect } from 'react';
-import { Form, Title, useDataProvider, useGetResourceLabel, useCreatePath } from 'react-admin';
+import { createElement, useEffect } from 'react';
+import { Title, useDataProvider, useGetResourceLabel, useCreatePath } from 'react-admin';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import CommonAutocompleteInput from '@shared/components/fields/CommonAutocompleteInput';
-import { defaultYearFilter, updateDefaultYear, yearChoices } from '@shared/utils/yearFilter';
+import { defaultYearFilter } from '@shared/utils/yearFilter';
 import ListIcon from '@mui/icons-material/List';
 import PersonIcon from '@mui/icons-material/Person';
 import EventIcon from '@mui/icons-material/Event';
@@ -35,19 +34,9 @@ const iconMap = {
 };
 
 export default ({ dashboardItems = [], children }) => {
-    const handleYearChange = useCallback((value) => {
-        updateDefaultYear(value);
-        window.location.reload();
-    }, []);
-
     return <Grid container spacing={2} mt={1}>
         <Grid item xs={12}>
             <Title title={"לוח המחוונים"} />
-        </Grid>
-        <Grid item xs={3}>
-            <Form>
-                <CommonAutocompleteInput source="year" label="שנה" choices={yearChoices} defaultValue={defaultYearFilter.year} onChange={handleYearChange} disableClearable />
-            </Form>
         </Grid>
         <Grid item xs={12}>
             <Divider />
