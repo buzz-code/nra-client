@@ -23,7 +23,13 @@ export const SubMenu = (props: SubMenuProps) => {
                 onClick={handleToggle}
                 sx={{
                     paddingLeft: '1rem',
-                    color: 'rgba(0, 0, 0, 0.54)',
+                    marginInline: 1,
+                    width: 'auto',
+                    borderRadius: 2,
+                    color: 'text.secondary',
+                    '&:hover': {
+                        backgroundColor: 'action.hover',
+                    },
                 }}
             >
                 {leftIcon}
@@ -34,7 +40,8 @@ export const SubMenu = (props: SubMenuProps) => {
                     sx={{
                         paddingLeft: 2,
                         fontSize: '1rem',
-                        color: 'rgba(0, 0, 0, 0.6)',
+                        fontWeight: 600,
+                        color: 'text.secondary',
                     }}
                 />
                 {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}

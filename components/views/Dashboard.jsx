@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
+import { alpha } from '@mui/material/styles';
 import { createElement, useEffect } from 'react';
 import { Title, useDataProvider, useGetResourceLabel, useCreatePath } from 'react-admin';
 import { Link } from 'react-router-dom';
@@ -96,6 +97,11 @@ const CardWithIcon = ({ icon, title, subtitle, to, children }) => {
                 display: 'flex',
                 flexDirection: 'column',
                 flex: '1',
+                transition: 'box-shadow 0.2s ease, transform 0.2s ease',
+                '&:hover': {
+                    boxShadow: '0 8px 24px -8px rgba(0, 0, 0, 0.2)',
+                    transform: 'translateY(-2px)',
+                },
                 '& a': {
                     textDecoration: 'none',
                     color: 'inherit',
@@ -110,20 +116,25 @@ const CardWithIcon = ({ icon, title, subtitle, to, children }) => {
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        '& .icon': {
-                            color: theme =>
-                                theme.palette.mode === 'dark'
-                                    ? 'inherit'
-                                    : '#dc2440',
-                        },
                     }}
                 >
-                    <Box width="3em" className="icon">
-                        {createElement(icon, { fontSize: 'large' })}
+                    <Box
+                        sx={{
+                            width: 44,
+                            height: 44,
+                            borderRadius: 2,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.12),
+                            color: 'primary.main',
+                        }}
+                    >
+                        {createElement(icon, { fontSize: 'medium' })}
                     </Box>
                     <Box textAlign="right">
-                        <Typography color="textSecondary">{title}</Typography>
-                        <Typography variant="h5" component="h2">
+                        <Typography color="textSecondary" variant="body2">{title}</Typography>
+                        <Typography variant="h5" component="h2" fontWeight={700}>
                             {subtitle ?? ' '}
                         </Typography>
                     </Box>
