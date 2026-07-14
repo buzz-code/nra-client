@@ -143,6 +143,7 @@ const extendedTranslation = {
             },
         },
         page: {
+            dashboard: 'תמונת מצב',
             empty: 'אין %{name} עדיין.',
             invite: 'האם ברצונך להוסיף?',
         },

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMoreOutlined';
+import ExpandLessIcon from '@mui/icons-material/ExpandLessOutlined';
 import { List, ListItem, ListItemText, Collapse } from '@mui/material';
 import { useTranslate, useSidebarState, useStore } from 'react-admin';
 
@@ -23,7 +23,13 @@ export const SubMenu = (props: SubMenuProps) => {
                 onClick={handleToggle}
                 sx={{
                     paddingLeft: '1rem',
-                    color: 'rgba(0, 0, 0, 0.54)',
+                    marginInline: 1,
+                    width: 'auto',
+                    borderRadius: 2,
+                    color: 'text.secondary',
+                    '&:hover': {
+                        backgroundColor: 'action.hover',
+                    },
                 }}
             >
                 {leftIcon}
@@ -34,7 +40,8 @@ export const SubMenu = (props: SubMenuProps) => {
                     sx={{
                         paddingLeft: 2,
                         fontSize: '1rem',
-                        color: 'rgba(0, 0, 0, 0.6)',
+                        fontWeight: 600,
+                        color: 'text.secondary',
                     }}
                 />
                 {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}

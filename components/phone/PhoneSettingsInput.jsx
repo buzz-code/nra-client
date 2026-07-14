@@ -1,6 +1,5 @@
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { TextInput, maxLength, useGetIdentity } from 'react-admin';
+import { CommonSettingsAccordion } from '@shared/components/settings/CommonSettingsAccordion';
 
 /**
  * Settings accordion section for updating the user's phone number.
@@ -16,19 +15,14 @@ import { TextInput, maxLength, useGetIdentity } from 'react-admin';
 export const PhoneSettingsInput = () => {
     const { identity } = useGetIdentity();
     return (
-        <Accordion sx={{ width: '100%' }}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography variant="h6">מספר טלפון</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-                <TextInput
-                    source="phoneNumber"
-                    label="resources.settings.fields.phoneNumber"
-                    fullWidth
-                    validate={maxLength(11)}
-                    defaultValue={identity?.phoneNumber ?? ''}
-                />
-            </AccordionDetails>
-        </Accordion>
+        <CommonSettingsAccordion id="phone-settings" title="מספר טלפון" subtitle="מספר הטלפון שלך, לצורך שליחת הודעות">
+            <TextInput
+                source="phoneNumber"
+                label="resources.settings.fields.phoneNumber"
+                fullWidth
+                validate={maxLength(11)}
+                defaultValue={identity?.phoneNumber ?? ''}
+            />
+        </CommonSettingsAccordion>
     );
 };

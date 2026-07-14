@@ -1,6 +1,5 @@
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { TextInput, useGetIdentity } from 'react-admin';
+import { CommonSettingsAccordion } from '@shared/components/settings/CommonSettingsAccordion';
 
 /**
  * Settings accordion section for Yemot (phone campaign) API key configuration.
@@ -16,20 +15,19 @@ import { TextInput, useGetIdentity } from 'react-admin';
 export const YemotSettingsInput = () => {
     const { identity } = useGetIdentity();
     return (
-        <Accordion sx={{ width: '100%' }}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography variant="h6">הגדרות Yemot (מערכת שיחות טלפון)</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-                <TextInput
-                    source="yemotApiKey"
-                    label="resources.settings.fields.yemotApiKey"
-                    helperText="הזן את מפתח ה-API שקיבלת ממערכת Yemot לשליחת הודעות טלפון"
-                    fullWidth
-                    type="password"
-                    defaultValue={identity?.additionalData?.yemotApiKey ?? ''}
-                />
-            </AccordionDetails>
-        </Accordion>
+        <CommonSettingsAccordion
+            id="yemot-settings"
+            title="הגדרות Yemot (מערכת שיחות טלפון)"
+            subtitle="חיבור למערכת השיחות של Yemot - להגדרה על ידי מנהל המערכת"
+        >
+            <TextInput
+                source="yemotApiKey"
+                label="resources.settings.fields.yemotApiKey"
+                helperText="הזן את מפתח ה-API שקיבלת ממערכת Yemot לשליחת הודעות טלפון"
+                fullWidth
+                type="password"
+                defaultValue={identity?.additionalData?.yemotApiKey ?? ''}
+            />
+        </CommonSettingsAccordion>
     );
 };

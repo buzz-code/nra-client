@@ -1,5 +1,6 @@
 import { List, Datagrid, BulkDeleteWithConfirmButton, useResourceDefinition, Pagination, TextField, DatagridConfigurable } from 'react-admin';
 import { CommonListActions } from '@shared/components/crudContainers/CommonListActions';
+import { CommonEmpty } from '@shared/components/crudContainers/CommonEmpty';
 import { useDefaultPageSize } from '@shared/utils/settingsUtil';
 import { PAGE_SIZE_OPTIONS } from '@shared/config/settings';
 
@@ -33,12 +34,12 @@ export const CommonList = ({ children, importer, exporter, filterDefaultValues, 
     );
 }
 
-export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, hasDelete, configurable = true, InlineEdit, ...props }) => {
+export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, hasDelete, configurable = true, InlineEdit, empty = <CommonEmpty />, ...props }) => {
     const bulkActionButtons = useBulkActionButtons(readonly, additionalBulkButtons, hasDelete, props);
     const RaDataGrid = configurable ? DatagridConfigurable : Datagrid;
 
     return (
-        <RaDataGrid rowClick={!readonly && 'edit'} bulkActionButtons={bulkActionButtons} {...props}>
+        <RaDataGrid rowClick={!readonly && 'edit'} bulkActionButtons={bulkActionButtons} empty={empty} {...props}>
             {children}
             {InlineEdit && <InlineEdit />}
         </RaDataGrid>
