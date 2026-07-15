@@ -28,3 +28,11 @@ export const CommonYearInput = (props) => (
 export const CommonYearInputFilter = (props) => (
     <CommonYearInput alwaysOn {...props} />
 );
+
+// Same issue as CommonYearField above: the "add filter" menu (FilterButtonMenuItem)
+// reads `source`/`label` directly off the unrendered <CommonYearInputFilter />
+// element to build each checkbox's title, not off what it renders internally -
+// without this, every list's filter menu showed a blank checkbox for the year filter.
+CommonYearInputFilter.defaultProps = {
+    source: 'year',
+};
