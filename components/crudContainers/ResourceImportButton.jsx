@@ -20,7 +20,7 @@ export const ResourceImportButton = ({ resource, refetch = null, fields, handleD
     }, [setUploadedData, setFileName]);
 
     return <>
-        <ImportButton fields={fields} handleDataParse={handleDataParse} xlsxOptions={xlsxOptions} update={update} {...props} />
+        <ImportButton resource={resource} fields={fields} handleDataParse={handleDataParse} xlsxOptions={xlsxOptions} update={update} {...props} />
         <PreviewListWithSavingDialog resource={resource} datagrid={datagrid}
             data={data} saveData={saveData}
             refetch={refetch} handleSuccess={handleSuccess} handlePreviewCancel={handlePreviewCancel} />
