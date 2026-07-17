@@ -1,10 +1,7 @@
 import { List, RichTextField, useListContext } from "react-admin";
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { CollapsibleSection } from '../layout/CollapsibleSection';
 
 
 export default (props) => {
@@ -21,16 +18,11 @@ const PagesData = ({ ...props }) => {
     return (
         <Stack spacing={2} sx={{ padding: 2 }}>
             {data.map(page => (
-                <Accordion key={page.id}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={`${page.id}-content`} id={`${page.id}-header`}                    >
-                        <Typography>{page.description}</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <Typography>
-                            <RichTextField record={page} source='value' />
-                        </Typography>
-                    </AccordionDetails>
-                </Accordion>
+                <CollapsibleSection key={page.id} id={page.id} title={page.description} titleVariant="body1">
+                    <Typography>
+                        <RichTextField record={page} source='value' />
+                    </Typography>
+                </CollapsibleSection>
             ))}
         </Stack>
     );
