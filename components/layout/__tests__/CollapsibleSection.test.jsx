@@ -30,4 +30,20 @@ describe('CollapsibleSection', () => {
         expect(summary).toHaveAttribute('id', '42-header');
         expect(summary).toHaveAttribute('aria-controls', '42-content');
     });
+
+    it('accepts titleColor without affecting rendering', () => {
+        render(<CollapsibleSection title="פרטים" titleColor="text.secondary"><div /></CollapsibleSection>);
+        expect(screen.getByText('פרטים')).toBeInTheDocument();
+    });
+
+    it('accepts summarySx/detailsSx without affecting rendering', () => {
+        render(
+            <CollapsibleSection title="פרטים" summarySx={{ minHeight: 0 }} detailsSx={{ px: 0 }}>
+                <div>תוכן</div>
+            </CollapsibleSection>,
+        );
+        expect(screen.getByRole('button', { name: 'פרטים' })).toBeInTheDocument();
+        fireEvent.click(screen.getByRole('button', { name: 'פרטים' }));
+        expect(screen.getByText('תוכן')).toBeVisible();
+    });
 });
