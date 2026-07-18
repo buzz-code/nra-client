@@ -56,11 +56,26 @@ const authProvider = {
         } catch { }
         localStorage.removeItem('auth');
     },
-    checkAuth: ({ force = false }) => {
+    checkAuth: async ({ force = false }) => {
         if (isPublicRoute() && !force) {
             return Promise.resolve('guest');
         }
-        return localStorage.getItem('auth') ? Promise.resolve() : Promise.reject();
+        if (!localStorage.getItem('auth')) {
+            return Promise.reject();
+        }
+        // localStorage.auth never expires on its own, so its mere presence doesn't
+        // mean the session is still valid server-side (e.g. a JWT from a week ago).
+        // react-admin's own <Login> page calls checkAuth on mount to decide whether
+        // to redirect an "already logged in" visitor away from the login form back
+        // to "/" - trusting the stale cache here would bounce a genuinely logged-out
+        // returning user away from the login form on every attempt, with no way to
+        // ever reach it. Validate for real instead of trusting the cache.
+        try {
+            await authProvider.getIdentity(true);
+            return Promise.resolve();
+        } catch {
+            return Promise.reject();
+        }
     },
     checkError: async (error) => {
         const status = error.status;
