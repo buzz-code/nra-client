@@ -172,6 +172,32 @@ describe('authProvider', () => {
 
       await expect(authProvider.checkAuth({})).rejects.toBeUndefined();
     });
+
+    it('resolves without a network call when it was validated recently', async () => {
+      // Re-validating on every single call would mean a real request each time
+      // react-admin checks auth (route changes, tab refocus, etc). Trust a
+      // recent real check for a while instead.
+      window.location.pathname = '/admin';
+      localStorageMock.getItem.mockImplementation((key) => ({
+        auth: '{"fullName":"Test User"}',
+        authCheckedAt: String(Date.now() - 1000),
+      })[key]);
+
+      await expect(authProvider.checkAuth({})).resolves.toBeUndefined();
+      expect(fetchJson).not.toHaveBeenCalled();
+    });
+
+    it('falls back to a real check once the last validation is older than the trust window', async () => {
+      window.location.pathname = '/admin';
+      localStorageMock.getItem.mockImplementation((key) => ({
+        auth: '{"fullName":"Test User"}',
+        authCheckedAt: String(Date.now() - 60 * 60 * 1000), // an hour ago
+      })[key]);
+      fetchJson.mockResolvedValueOnce({ json: { name: 'Test User', permissions: ['admin'] } });
+
+      await expect(authProvider.checkAuth({})).resolves.toBeUndefined();
+      expect(fetchJson).toHaveBeenCalledWith(`${apiUrl}/profile`, { method: 'GET' });
+    });
   });
 
   describe('checkError', () => {
