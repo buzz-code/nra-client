@@ -7,6 +7,14 @@ const maintenanceResponse = {
     redirectTo: '/maintenance',
 };
 
+// How long checkAuth trusts a real server-validated check before requiring
+// another one. localStorage.auth itself never expires, so without this
+// window checkAuth would either trust it forever (a week-old dead session
+// looks "valid" indefinitely) or re-validate on every single call (a real
+// request each time react-admin checks auth). This bounds it to one real
+// check per window instead.
+const AUTH_TRUST_WINDOW_MS = 5 * 60 * 1000;
+
 const authProvider = {
     login: async ({ username, password }) => {
         try {
@@ -19,6 +27,7 @@ const authProvider = {
                 throw new Error(response.statusText);
             }
             await authProvider.getIdentity(true);
+            markAuthChecked();
         } catch (error) {
             console.log(error);
             const errorMessage = error.body?.message ?? 'Network error';
@@ -36,6 +45,7 @@ const authProvider = {
                 throw new Error(response.statusText);
             }
             await authProvider.getIdentity(true);
+            markAuthChecked();
         } catch (error) {
             console.log(error);
             const errorMessage = error.body?.message ?? 'Network error';
@@ -55,12 +65,34 @@ const authProvider = {
             await fetchJson(apiUrl + '/auth/logout', { method: 'POST', keepalive: true });
         } catch { }
         localStorage.removeItem('auth');
+        localStorage.removeItem('authCheckedAt');
     },
-    checkAuth: ({ force = false }) => {
+    checkAuth: async ({ force = false }) => {
         if (isPublicRoute() && !force) {
             return Promise.resolve('guest');
         }
-        return localStorage.getItem('auth') ? Promise.resolve() : Promise.reject();
+        if (!localStorage.getItem('auth')) {
+            return Promise.reject();
+        }
+        // localStorage.auth never expires on its own, so its mere presence doesn't
+        // mean the session is still valid server-side (e.g. a JWT from a week ago).
+        // react-admin's own <Login> page calls checkAuth on mount to decide whether
+        // to redirect an "already logged in" visitor away from the login form back
+        // to "/" - trusting the stale cache indefinitely would bounce a genuinely
+        // logged-out returning user away from the login form on every attempt, with
+        // no way to ever reach it. But re-validating on every single call would mean
+        // a real request each time react-admin checks auth (route changes, tab
+        // refocus, etc). Trust a recent real check for a while instead of either.
+        if (isAuthRecentlyChecked()) {
+            return Promise.resolve();
+        }
+        try {
+            await authProvider.getIdentity(true);
+            markAuthChecked();
+            return Promise.resolve();
+        } catch {
+            return Promise.reject();
+        }
     },
     checkError: async (error) => {
         const status = error.status;
@@ -130,6 +162,15 @@ const authProvider = {
 
 function isPublicRoute() {
     return location.pathname === '/register' || location.pathname === '/maintenance';
+}
+
+function isAuthRecentlyChecked() {
+    const checkedAt = Number(localStorage.getItem('authCheckedAt'));
+    return Boolean(checkedAt) && Date.now() - checkedAt < AUTH_TRUST_WINDOW_MS;
+}
+
+function markAuthChecked() {
+    localStorage.setItem('authCheckedAt', String(Date.now()));
 }
 
 export default authProvider;

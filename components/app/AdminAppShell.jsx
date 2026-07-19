@@ -29,6 +29,16 @@ import { HomePage } from '@shared/components/layout/HomePage';
  *                              deciding routes, so once a user is authenticated this route
  *                              is never registered and "/" keeps rendering `dashboard`
  *                              exactly as before; no existing route or behaviour changes.
+ *                              Also checks localStorage directly: react-admin's
+ *                              usePermissions() caches its result for 5 minutes and isn't
+ *                              invalidated by a successful login (unlike logout, which does
+ *                              call queryClient.clear()), so right after logging in from
+ *                              this page, `permissions` here can still be the stale
+ *                              pre-login (falsy) value. Without this check that stale value
+ *                              would re-register this route and strand the user back on the
+ *                              anonymous homepage - a login loop. authProvider.login() sets
+ *                              localStorage synchronously before redirecting here, so this
+ *                              check is always fresh.
  *                              Define at module level so the reference is stable, like
  *                              themeOptions.
  *  - children       {function|node} permissions => JSX, or plain JSX (React-Admin
@@ -65,7 +75,7 @@ const AdminAppShell = ({ title, themeOptions, domainTranslations, dashboard, lay
                 >
                     {(permissions) => (
                         <>
-                            {homeContent && !permissions && (
+                            {homeContent && !permissions && !localStorage.getItem('auth') && (
                                 <CustomRoutes noLayout>
                                     <Route path="/" element={<HomePage {...homeContent} />} />
                                 </CustomRoutes>
