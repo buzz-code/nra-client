@@ -15,7 +15,7 @@ import { CommonSettingsAccordion } from '@shared/components/settings/CommonSetti
 export const PhoneSettingsInput = () => {
     const { identity } = useGetIdentity();
     return (
-        <CommonSettingsAccordion id="phone-settings" title="מספר טלפון" subtitle="מספר הטלפון שלך, לצורך שליחת הודעות">
+        <CommonSettingsAccordion id="phone-settings" title="מספר טלפון" subtitle="מספר המערכת שלך בימות המשיח">
             <TextInput
                 source="phoneNumber"
                 label="resources.settings.fields.phoneNumber"
