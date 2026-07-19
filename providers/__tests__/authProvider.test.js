@@ -142,16 +142,61 @@ describe('authProvider', () => {
       await expect(authProvider.checkAuth({})).resolves.toBe('guest');
     });
 
-    it('resolves when auth exists', async () => {
+    it('resolves when local auth exists and the server confirms it is still valid', async () => {
       window.location.pathname = '/admin';
-      localStorageMock.getItem.mockReturnValueOnce('{"token":"xyz"}');
+      localStorageMock.getItem.mockReturnValue('{"fullName":"Test User"}');
+      fetchJson.mockResolvedValueOnce({ json: { name: 'Test User', permissions: ['admin'] } });
+
       await expect(authProvider.checkAuth({})).resolves.toBeUndefined();
+      expect(fetchJson).toHaveBeenCalledWith(`${apiUrl}/profile`, { method: 'GET' });
     });
 
-    it('rejects when no auth exists', async () => {
+    it('rejects when no auth exists, without a network call', async () => {
       window.location.pathname = '/admin';
-      localStorageMock.getItem.mockReturnValueOnce(null);
+      localStorageMock.getItem.mockReturnValue(null);
+
       await expect(authProvider.checkAuth({})).rejects.toBeUndefined();
+      expect(fetchJson).not.toHaveBeenCalled();
+    });
+
+    it('rejects when local auth exists but the server says the session is no longer valid', async () => {
+      // A stale localStorage entry (e.g. from a week-old login) never expires on
+      // its own, so its mere presence must not be enough - the session could be
+      // long dead server-side. Without a real check here, react-admin's <Login>
+      // page (which calls checkAuth on mount to decide whether to bounce an
+      // "already logged in" visitor away) would bounce a genuinely logged-out
+      // returning user away from the login form every time, with no way in.
+      window.location.pathname = '/admin';
+      localStorageMock.getItem.mockReturnValue('{"fullName":"Test User"}');
+      fetchJson.mockRejectedValueOnce({ status: 401 });
+
+      await expect(authProvider.checkAuth({})).rejects.toBeUndefined();
+    });
+
+    it('resolves without a network call when it was validated recently', async () => {
+      // Re-validating on every single call would mean a real request each time
+      // react-admin checks auth (route changes, tab refocus, etc). Trust a
+      // recent real check for a while instead.
+      window.location.pathname = '/admin';
+      localStorageMock.getItem.mockImplementation((key) => ({
+        auth: '{"fullName":"Test User"}',
+        authCheckedAt: String(Date.now() - 1000),
+      })[key]);
+
+      await expect(authProvider.checkAuth({})).resolves.toBeUndefined();
+      expect(fetchJson).not.toHaveBeenCalled();
+    });
+
+    it('falls back to a real check once the last validation is older than the trust window', async () => {
+      window.location.pathname = '/admin';
+      localStorageMock.getItem.mockImplementation((key) => ({
+        auth: '{"fullName":"Test User"}',
+        authCheckedAt: String(Date.now() - 60 * 60 * 1000), // an hour ago
+      })[key]);
+      fetchJson.mockResolvedValueOnce({ json: { name: 'Test User', permissions: ['admin'] } });
+
+      await expect(authProvider.checkAuth({})).resolves.toBeUndefined();
+      expect(fetchJson).toHaveBeenCalledWith(`${apiUrl}/profile`, { method: 'GET' });
     });
   });
 

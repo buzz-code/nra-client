@@ -72,6 +72,24 @@ describe('AdminAppShell public homepage at "/"', () => {
     expect(screen.queryByText('ברוכים הבאים')).not.toBeInTheDocument();
   });
 
+  it('shows the real dashboard at "/" right after login, even if `permissions` is still the stale pre-login value', async () => {
+    // Reproduces the login loop: react-admin's usePermissions() caches its result for
+    // 5 minutes and isn't invalidated by a successful login, so `permissions` can still
+    // resolve falsy immediately after login while localStorage (set synchronously by
+    // authProvider.login() before the post-login redirect) is already fresh.
+    mockAuthProvider.checkAuth.mockReturnValue(Promise.resolve());
+    mockAuthProvider.getPermissions.mockReturnValue(Promise.reject());
+    localStorage.setItem('auth', JSON.stringify({ id: 1 }));
+
+    window.history.pushState({}, '', '/');
+    render(<TestApp />);
+
+    await waitFor(() => expect(screen.getByText('Dashboard Content')).toBeInTheDocument());
+    expect(screen.queryByText('ברוכים הבאים')).not.toBeInTheDocument();
+
+    localStorage.removeItem('auth');
+  });
+
   it('accepts plain JSX children (not just children-as-a-function), per React-Admin', async () => {
     mockAuthProvider.checkAuth.mockReturnValue(Promise.resolve());
     mockAuthProvider.getPermissions.mockReturnValue(Promise.resolve({ admin: true }));
