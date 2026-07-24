@@ -196,6 +196,31 @@ export const sharedEntityTranslations = {
       refresh_failed: 'עדכון הסטטוס נכשל',
     },
   },
+  job: {
+    name: 'משימה |||| משימות',
+    fields: {
+      ...generalResourceFieldsTranslation,
+      type: 'סוג',
+      status: 'סטטוס',
+      progress: 'התקדמות',
+      attempts: 'ניסיונות',
+      error: 'שגיאה',
+      completedAt: 'הסתיים בתאריך',
+    },
+  },
+  schedule: {
+    name: 'תזמון |||| תזמונים',
+    fields: {
+      ...generalResourceFieldsTranslation,
+      name: 'שם',
+      jobType: 'סוג משימה',
+      cronExpression: 'ביטוי cron',
+      timeZone: 'אזור זמן',
+      active: 'פעיל?',
+      nextRunAt: 'ריצה הבאה',
+      lastRunAt: 'ריצה אחרונה',
+    },
+  },
   settings: {
     fields: {
       yemotApiKey: 'מפתח API של Yemot',
