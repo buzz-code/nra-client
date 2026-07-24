@@ -154,10 +154,14 @@ const calcFileName = (disposition, filename) => {
   return filename;
 }
 
-const saveResponseFile = async ({ json }, filename) => {
+const responseToBlob = async ({ json }) => {
   validateFileResponse(json);
-  const blob = await fetch(`data:${json.type};base64,${json.data}`).then(res => res.blob());
-  return saveAs(blob, calcFileName(json.disposition, filename));
+  return fetch(`data:${json.type};base64,${json.data}`).then(res => res.blob());
+}
+
+const saveResponseFile = async (res, filename) => {
+  const blob = await responseToBlob(res);
+  return saveAs(blob, calcFileName(res.json.disposition, filename));
 }
 
 const validateFileResponse = (response: any) => {
@@ -387,4 +391,9 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
   execAndDownload: (resource, url, params, filename) =>
     httpClient(`${apiUrl}/${resource}/${url}`, params)
       .then(res => saveResponseFile(res, filename)),
+
+  execAndGetBlobUrl: (resource, url, params) =>
+    httpClient(`${apiUrl}/${resource}/${url}`, params)
+      .then(res => responseToBlob(res))
+      .then(blob => URL.createObjectURL(blob)),
 });

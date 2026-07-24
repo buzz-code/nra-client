@@ -71,3 +71,12 @@ dataProvider.actionAndDownload = (resource, action, queryParams = {}, bodyParams
         body: JSON.stringify(bodyParams)
     }).then(() => ({data: {}}));
 }
+
+dataProvider.actionAndGetBlobUrl = (resource, action, queryParams = {}, bodyParams = {}) => {
+    const queryParamsStr = createQueryParamsStrWithAction(queryParams, action);
+
+    return dataProvider.execAndGetBlobUrl(resource, 'action?' + queryParamsStr, {
+        method: 'POST',
+        body: JSON.stringify(bodyParams)
+    });
+}

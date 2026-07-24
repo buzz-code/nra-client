@@ -239,4 +239,40 @@ describe('dataProvider', () => {
       );
     });
   });
+
+  describe('actionAndGetBlobUrl', () => {
+    it('executes action and resolves a blob URL', async () => {
+      const queryParams = {};
+      const bodyParams = { target: 'kəˈθuːlu' };
+      const responseData = btoa('audio bytes');
+      const mockResponse = {
+        json: {
+          data: responseData,
+          type: 'audio/mpeg',
+          disposition: undefined,
+          contentLength: responseData.length,
+        },
+      };
+
+      fetchJson.mockResolvedValueOnce(mockResponse);
+      URL.createObjectURL.mockReturnValue('blob:dummy-url');
+
+      const result = await dataProvider.actionAndGetBlobUrl(
+        'phonetic_word',
+        'previewTarget',
+        queryParams,
+        bodyParams
+      );
+
+      const expectedUrl = `${apiUrl}/phonetic_word/action?extra.action=previewTarget`;
+      expect(fetchJson).toHaveBeenCalledWith(
+        expectedUrl,
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify(bodyParams),
+        })
+      );
+      expect(result).toBe('blob:dummy-url');
+    });
+  });
 });
