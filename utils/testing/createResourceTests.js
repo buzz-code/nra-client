@@ -28,6 +28,7 @@ jest.mock('@shared/providers/authProvider', () => ({
 }));
 
 import { render, screen, cleanup } from '@testing-library/react';
+import { PUBLIC_ROUTE_PATHS } from '@shared/utils/publicRoutes';
 
 /**
  * createResourceTests(App, options)
@@ -44,12 +45,6 @@ import { render, screen, cleanup } from '@testing-library/react';
  * @param {React.ComponentType} App
  * @param {{ timeout?: number }} [options]
  */
-// Sidebar links that point at a noLayout route (CommonRoutes.jsx / ContactPage) render
-// without the admin shell (no sidebar), by design - anonymous visitors must reach them
-// too. Resource discovery below can't tell those apart from a real listable resource by
-// DOM shape alone, so they're excluded explicitly instead of being smoke-tested as one.
-const NO_LAYOUT_PATHS = new Set(['/register', '/maintenance', '/contact']);
-
 export function createResourceTests(App, options = {}) {
   const timeout = options.timeout ?? 8000;
 
@@ -85,8 +80,10 @@ export function createResourceTests(App, options = {}) {
         const anchor = item.tagName === 'A' ? item : item.querySelector('a');
         if (!anchor) return;
         const href = anchor.getAttribute('href');
-        // Keep only simple root paths like "/student", "/att_report"
-        if (href && /^\/[a-z0-9_-]+$/.test(href) && !seen.has(href) && !NO_LAYOUT_PATHS.has(href)) {
+        // Keep only simple root paths like "/student", "/att_report" - skip noLayout
+        // routes (see PUBLIC_ROUTE_PATHS): they render without the admin shell (no
+        // sidebar) by design, which the generic smoke test below can't handle.
+        if (href && /^\/[a-z0-9_-]+$/.test(href) && !seen.has(href) && !PUBLIC_ROUTE_PATHS.has(href)) {
           seen.add(href);
           resources.push(href);
         }

@@ -1,5 +1,6 @@
 import { fetchJson } from "@shared/utils/httpUtil";
 import { apiUrl } from "@shared/providers/constantsProvider";
+import { PUBLIC_ROUTE_PATHS } from "@shared/utils/publicRoutes";
 
 const maintenanceResponse = {
     message: false,
@@ -161,7 +162,7 @@ const authProvider = {
 };
 
 function isPublicRoute() {
-    return location.pathname === '/register' || location.pathname === '/maintenance' || location.pathname === '/contact';
+    return PUBLIC_ROUTE_PATHS.has(location.pathname);
 }
 
 function isAuthRecentlyChecked() {
