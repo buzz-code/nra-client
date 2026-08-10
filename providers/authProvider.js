@@ -161,7 +161,7 @@ const authProvider = {
 };
 
 function isPublicRoute() {
-    return location.pathname === '/register' || location.pathname === '/maintenance';
+    return location.pathname === '/register' || location.pathname === '/maintenance' || location.pathname === '/contact';
 }
 
 function isAuthRecentlyChecked() {

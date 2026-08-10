@@ -1,4 +1,4 @@
-import { Box, Container, Typography, Button, Grid, Card, CardContent, Chip, Avatar } from '@mui/material';
+import { Box, Container, Typography, Button, Grid, Card, CardContent, Chip, Avatar, Link as MuiLink } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
 import CheckIcon from '@mui/icons-material/Check';
 import { Link } from 'react-router-dom';
@@ -78,6 +78,11 @@ export const HomePage = ({
                 >
                     {ctaLabel}
                 </Button>
+                <Box sx={{ mt: 2 }}>
+                    <MuiLink component={Link} to="/contact" sx={{ color: 'common.white' }}>
+                        צור קשר
+                    </MuiLink>
+                </Box>
             </Container>
         </Box>
 

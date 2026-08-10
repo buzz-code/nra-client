@@ -15,6 +15,11 @@ export const LoginPage = (props) => {
                         <span>{translate('ra.auth.sign_up_invitation')}</span>
                     </Link>
                 </Box>
+                <Box height='2rem' display='flex' alignItems='center' justifyContent='center' paddingBottom='16px'>
+                    <Link to='/contact'>
+                        <span>צור קשר</span>
+                    </Link>
+                </Box>
             </Login>
         </DirectionalThemeProvider>
     );

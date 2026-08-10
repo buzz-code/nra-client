@@ -47,6 +47,12 @@ dataProvider.updateProfile = async ({ data }) =>
         body: JSON.stringify(data)
     });
 
+dataProvider.sendContactMessage = async (data) =>
+    dataProvider.exec('contact', '', {
+        method: 'POST',
+        body: JSON.stringify(data)
+    });
+
 const createQueryParamsStrWithAction = (queryParams, action) => {
     return new URLSearchParams({
         ...queryParams,
