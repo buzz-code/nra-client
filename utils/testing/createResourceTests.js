@@ -44,6 +44,12 @@ import { render, screen, cleanup } from '@testing-library/react';
  * @param {React.ComponentType} App
  * @param {{ timeout?: number }} [options]
  */
+// Sidebar links that point at a noLayout route (CommonRoutes.jsx / ContactPage) render
+// without the admin shell (no sidebar), by design - anonymous visitors must reach them
+// too. Resource discovery below can't tell those apart from a real listable resource by
+// DOM shape alone, so they're excluded explicitly instead of being smoke-tested as one.
+const NO_LAYOUT_PATHS = new Set(['/register', '/maintenance', '/contact']);
+
 export function createResourceTests(App, options = {}) {
   const timeout = options.timeout ?? 8000;
 
@@ -80,7 +86,7 @@ export function createResourceTests(App, options = {}) {
         if (!anchor) return;
         const href = anchor.getAttribute('href');
         // Keep only simple root paths like "/student", "/att_report"
-        if (href && /^\/[a-z0-9_-]+$/.test(href) && !seen.has(href)) {
+        if (href && /^\/[a-z0-9_-]+$/.test(href) && !seen.has(href) && !NO_LAYOUT_PATHS.has(href)) {
           seen.add(href);
           resources.push(href);
         }
