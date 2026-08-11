@@ -142,6 +142,11 @@ describe('authProvider', () => {
       await expect(authProvider.checkAuth({})).resolves.toBe('guest');
     });
 
+    it('returns guest for the contact page', async () => {
+      window.location.pathname = '/contact';
+      await expect(authProvider.checkAuth({})).resolves.toBe('guest');
+    });
+
     it('resolves when local auth exists and the server confirms it is still valid', async () => {
       window.location.pathname = '/admin';
       localStorageMock.getItem.mockReturnValue('{"fullName":"Test User"}');

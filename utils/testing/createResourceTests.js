@@ -28,6 +28,7 @@ jest.mock('@shared/providers/authProvider', () => ({
 }));
 
 import { render, screen, cleanup } from '@testing-library/react';
+import { PUBLIC_ROUTE_PATHS } from '@shared/utils/publicRoutes';
 
 /**
  * createResourceTests(App, options)
@@ -79,8 +80,10 @@ export function createResourceTests(App, options = {}) {
         const anchor = item.tagName === 'A' ? item : item.querySelector('a');
         if (!anchor) return;
         const href = anchor.getAttribute('href');
-        // Keep only simple root paths like "/student", "/att_report"
-        if (href && /^\/[a-z0-9_-]+$/.test(href) && !seen.has(href)) {
+        // Keep only simple root paths like "/student", "/att_report" - skip noLayout
+        // routes (see PUBLIC_ROUTE_PATHS): they render without the admin shell (no
+        // sidebar) by design, which the generic smoke test below can't handle.
+        if (href && /^\/[a-z0-9_-]+$/.test(href) && !seen.has(href) && !PUBLIC_ROUTE_PATHS.has(href)) {
           seen.add(href);
           resources.push(href);
         }

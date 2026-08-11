@@ -140,6 +140,23 @@ describe('dataProvider', () => {
     });
   });
 
+  describe('sendContactMessage', () => {
+    it('sends the contact form data', async () => {
+      const contactData = { name: 'Test User', email: 'test@example.com', message: 'Hello' };
+      fetchJson.mockResolvedValueOnce({ json: { success: true } });
+
+      await dataProvider.sendContactMessage(contactData);
+
+      expect(fetchJson).toHaveBeenCalledWith(
+        expect.stringMatching(new RegExp(`${apiUrl}/contact/?$`)),
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify(contactData),
+        })
+      );
+    });
+  });
+
   describe('action', () => {
     it('executes action with query params and body', async () => {
       const queryParams = { filter: 'active' };
