@@ -1,17 +1,50 @@
 // These jest.mock() calls are hoisted to the top of THIS file by Babel.
 // Because entities.test.js imports createResourceTests before importing App,
 // these mocks are registered before App.jsx (and its provider imports) load.
-jest.mock('@shared/providers/dataProvider', () => ({
-  getList: () => Promise.resolve({ data: [], total: 0 }),
-  getOne: () => Promise.resolve({ data: {} }),
-  getMany: () => Promise.resolve({ data: [] }),
-  getManyReference: () => Promise.resolve({ data: [], total: 0 }),
-  create: () => Promise.resolve({ data: {} }),
-  update: () => Promise.resolve({ data: {} }),
-  updateMany: () => Promise.resolve({ data: [] }),
-  delete: () => Promise.resolve({ data: {} }),
-  deleteMany: () => Promise.resolve({ data: [] }),
-}));
+//
+// The mock record below is deliberately "kitchen sink": it fills in a broad
+// set of common field names (id/name/tz/phone/email/dates/booleans/...) with
+// plausible values instead of returning {}. A List/Create/Edit component that
+// crashes only when a real field is present (e.g. `record.someField.nested`)
+// stays invisible against an always-empty mock — this gives it something to
+// actually touch. It's generic on purpose (no per-entity field knowledge) so
+// it doesn't need updating as entities change.
+jest.mock('@shared/providers/dataProvider', () => {
+  const mockRow = {
+    id: 1,
+    name: 'שם לדוגמה',
+    key: 'MOCK',
+    title: 'שם לדוגמה',
+    label: 'שם לדוגמה',
+    description: 'תיאור לדוגמה',
+    tz: '123456789',
+    phone: '0500000000',
+    email: 'mock@example.com',
+    date: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    active: true,
+    isActive: true,
+    status: 'active',
+    amount: 1,
+    price: 1,
+    count: 1,
+    year: new Date().getFullYear(),
+  };
+  const mockRows = [mockRow, { ...mockRow, id: 2, name: 'שם לדוגמה 2' }];
+
+  return {
+    getList: () => Promise.resolve({ data: mockRows, total: mockRows.length }),
+    getOne: () => Promise.resolve({ data: mockRow }),
+    getMany: () => Promise.resolve({ data: mockRows }),
+    getManyReference: () => Promise.resolve({ data: mockRows, total: mockRows.length }),
+    create: () => Promise.resolve({ data: mockRow }),
+    update: () => Promise.resolve({ data: mockRow }),
+    updateMany: () => Promise.resolve({ data: [mockRow.id] }),
+    delete: () => Promise.resolve({ data: mockRow }),
+    deleteMany: () => Promise.resolve({ data: [mockRow.id] }),
+  };
+});
 
 jest.mock('@shared/providers/authProvider', () => ({
   checkAuth: () => Promise.resolve(),
@@ -134,6 +167,51 @@ export function createResourceTests(App, options = {}) {
         }
       },
       // Generous timeout: up to 50 resources
+      (timeout + 1000) * 50
+    );
+
+    // -----------------------------------------------------------------------
+    // Phase 4: Smoke-test each resource's Create and Edit pages
+    //
+    // Same signal as Phase 3 (admin shell / sidebar renders without crashing).
+    // If a resource has no create/edit page registered, the route simply
+    // matches nothing inside the layout and the shell renders normally — this
+    // only fails on a real crash (e.g. a component throwing on mount, a
+    // reference to something that was never imported).
+    // -----------------------------------------------------------------------
+    it(
+      'each resource create page loads admin shell without crashing',
+      async () => {
+        for (const path of resources) {
+          window.history.pushState({}, '', `${path}/create`);
+
+          render(<App />);
+
+          // eslint-disable-next-line no-await-in-loop
+          const items = await screen.findAllByRole('menuitem', {}, { timeout });
+          expect(items.length).toBeGreaterThan(0);
+
+          cleanup();
+        }
+      },
+      (timeout + 1000) * 50
+    );
+
+    it(
+      'each resource edit page loads admin shell without crashing',
+      async () => {
+        for (const path of resources) {
+          window.history.pushState({}, '', `${path}/1`);
+
+          render(<App />);
+
+          // eslint-disable-next-line no-await-in-loop
+          const items = await screen.findAllByRole('menuitem', {}, { timeout });
+          expect(items.length).toBeGreaterThan(0);
+
+          cleanup();
+        }
+      },
       (timeout + 1000) * 50
     );
   });
