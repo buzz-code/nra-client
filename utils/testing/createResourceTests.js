@@ -255,6 +255,12 @@ export function createResourceTests(App, options = {}) {
           await assertShellSurvives(timeout);
 
           cleanup();
+          // Defensive extra reset: MUI portals (Popper/Dialog/Snackbar) can
+          // mount content directly under document.body outside the RTL
+          // container RTL's own cleanup() tracks. Across ~50 renders in one
+          // process that's enough accumulated DOM to visibly slow down every
+          // later query, so force the slate clean between iterations.
+          document.body.innerHTML = '';
         }
       },
       // Generous timeout: CI hardware runs noticeably slower than local dev,
@@ -285,6 +291,7 @@ export function createResourceTests(App, options = {}) {
           await assertShellSurvives(timeout);
 
           cleanup();
+          document.body.innerHTML = ''; // see comment on the list-page test above
         }
       },
       (timeout + 5000) * 100
@@ -302,6 +309,7 @@ export function createResourceTests(App, options = {}) {
           await assertShellSurvives(timeout);
 
           cleanup();
+          document.body.innerHTML = ''; // see comment on the list-page test above
         }
       },
       (timeout + 5000) * 100
