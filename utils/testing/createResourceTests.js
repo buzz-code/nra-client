@@ -60,8 +60,49 @@ jest.mock('@shared/providers/authProvider', () => ({
   clearMaintenanceInfo: () => undefined,
 }));
 
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import { PUBLIC_ROUTE_PATHS } from '@shared/utils/publicRoutes';
+
+/**
+ * React-admin paints the layout/sidebar on the first render pass and defers
+ * the actual routed page content (List/Create/Edit) to a later, async commit
+ * — so `findAllByRole('menuitem')` can resolve successfully *before* that
+ * deferred content has even mounted, let alone crashed.
+ *
+ * A component that throws once it actually renders (a missing import, a bad
+ * reference) does NOT take the sidebar down with it: react-admin's <Layout>
+ * wraps only the routed content in its own <ErrorBoundary> (see
+ * ra-ui-materialui's Layout.tsx) — the Sidebar/Menu is a sibling *outside*
+ * that boundary and survives untouched. So menuitem presence alone can never
+ * detect this kind of crash; it only rules out failures severe enough to
+ * reach the app-wide boundary above CoreAdminUI. The per-route boundary's
+ * fallback (ra-ui-materialui's <Error>) renders an `<h1 role="alert">` —
+ * that's the actual signal a routed page crashed.
+ *
+ * This waits for the initial shell, then gives deferred content a moment to
+ * actually commit, then re-checks the shell is *still* there and no error
+ * fallback appeared. A resource with no page registered for the route it was
+ * given renders no extra content but doesn't crash either, so this still
+ * passes for it.
+ */
+async function assertShellSurvives(timeout) {
+  const initial = await screen.findAllByRole('menuitem', {}, { timeout });
+  expect(initial.length).toBeGreaterThan(0);
+
+  // Let any promise-driven content (the mocked dataProvider calls resolve
+  // asynchronously) finish mounting — and crash, if it's going to.
+  // eslint-disable-next-line no-await-in-loop
+  await new Promise((resolve) => setTimeout(resolve, 100));
+
+  const stillThere = screen.queryAllByRole('menuitem');
+  expect(stillThere.length).toBeGreaterThan(0);
+
+  // A routed-content crash is caught locally by <Layout>'s own ErrorBoundary
+  // and rendered as an `<h1 role="alert">` — it doesn't remove the sidebar,
+  // so it has to be checked for explicitly.
+  const alerts = screen.queryAllByRole('alert');
+  expect(alerts.length).toBe(0);
+}
 
 /**
  * createResourceTests(App, options)
@@ -95,9 +136,8 @@ export function createResourceTests(App, options = {}) {
 
       // React Admin renders a MenuItemLink (role="menuitem") for every
       // Resource that has a list prop, once auth + permissions resolve.
-      let items;
       try {
-        items = await screen.findAllByRole('menuitem', {}, { timeout });
+        await screen.findAllByRole('menuitem', {}, { timeout });
       } catch (_e) {
         cleanup();
         throw new Error(
@@ -106,6 +146,56 @@ export function createResourceTests(App, options = {}) {
           'Original error: ' + _e.message
         );
       }
+
+      // Resources assigned a `menuGroup` (see the shared Menu/SubMenu
+      // components) render inside a <Collapse unmountOnExit>, collapsed by
+      // default — their menuitems don't exist in the DOM at all until the
+      // group is expanded. Click every button in the sidebar (group
+      // toggles included) to expand them all before collecting menuitems;
+      // harmless here since this render is torn down right after.
+      // Clicking indiscriminately is unsafe — one of these buttons is the
+      // sidebar's own open/close toggle, and clicking *that* one hides
+      // every menuitem instead of revealing more. Self-correct: keep a
+      // click only if it didn't reduce how many menuitems are visible.
+      // SubMenu's own group toggles render as a MUI `ListItem button` —
+      // a `<div role="button">`, not a real `<button>` element. Every risky
+      // control (sidebar open/close toggle, skip-link, refresh, year
+      // selector, language switcher, profile menu, ...) renders as a real
+      // `<button>`. Restricting clicks to non-`<button>` elements targets
+      // exactly the SubMenu toggles and structurally excludes everything
+      // else — no need to reason about aria-haspopup or which button opens
+      // a popover.
+      //
+      // Buttons are re-queried fresh on every pass rather than clicked from
+      // one static snapshot: clicking one toggle can re-render the menu tree
+      // and replace other buttons' DOM nodes, leaving a snapshot's
+      // references stale/detached — fireEvent.click on a detached node is a
+      // silent no-op.
+      const clickedLabels = new Set();
+      for (let pass = 0; pass < 5; pass += 1) {
+        const toggles = screen
+          .queryAllByRole('button')
+          .filter((button) => button.tagName !== 'BUTTON');
+
+        let clickedSomethingNew = false;
+        toggles.forEach((toggle) => {
+          const label = toggle.textContent || toggle.getAttribute('aria-label') || `unlabeled-${pass}`;
+          if (clickedLabels.has(label)) return;
+          clickedLabels.add(label);
+          clickedSomethingNew = true;
+
+          const before = screen.queryAllByRole('menuitem').length;
+          fireEvent.click(toggle);
+          const after = screen.queryAllByRole('menuitem').length;
+          if (after < before) {
+            fireEvent.click(toggle); // undo — this one hid items, not revealed them
+          }
+        });
+
+        if (!clickedSomethingNew) break;
+      }
+
+      const items = await screen.findAllByRole('menuitem', {}, { timeout });
 
       // Each menuitem contains an <a> whose href is the resource path
       const seen = new Set();
@@ -153,21 +243,24 @@ export function createResourceTests(App, options = {}) {
 
           render(<App />);
 
-          // Wait for the admin layout to render at this specific route.
-          // Sidebar menuitems appearing proves:
+          // Wait for the admin layout to render at this specific route, then
+          // confirm it's still standing once any deferred content has had a
+          // chance to mount (and crash, if it's going to). Sidebar menuitems
+          // appearing proves:
           //   - Auth passed (checkAuth resolved)
           //   - Permissions resolved (getPermissions returned)
           //   - The admin layout rendered (no crash, no error boundary)
           //   - We are NOT on the login page
           // eslint-disable-next-line no-await-in-loop
-          const items = await screen.findAllByRole('menuitem', {}, { timeout });
-          expect(items.length).toBeGreaterThan(0);
+          await assertShellSurvives(timeout);
 
           cleanup();
         }
       },
-      // Generous timeout: up to 50 resources
-      (timeout + 1000) * 50
+      // Generous timeout: real apps have run close to 50 resources at ~10s
+      // each once actually rendered (not just the 8 static pages discovery used
+      // to find), so this budgets 80 resources at 11s each for headroom.
+      (timeout + 3000) * 80
     );
 
     // -----------------------------------------------------------------------
@@ -188,13 +281,12 @@ export function createResourceTests(App, options = {}) {
           render(<App />);
 
           // eslint-disable-next-line no-await-in-loop
-          const items = await screen.findAllByRole('menuitem', {}, { timeout });
-          expect(items.length).toBeGreaterThan(0);
+          await assertShellSurvives(timeout);
 
           cleanup();
         }
       },
-      (timeout + 1000) * 50
+      (timeout + 3000) * 80
     );
 
     it(
@@ -206,13 +298,12 @@ export function createResourceTests(App, options = {}) {
           render(<App />);
 
           // eslint-disable-next-line no-await-in-loop
-          const items = await screen.findAllByRole('menuitem', {}, { timeout });
-          expect(items.length).toBeGreaterThan(0);
+          await assertShellSurvives(timeout);
 
           cleanup();
         }
       },
-      (timeout + 1000) * 50
+      (timeout + 3000) * 80
     );
   });
 
