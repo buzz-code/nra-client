@@ -35,11 +35,17 @@ jest.mock('@shared/providers/dataProvider', () => {
 
   return {
     getList: () => Promise.resolve({ data: mockRows, total: mockRows.length }),
-    getOne: () => Promise.resolve({ data: mockRow }),
+    // Echo back the requested id rather than always returning mockRow.id.
+    // A resource with no create page registered makes /<resource>/create
+    // fall through to the *edit* route with id "create", and react-admin's
+    // useEditController throws if the fetched record's id doesn't match the
+    // one requested — a mock-induced crash that looks exactly like a real
+    // one. Echoing keeps the mock self-consistent for any id.
+    getOne: (resource, params) => Promise.resolve({ data: { ...mockRow, id: params?.id ?? mockRow.id } }),
     getMany: () => Promise.resolve({ data: mockRows }),
     getManyReference: () => Promise.resolve({ data: mockRows, total: mockRows.length }),
     create: () => Promise.resolve({ data: mockRow }),
-    update: () => Promise.resolve({ data: mockRow }),
+    update: (resource, params) => Promise.resolve({ data: { ...mockRow, id: params?.id ?? mockRow.id } }),
     updateMany: () => Promise.resolve({ data: [mockRow.id] }),
     delete: () => Promise.resolve({ data: mockRow }),
     deleteMany: () => Promise.resolve({ data: [mockRow.id] }),
@@ -60,48 +66,175 @@ jest.mock('@shared/providers/authProvider', () => ({
   clearMaintenanceInfo: () => undefined,
 }));
 
-import { render, screen, cleanup, fireEvent } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent, act } from '@testing-library/react';
 import { PUBLIC_ROUTE_PATHS } from '@shared/utils/publicRoutes';
 
+// A fixed sleep after navigation is NOT safe here: an Edit page waits for
+// the dataProvider's getOne to resolve before it renders its form, so a
+// short fixed wait checks the page before the very component that might
+// crash has mounted — a false negative (observed: a deliberately broken
+// Edit form passed a 50ms wait while the identical broken Create form
+// failed). Instead poll until the routed content stops growing.
+const SETTLE_POLL_MS = 50;
+const SETTLE_MAX_MS = 2000;
+
+// -----------------------------------------------------------------------
+// Why these use querySelectorAll instead of testing-library's *ByRole:
+//
+// `queryAllByRole` filters matches by accessibility (visibility), which
+// runs getComputedStyle on every candidate. In jsdom that is pathologically
+// slow — measured at ~666ms per queryAllByRole('menuitem') call against
+// this app's sidebar, versus ~0.7ms for the equivalent querySelectorAll.
+// `findAllByRole` re-runs that scan on every poll, so a single call could
+// burn seconds. Across ~140 routes that alone was minutes of the runtime.
+//
+// Both roles we care about are explicit `role="..."` attributes in the
+// rendered DOM (MUI sets them on MenuItem and on react-admin's <Error>
+// fallback heading), so a plain attribute selector finds exactly the same
+// elements without the visibility pass.
+// -----------------------------------------------------------------------
+const countMenuItems = () => document.querySelectorAll('[role="menuitem"]').length;
+const countAlerts = () => document.querySelectorAll('[role="alert"]').length;
+
+async function waitForShell(timeout) {
+  const deadline = Date.now() + timeout;
+  while (countMenuItems() === 0) {
+    if (Date.now() > deadline) {
+      throw new Error(
+        'Admin shell never rendered: no [role="menuitem"] found within timeout. ' +
+        'This usually means auth mocks are not working, or the app crashed hard ' +
+        'enough to trip the app-wide error boundary above CoreAdminUI.'
+      );
+    }
+    // eslint-disable-next-line no-await-in-loop
+    await new Promise((resolve) => setTimeout(resolve, 25));
+  }
+}
+
+const mainContent = () => document.getElementById('main-content') || document.body;
+
 /**
- * React-admin paints the layout/sidebar on the first render pass and defers
- * the actual routed page content (List/Create/Edit) to a later, async commit
- * — so `findAllByRole('menuitem')` can resolve successfully *before* that
- * deferred content has even mounted, let alone crashed.
+ * Waits for the routed page to actually be the *new* page, then to stop
+ * changing.
  *
- * A component that throws once it actually renders (a missing import, a bad
- * reference) does NOT take the sidebar down with it: react-admin's <Layout>
- * wraps only the routed content in its own <ErrorBoundary> (see
- * ra-ui-materialui's Layout.tsx) — the Sidebar/Menu is a sibling *outside*
- * that boundary and survives untouched. So menuitem presence alone can never
- * detect this kind of crash; it only rules out failures severe enough to
- * reach the app-wide boundary above CoreAdminUI. The per-route boundary's
- * fallback (ra-ui-materialui's <Error>) renders an `<h1 role="alert">` —
- * that's the actual signal a routed page crashed.
+ * Two traps this exists to avoid, both of which produced silent false
+ * passes before:
  *
- * This waits for the initial shell, then gives deferred content a moment to
- * actually commit, then re-checks the shell is *still* there and no error
- * fallback appeared. A resource with no page registered for the route it was
- * given renders no extra content but doesn't crash either, so this still
- * passes for it.
+ *  1. React Router navigates inside startTransition, so React keeps the
+ *     PREVIOUS page mounted until the new one is ready. Sampling right
+ *     after navigation reads the old page — observed directly: while the
+ *     URL was /student/1, #main-content still rendered the previous
+ *     resource's edit page (its "back to list" link still pointed at
+ *     /lesson_schedule). So wait for the content to actually swap.
+ *  2. "DOM stopped changing" alone is not "page finished rendering" — a
+ *     half-rendered Edit page waiting on getOne is perfectly stable. So
+ *     require the swap first, and only then look for stability.
+ *
+ * Each poll runs in its own act() so React can flush the transition
+ * between polls; awaiting inside a single long act() does not.
  */
-async function assertShellSurvives(timeout) {
-  const initial = await screen.findAllByRole('menuitem', {}, { timeout });
-  expect(initial.length).toBeGreaterThan(0);
+async function settleRoutedContent(previousHtml) {
+  const deadline = Date.now() + SETTLE_MAX_MS;
+  let lastHtml = null;
+  let stableChecks = 0;
+  let swapped = false;
 
-  // Let any promise-driven content (the mocked dataProvider calls resolve
-  // asynchronously) finish mounting — and crash, if it's going to.
-  // eslint-disable-next-line no-await-in-loop
-  await new Promise((resolve) => setTimeout(resolve, 100));
+  while (Date.now() < deadline) {
+    // eslint-disable-next-line no-await-in-loop
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, SETTLE_POLL_MS));
+    });
 
-  const stillThere = screen.queryAllByRole('menuitem');
-  expect(stillThere.length).toBeGreaterThan(0);
+    // Already crashed — the error fallback is the final state, stop here.
+    if (countAlerts() > 0) return;
 
-  // A routed-content crash is caught locally by <Layout>'s own ErrorBoundary
-  // and rendered as an `<h1 role="alert">` — it doesn't remove the sidebar,
-  // so it has to be checked for explicitly.
-  const alerts = screen.queryAllByRole('alert');
-  expect(alerts.length).toBe(0);
+    const html = mainContent().innerHTML;
+    if (!swapped && html !== previousHtml) swapped = true;
+
+    if (swapped) {
+      if (html === lastHtml) {
+        stableChecks += 1;
+        if (stableChecks >= 2) return;
+      } else {
+        stableChecks = 0;
+      }
+    }
+    lastHtml = html;
+  }
+}
+
+/**
+ * Navigates the already-mounted app to `path` and checks the page rendered
+ * without crashing. Returns an error string, or null when the page is fine.
+ *
+ * Navigating rather than re-rendering <App /> per page is a deliberate
+ * performance choice, and it is safe here for a specific reason: a routed
+ * page that throws is caught by <Layout>'s own <ErrorBoundary> (see
+ * ra-ui-materialui's Layout.tsx), and react-admin resets that boundary on
+ * every location change (ra-core's useResetErrorBoundaryOnLocationChange).
+ * So one crashed page cannot poison the next one.
+ *
+ * Re-rendering instead measurably degrades: successive full mounts of this
+ * app were timed at 1.2s, 2.6s, 2.9s, 3.5s, 4.7s — monotonically climbing
+ * even with cleanup() between them — while navigation stays flat.
+ *
+ * The crash signal is the error fallback, not a missing sidebar: <Layout>
+ * wraps only the routed content, so the Sidebar/Menu is a sibling *outside*
+ * that boundary and survives a page crash untouched. The fallback
+ * (ra-ui-materialui's <Error>) renders an `<h1 role="alert">` — that is
+ * what actually proves a page blew up. A resource with no page registered
+ * for the route renders no extra content but doesn't crash either, so this
+ * still passes for it.
+ */
+async function checkRoute(path, timeout) {
+  const previousHtml = mainContent().innerHTML;
+
+  await act(async () => {
+    window.history.pushState({}, '', path);
+    // <Admin> is mounted inside the app's own <BrowserRouter> (see
+    // AdminAppShell), whose history listens for popstate — pushState alone
+    // would change the URL without telling the router.
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  });
+
+  await settleRoutedContent(previousHtml);
+
+  try {
+    await waitForShell(timeout);
+  } catch (error) {
+    return `${path}: ${error.message}`;
+  }
+
+  if (countAlerts() > 0) {
+    return `${path}: the page crashed — react-admin's error boundary fallback rendered.`;
+  }
+
+  return null;
+}
+
+/**
+ * Walks every path through checkRoute on a single mounted app, collecting
+ * every failure rather than stopping at the first, so one broken entity
+ * doesn't hide the rest.
+ */
+async function checkAllRoutes(App, paths, timeout) {
+  window.history.pushState({}, '', '/');
+  render(<App />);
+  await waitForShell(timeout);
+
+  const failures = [];
+  for (const path of paths) {
+    // eslint-disable-next-line no-await-in-loop
+    const failure = await checkRoute(path, timeout);
+    if (failure) failures.push(failure);
+  }
+
+  if (failures.length > 0) {
+    throw new Error(
+      `${failures.length} of ${paths.length} pages failed to render:\n  ` +
+      failures.join('\n  ')
+    );
+  }
 }
 
 /**
@@ -137,7 +270,7 @@ export function createResourceTests(App, options = {}) {
       // React Admin renders a MenuItemLink (role="menuitem") for every
       // Resource that has a list prop, once auth + permissions resolve.
       try {
-        await screen.findAllByRole('menuitem', {}, { timeout });
+        await waitForShell(timeout);
       } catch (_e) {
         cleanup();
         throw new Error(
@@ -173,8 +306,12 @@ export function createResourceTests(App, options = {}) {
       // silent no-op.
       const clickedLabels = new Set();
       for (let pass = 0; pass < 5; pass += 1) {
-        const toggles = screen
-          .queryAllByRole('button')
+        // Explicit role="button" attribute (again via selector, not *ByRole,
+        // for the speed reason documented above). This conveniently matches
+        // only elements that opt into the role explicitly — real <button>
+        // elements get the role implicitly and carry no attribute — so the
+        // tagName filter is a belt-and-braces guard.
+        const toggles = Array.from(document.querySelectorAll('[role="button"]'))
           .filter((button) => button.tagName !== 'BUTTON');
 
         let clickedSomethingNew = false;
@@ -184,9 +321,9 @@ export function createResourceTests(App, options = {}) {
           clickedLabels.add(label);
           clickedSomethingNew = true;
 
-          const before = screen.queryAllByRole('menuitem').length;
+          const before = countMenuItems();
           fireEvent.click(toggle);
-          const after = screen.queryAllByRole('menuitem').length;
+          const after = countMenuItems();
           if (after < before) {
             fireEvent.click(toggle); // undo — this one hid items, not revealed them
           }
@@ -195,7 +332,7 @@ export function createResourceTests(App, options = {}) {
         if (!clickedSomethingNew) break;
       }
 
-      const items = await screen.findAllByRole('menuitem', {}, { timeout });
+      const items = Array.from(document.querySelectorAll('[role="menuitem"]'));
 
       // Each menuitem contains an <a> whose href is the resource path
       const seen = new Set();
@@ -223,96 +360,40 @@ export function createResourceTests(App, options = {}) {
     });
 
     // -----------------------------------------------------------------------
-    // Phase 3: Smoke-test each resource list page
+    // Phase 3/4: Smoke-test each resource's List, Create and Edit page
     //
-    // We render the App at each resource URL and verify the Admin shell loads
-    // (auth passed, layout rendered, no crash). We use sidebar nav items as
-    // the indicator because React Admin renders them after the full auth +
-    // permissions lifecycle completes.
+    // Each phase mounts the app once and then navigates between routes (see
+    // checkAllRoutes / checkRoute above for why that is both much faster and
+    // still a valid crash check). A page that renders without tripping
+    // react-admin's error boundary passes; anything that throws on mount —
+    // a missing import, a bad reference, a field the record doesn't have —
+    // fails, and every failing page is reported, not just the first.
     //
-    // We then also attempt to find a table (React Query data load), but treat
-    // it as a non-blocking best-effort check — a missing table just means
-    // the resource uses a custom list layout or React Query hasn't settled.
+    // If a resource has no create/edit page registered, the route simply
+    // matches nothing inside the layout and the shell renders normally, so
+    // this only fails on a real crash.
     // -----------------------------------------------------------------------
+    // Guard rail, not a target: each phase mounts once then navigates, which
+    // measured ~1.2s per page, so ~46 resources lands near a minute. If a
+    // phase ever approaches this, something has regressed and should fail.
+    const phaseTimeout = 240000;
+
     it(
       'each resource list page loads admin shell without crashing',
-      async () => {
-        for (const path of resources) {
-          // Set URL before rendering so React Router opens the correct route
-          window.history.pushState({}, '', path);
-
-          render(<App />);
-
-          // Wait for the admin layout to render at this specific route, then
-          // confirm it's still standing once any deferred content has had a
-          // chance to mount (and crash, if it's going to). Sidebar menuitems
-          // appearing proves:
-          //   - Auth passed (checkAuth resolved)
-          //   - Permissions resolved (getPermissions returned)
-          //   - The admin layout rendered (no crash, no error boundary)
-          //   - We are NOT on the login page
-          // eslint-disable-next-line no-await-in-loop
-          await assertShellSurvives(timeout);
-
-          cleanup();
-          // Defensive extra reset: MUI portals (Popper/Dialog/Snackbar) can
-          // mount content directly under document.body outside the RTL
-          // container RTL's own cleanup() tracks. Across ~50 renders in one
-          // process that's enough accumulated DOM to visibly slow down every
-          // later query, so force the slate clean between iterations.
-          document.body.innerHTML = '';
-        }
-      },
-      // Generous timeout: CI hardware runs noticeably slower than local dev,
-      // and real apps have run close to 50 resources once actually rendered
-      // (not just the 8 static pages the old, broken discovery used to
-      // find), so this budgets 100 resources at 13s each for headroom.
-      (timeout + 5000) * 100
+      () => checkAllRoutes(App, resources, timeout),
+      phaseTimeout
     );
 
-    // -----------------------------------------------------------------------
-    // Phase 4: Smoke-test each resource's Create and Edit pages
-    //
-    // Same signal as Phase 3 (admin shell / sidebar renders without crashing).
-    // If a resource has no create/edit page registered, the route simply
-    // matches nothing inside the layout and the shell renders normally — this
-    // only fails on a real crash (e.g. a component throwing on mount, a
-    // reference to something that was never imported).
-    // -----------------------------------------------------------------------
     it(
       'each resource create page loads admin shell without crashing',
-      async () => {
-        for (const path of resources) {
-          window.history.pushState({}, '', `${path}/create`);
-
-          render(<App />);
-
-          // eslint-disable-next-line no-await-in-loop
-          await assertShellSurvives(timeout);
-
-          cleanup();
-          document.body.innerHTML = ''; // see comment on the list-page test above
-        }
-      },
-      (timeout + 5000) * 100
+      () => checkAllRoutes(App, resources.map((path) => `${path}/create`), timeout),
+      phaseTimeout
     );
 
     it(
       'each resource edit page loads admin shell without crashing',
-      async () => {
-        for (const path of resources) {
-          window.history.pushState({}, '', `${path}/1`);
-
-          render(<App />);
-
-          // eslint-disable-next-line no-await-in-loop
-          await assertShellSurvives(timeout);
-
-          cleanup();
-          document.body.innerHTML = ''; // see comment on the list-page test above
-        }
-      },
-      (timeout + 5000) * 100
+      () => checkAllRoutes(App, resources.map((path) => `${path}/1`), timeout),
+      phaseTimeout
     );
   });
 
@@ -352,7 +433,7 @@ export function createResourceTests(App, options = {}) {
       async () => {
         window.history.pushState({}, '', '/yemot-simulator');
         render(<App />);
-        await screen.findAllByRole('menuitem', {}, { timeout });
+        await waitForShell(timeout);
         // Keep this broad so the test survives minor wording updates around call text in the simulator UI.
         await screen.findAllByLabelText(/שיחה/i, {}, { timeout });
         assertNoErrors();
@@ -368,7 +449,7 @@ export function createResourceTests(App, options = {}) {
       async () => {
         window.history.pushState({}, '', '/tutorial');
         render(<App />);
-        await screen.findAllByRole('menuitem', {}, { timeout });
+        await waitForShell(timeout);
         // Tutorial.jsx renders a Typography with hardcoded "מדריך:" heading.
         // The sidebar also contains a menu item with "מדריך" so use the colon
         // to match only the page heading (not the sidebar link "מדריך למשתמש").
@@ -388,7 +469,7 @@ export function createResourceTests(App, options = {}) {
         render(<App />);
         // The List component fetches via dataProvider (mocked → []).
         // Even with empty data, the admin layout with sidebar menuitems renders.
-        await screen.findAllByRole('menuitem', {}, { timeout });
+        await waitForShell(timeout);
         assertNoErrors();
         cleanup();
       },
@@ -402,7 +483,7 @@ export function createResourceTests(App, options = {}) {
       async () => {
         window.history.pushState({}, '', '/roadmap');
         render(<App />);
-        await screen.findAllByRole('menuitem', {}, { timeout });
+        await waitForShell(timeout);
         // Roadmap.jsx always renders this heading regardless of features list.
         // The sidebar link also contains this text so use findAllByText (allow
         // multiple matches) — having ≥2 matches means both sidebar and page
@@ -424,7 +505,7 @@ export function createResourceTests(App, options = {}) {
         window.history.pushState({}, '', '/register');
         render(<App />);
         // After redirect to '/', the admin shell (sidebar menuitems) appears
-        await screen.findAllByRole('menuitem', {}, { timeout });
+        await waitForShell(timeout);
         assertNoErrors();
         cleanup();
       },
@@ -443,7 +524,7 @@ export function createResourceTests(App, options = {}) {
         render(<App />);
         // After useEffect: getIdentity resolves → clearMaintenanceInfo() →
         // navigate('/') → admin layout renders with sidebar menuitems.
-        await screen.findAllByRole('menuitem', {}, { timeout });
+        await waitForShell(timeout);
         assertNoErrors();
         cleanup();
       },
