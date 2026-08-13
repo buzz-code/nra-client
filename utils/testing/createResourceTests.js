@@ -257,10 +257,11 @@ export function createResourceTests(App, options = {}) {
           cleanup();
         }
       },
-      // Generous timeout: real apps have run close to 50 resources at ~10s
-      // each once actually rendered (not just the 8 static pages discovery used
-      // to find), so this budgets 80 resources at 11s each for headroom.
-      (timeout + 3000) * 80
+      // Generous timeout: CI hardware runs noticeably slower than local dev,
+      // and real apps have run close to 50 resources once actually rendered
+      // (not just the 8 static pages the old, broken discovery used to
+      // find), so this budgets 100 resources at 13s each for headroom.
+      (timeout + 5000) * 100
     );
 
     // -----------------------------------------------------------------------
@@ -286,7 +287,7 @@ export function createResourceTests(App, options = {}) {
           cleanup();
         }
       },
-      (timeout + 3000) * 80
+      (timeout + 5000) * 100
     );
 
     it(
@@ -303,7 +304,7 @@ export function createResourceTests(App, options = {}) {
           cleanup();
         }
       },
-      (timeout + 3000) * 80
+      (timeout + 5000) * 100
     );
   });
 
