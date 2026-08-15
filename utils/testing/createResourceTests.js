@@ -94,7 +94,11 @@ const SETTLE_MAX_MS = 2000;
 // elements without the visibility pass.
 // -----------------------------------------------------------------------
 const countMenuItems = () => document.querySelectorAll('[role="menuitem"]').length;
-const countAlerts = () => document.querySelectorAll('[role="alert"]').length;
+// Specifically the `<h1 role="alert">` react-admin's <Error> fallback
+// renders (see ra-ui-materialui's Error.tsx) — not a bare `[role="alert"]`,
+// which would also match an ordinary MUI <Alert> or a validation-message
+// live region that a page can legitimately render without having crashed.
+const countAlerts = () => document.querySelectorAll('h1[role="alert"]').length;
 
 async function waitForShell(timeout) {
   const deadline = Date.now() + timeout;
