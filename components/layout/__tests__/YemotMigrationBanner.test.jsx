@@ -77,4 +77,43 @@ describe('YemotMigrationBanner', () => {
             expect(mockNotify).toHaveBeenCalledWith('העדכון נכשל, נסו שוב', { type: 'error' });
         });
     });
+
+    describe('legacy route deadline countdown', () => {
+        it('shows days remaining and stays at warning severity when far from the deadline', () => {
+            const deadline = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000);
+            mockUseGetIdentity.mockReturnValue({
+                data: { phoneNumber: '035586526', additionalData: {}, yemotLegacyRouteDeadline: deadline.toISOString() },
+            });
+            render(<YemotMigrationBanner />);
+            expect(screen.getByText(/יפסיק לעבוד בעוד 20 ימים/)).toBeInTheDocument();
+            expect(document.querySelector('.MuiAlert-outlinedWarning')).toBeInTheDocument();
+        });
+
+        it('escalates to error severity within the urgent window', () => {
+            const deadline = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+            mockUseGetIdentity.mockReturnValue({
+                data: { phoneNumber: '035586526', additionalData: {}, yemotLegacyRouteDeadline: deadline.toISOString() },
+            });
+            render(<YemotMigrationBanner />);
+            expect(screen.getByText(/יפסיק לעבוד בעוד 3 ימים/)).toBeInTheDocument();
+            expect(document.querySelector('.MuiAlert-outlinedError')).toBeInTheDocument();
+        });
+
+        it('shows an already-expired message once past the deadline', () => {
+            const deadline = new Date(Date.now() - 24 * 60 * 60 * 1000);
+            mockUseGetIdentity.mockReturnValue({
+                data: { phoneNumber: '035586526', additionalData: {}, yemotLegacyRouteDeadline: deadline.toISOString() },
+            });
+            render(<YemotMigrationBanner />);
+            expect(screen.getByText(/הקישור הישן כבר הפסיק לעבוד/)).toBeInTheDocument();
+        });
+
+        it('omits the countdown when no deadline is configured', () => {
+            mockUseGetIdentity.mockReturnValue({
+                data: { phoneNumber: '035586526', additionalData: {}, yemotLegacyRouteDeadline: null },
+            });
+            render(<YemotMigrationBanner />);
+            expect(screen.queryByText(/יפסיק לעבוד/)).not.toBeInTheDocument();
+        });
+    });
 });

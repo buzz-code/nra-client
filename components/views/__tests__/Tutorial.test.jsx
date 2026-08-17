@@ -23,4 +23,12 @@ describe('Tutorial', () => {
         expect(screen.getByText(/handle-call$/m)).toBeInTheDocument();
         expect(screen.getByText(/הקישור האישי שלכם ייטען/)).toBeInTheDocument();
     });
+
+    it('shows the legacy route cutoff date when one is configured', () => {
+        mockUseGetIdentity.mockReturnValue({
+            data: { additionalData: { yemotWebhookToken: 'abc123' }, yemotLegacyRouteDeadline: '2030-01-01T00:00:00.000Z' },
+        });
+        render(<Tutorial />);
+        expect(screen.getByText(/יפסיק לעבוד לחלוטין החל מתאריך/)).toBeInTheDocument();
+    });
 });

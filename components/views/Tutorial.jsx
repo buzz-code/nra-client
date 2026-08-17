@@ -12,6 +12,7 @@ export default ({ }) => {
     const { data: identity } = useGetIdentity();
     const webhookToken = identity?.additionalData?.yemotWebhookToken;
     const apiLink = webhookToken ? `${apiUrl}/yemot/handle-call/${webhookToken}` : `${apiUrl}/yemot/handle-call`;
+    const deadline = identity?.yemotLegacyRouteDeadline ? new Date(identity.yemotLegacyRouteDeadline) : null;
 
     return (
         <Container maxWidth="sm" mt={1}>
@@ -68,6 +69,9 @@ export default ({ }) => {
                             <strong>שימו לב:</strong> הקישור שמופיע למעלה הוא אישי לחשבון שלכם - אל תעתיקו קישור של חשבון אחר, ואל תשתפו אותו עם אחרים.
                             <br />
                             אם כבר חיברתם את המערכת בעבר עם קישור ישן שמסתיים ב-<code>/handle-call</code> (בלי הקוד שאחריו), הוא עדיין יעבוד - אבל מומלץ לעדכן לקישור החדש והמאובטח שלמעלה בהקדם.
+                            {deadline && (
+                                <> הקישור הישן יפסיק לעבוד לחלוטין החל מתאריך {deadline.toLocaleDateString('he-IL')}.</>
+                            )}
                             <br />
                             <strong>שלב 5: שמירת השינויים</strong>
                             <br />
