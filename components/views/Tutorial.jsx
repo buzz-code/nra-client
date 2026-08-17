@@ -5,9 +5,14 @@ import Paper from '@mui/material/Paper';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
+import { useGetIdentity } from 'react-admin';
 import { apiUrl } from '@shared/providers/constantsProvider';
 
 export default ({ }) => {
+    const { data: identity } = useGetIdentity();
+    const webhookToken = identity?.additionalData?.yemotWebhookToken;
+    const apiLink = webhookToken ? `${apiUrl}/yemot/handle-call/${webhookToken}` : `${apiUrl}/yemot/handle-call`;
+
     return (
         <Container maxWidth="sm" mt={1}>
             <Paper>
@@ -48,7 +53,7 @@ export default ({ }) => {
                             <pre dir='ltr'>
                                 type=api
                                 {'\r\n'}
-                                api_link={apiUrl}/yemot/handle-call
+                                api_link={apiLink}
                                 {'\r\n'}
                                 api_url_post=yes
                                 {'\r\n'}
@@ -56,6 +61,13 @@ export default ({ }) => {
                                 {'\r\n'}
                                 tts_voice=Sivan
                             </pre>
+                            {!webhookToken && (
+                                <span style={{ color: 'gray' }}>(הקישור האישי שלכם ייטען ברגע שהעמוד יסיים לטעון)</span>
+                            )}
+                            <br />
+                            <strong>שימו לב:</strong> הקישור שמופיע למעלה הוא אישי לחשבון שלכם - אל תעתיקו קישור של חשבון אחר, ואל תשתפו אותו עם אחרים.
+                            <br />
+                            אם כבר חיברתם את המערכת בעבר עם קישור ישן שמסתיים ב-<code>/handle-call</code> (בלי הקוד שאחריו), הוא עדיין יעבוד - אבל מומלץ לעדכן לקישור החדש והמאובטח שלמעלה בהקדם.
                             <br />
                             <strong>שלב 5: שמירת השינויים</strong>
                             <br />

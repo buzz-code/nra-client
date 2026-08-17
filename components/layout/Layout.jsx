@@ -6,6 +6,7 @@ import DirectionalThemeProvider from './DirectionalThemeProvider';
 import { useIsAdmin } from '@shared/utils/permissionsUtil';
 import { filterArrayByParams } from '@shared/utils/filtersUtil';
 import { TrialMessage } from './TrialMessage';
+import { YemotMigrationBanner } from './YemotMigrationBanner';
 import { setRumUser } from '@shared/utils/openobserveRumUtil';
 
 const CustomLayout = ({ customMenuItems, menuGroups, children }) => {
@@ -31,6 +32,7 @@ const CustomLayout = ({ customMenuItems, menuGroups, children }) => {
         <DirectionalThemeProvider>
             <Layout menu={Menu} appBar={CustomAppBar}>
                 <TrialMessage />
+                <YemotMigrationBanner />
 
                 {children}
             </Layout>
