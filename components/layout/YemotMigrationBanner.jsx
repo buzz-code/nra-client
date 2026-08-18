@@ -57,8 +57,9 @@ export const YemotMigrationBanner = () => {
                     </Button>
                 }
             >
-                יש לעדכן את קובץ ה-<code>ext.ini</code> במערכת ימות המשיח לקישור המאובטח האישי שלכם.{deadlineText}{' '}
-                <Link href="/tutorial" target="_blank">הוראות מלאות כאן</Link>.
+                לצורך שיפור האבטחה במערכת, ביצענו שינוי בדרך ההתחברות של המערכת הטלפונית. על מנת שהמערכת תמשיך לפעול כסדרה,
+                יש לעדכן את ההגדרות שלכם (קובץ <code>ext.ini</code>) במערכת ימות המשיח, לפי ההנחיות המפורטות{' '}
+                <Link href="/tutorial" target="_blank">כאן</Link>.{deadlineText}
             </Alert>
         </Box>
     );
