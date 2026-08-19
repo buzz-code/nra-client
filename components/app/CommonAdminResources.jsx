@@ -7,17 +7,21 @@ import recievedMail from '@shared/components/common-entities/recieved-mail';
 import page from '@shared/components/common-entities/page';
 import paymentTrack from '@shared/components/common-entities/payment-track';
 import yemotCall from '@shared/components/common-entities/yemot-call';
+import job from '@shared/components/common-entities/job';
+import schedule from '@shared/components/common-entities/schedule';
 import SettingsPhoneIcon from '@mui/icons-material/SettingsPhone';
 import EmailIcon from '@mui/icons-material/Email';
 import LogoDevIcon from '@mui/icons-material/LogoDev';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import WorkIcon from '@mui/icons-material/WorkOutline';
+import ScheduleIcon from '@mui/icons-material/ScheduleOutlined';
 import { isAdmin, isShowUsersData, isEditPagesData, isEditPaymentTracksData } from '@shared/utils/permissionsUtil';
 
 /**
  * Renders the admin-gated resources that are identical across all NRA apps:
- *   text, yemot_call, recieved_mail, audit_log  (admin only)
+ *   text, yemot_call, recieved_mail, audit_log, schedule, job  (admin only)
  *   user                                         (showUsersData permission)
  *   page                                         (editPagesData permission)
  *   payment_track                                (editPaymentTracks / showUsersData, optional)
@@ -33,6 +37,8 @@ const CommonAdminResources = ({ permissions, showPaymentTrack = true }) => (
             <Resource name="yemot_call" {...yemotCall} options={{ menuGroup: 'admin' }} icon={SettingsPhoneIcon} />
             <Resource name="recieved_mail" {...recievedMail} options={{ menuGroup: 'admin' }} icon={EmailIcon} />
             <Resource name="audit_log" {...auditLog} options={{ menuGroup: 'admin' }} icon={LogoDevIcon} />
+            <Resource name="schedule" {...schedule} options={{ menuGroup: 'admin' }} icon={ScheduleIcon} />
+            <Resource name="job" {...job} options={{ menuGroup: 'admin' }} icon={WorkIcon} />
         </>}
 
         {isShowUsersData(permissions) && <>
