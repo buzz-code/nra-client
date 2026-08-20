@@ -205,6 +205,7 @@ export const sharedEntityTranslations = {
       progress: 'התקדמות',
       attempts: 'ניסיונות',
       error: 'שגיאה',
+      result: 'תוצאה',
       completedAt: 'הסתיים בתאריך',
     },
   },

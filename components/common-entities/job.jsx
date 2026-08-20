@@ -3,6 +3,7 @@ import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import { CommonRepresentation } from '@shared/components/CommonRepresentation';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { commonAdminFilters } from '@shared/components/fields/PermissionFilter';
+import { CommonJsonField } from '@shared/components/fields/CommonJsonItem';
 
 const filters = [
     ...commonAdminFilters,
@@ -22,6 +23,7 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
             <NumberField source="progress" />
             <NumberField source="attempts" />
             <TextField source="error" />
+            <CommonJsonField source="result" />
             <DateField showDate showTime source="createdAt" />
             <DateField showDate showTime source="completedAt" />
         </CommonDatagrid>
