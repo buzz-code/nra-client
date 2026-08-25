@@ -49,8 +49,8 @@ const AdminAppShell = ({ title, themeOptions, domainTranslations, dashboard, lay
     const theme = useMemo(() => createTheme({ ...themeOptions, isRtl: true }), [themeOptions]);
     const i18nProvider = useMemo(() => getI18nProvider(domainTranslations), [domainTranslations]);
     const scopedDataProvider = useMemo(
-        () => withForeignKeyErrorTranslation(dataProvider, domainTranslations),
-        [domainTranslations],
+        () => withForeignKeyErrorTranslation(dataProvider, i18nProvider),
+        [i18nProvider],
     );
     // Anonymous visitors always fail the permissions check (no session yet); without this,
     // react-query's default retry backoff (~1s+2s+4s) delays the public homepage from
