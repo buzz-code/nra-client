@@ -1,14 +1,20 @@
-import { List, Datagrid, BulkDeleteWithConfirmButton, useResourceDefinition, Pagination, TextField, DatagridConfigurable } from 'react-admin';
+import { List, Datagrid, BulkDeleteWithConfirmButton, useResourceDefinition, useListContext, Pagination, TextField, DatagridConfigurable } from 'react-admin';
 import { CommonListActions } from '@shared/components/crudContainers/CommonListActions';
 import { CommonEmpty } from '@shared/components/crudContainers/CommonEmpty';
+import { BulkFixTimezoneShiftButton } from '@shared/components/crudContainers/BulkFixTimezoneShiftButton';
 import { useDefaultPageSize } from '@shared/utils/settingsUtil';
 import { PAGE_SIZE_OPTIONS } from '@shared/config/settings';
 
 const useBulkActionButtons = (readonly, additionalBulkButtons = [], hasDelete, props) => {
     const { hasCreate } = useResourceDefinition(props);
+    const { data } = useListContext();
     const shouldShowDelete = (!readonly && hasCreate) || hasDelete;
+    // Only offer the timezone-fix action where it's actually meaningful: resources
+    // whose rows carry a createdAt/updatedAt (the columns nra-server#44 could affect).
+    const hasTimestampColumns = Boolean(data?.[0] && ('createdAt' in data[0] || 'updatedAt' in data[0]));
 
     const actionButtons = additionalBulkButtons.concat([
+        hasTimestampColumns && <BulkFixTimezoneShiftButton key='bulkFixTimezoneShift' />,
         // <BulkExportButton />,
         shouldShowDelete && <BulkDeleteWithConfirmButton key='bulkDeleteWithConfirmButton' />,
     ]).filter(Boolean);
