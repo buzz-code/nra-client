@@ -1,17 +1,20 @@
-import { BooleanField, DateField, ReferenceField, TextField } from 'react-admin';
+import { BooleanField, DateField, DateInput, ReferenceField, TextField } from 'react-admin';
 import { NullableBooleanInput, TextInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
 import YemotCallHistoryField from '@shared/components/fields/YemotCallHistoryField';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonJsonField } from '@shared/components/fields/CommonJsonItem';
-import { commonAdminFilters } from '@shared/components/fields/PermissionFilter';
+import { adminUserFilter, adminUpdatedAtFilters } from '@shared/components/fields/PermissionFilter';
 
 const filters = [
-    ...commonAdminFilters,
+    adminUserFilter,
+    ...adminUpdatedAtFilters,
     <TextInput source="phone:$cont" alwaysOn />,
     <NullableBooleanInput source="isOpen" />,
     <NullableBooleanInput source="hasError" />,
     <TextInput source="errorMessage:$cont" />,
+    <DateInput source="createdAt:$gte" />,
+    <DateInput source="createdAt:$lte" />,
 ];
 
 const Datagrid = ({ isAdmin, children, ...props }) => {
@@ -28,7 +31,7 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
             <TextField source="errorMessage" />
             {isAdmin && <TextField source="currentStep" />}
             {isAdmin && <CommonJsonField source="data" />}
-            {isAdmin && <DateField showDate showTime source="createdAt" />}
+            <DateField showDate showTime source="createdAt" />
             {isAdmin && <DateField showDate showTime source="updatedAt" />}
         </CommonDatagrid>
     );
