@@ -161,9 +161,20 @@ const findDuplicateStepIndexes = (history) => {
     return skip;
 };
 
-// Strips the legacy "[1: ..., 2: ...]" legend and "הקישי X - " lead-in; already-clean data is untouched.
+// Strips the legacy "[1: ..., 2: ...]" legend; already-clean data is untouched.
 const cleanBotText = (text) => text.replace(/\s*\[\d+:\s*.+?\]\s*$/, '');
-const cleanUserText = (text) => text.replace(/הקישי\s+\S+\s*-\s*/g, '');
+
+// "1 (הקישי 1 - כן)" -> "1 (כן)" - uses the digit already shown, not a guess at the wording around it.
+const cleanUserText = (text) => {
+    const match = text.match(/^(\d+) \((.+)\)$/);
+    if (!match) {
+        return text;
+    }
+    const [, digit, label] = match;
+    const marker = `${digit} - `;
+    const markerIndex = label.indexOf(marker);
+    return markerIndex === -1 ? text : `${digit} (${label.slice(markerIndex + marker.length).trim()})`;
+};
 
 const V2ConversationHistory = ({ history }) => {
     const duplicateIndexes = useMemo(() => findDuplicateStepIndexes(history), [history]);
