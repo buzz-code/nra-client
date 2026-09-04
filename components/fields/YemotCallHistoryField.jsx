@@ -132,7 +132,42 @@ const V2ConversationSummary = ({ history }) => {
     );
 };
 
+const USER_STEP_TYPES = ['user_input', 'menu_selection', 'confirmation_result'];
+
+// Finds raw ask_input/user_input steps duplicating an adjacent ask_confirmation/menu_selection
+// (older calls only, server-side logging bug now fixed). Never touches a genuine retry.
+const findDuplicateStepIndexes = (history) => {
+    const skip = new Set();
+    for (let i = 0; i < history.length; i++) {
+        const cur = history[i]?.params || {};
+        const next = history[i + 1]?.params;
+        const after = history[i + 2]?.params;
+        if (cur.stepType !== 'ask_input' || !next || next.stepType !== 'user_input' || next.userResponse === undefined || !after) {
+            continue;
+        }
+        const rawResponse = String(next.userResponse);
+        const richResponse = after.userResponse !== undefined ? String(after.userResponse) : '';
+        const sameExchange = richResponse === rawResponse || richResponse.startsWith(`${rawResponse} `);
+        if (!sameExchange) {
+            continue;
+        }
+        if (after.stepType === 'confirmation_result' && history[i - 1]?.params?.stepType === 'ask_confirmation') {
+            skip.add(i); // raw question, already shown by the preceding ask_confirmation
+            skip.add(i + 1); // raw answer, already shown by confirmation_result
+        } else if (after.stepType === 'menu_selection') {
+            skip.add(i + 1); // raw answer only - the ask_input is the only record of the question, keep it
+        }
+    }
+    return skip;
+};
+
+// Strips the legacy "[1: ..., 2: ...]" legend and "הקישי X - " lead-in; already-clean data is untouched.
+const cleanBotText = (text) => text.replace(/\s*\[\d+:\s*.+?\]\s*$/, '');
+const cleanUserText = (text) => text.replace(/הקישי\s+\S+\s*-\s*/g, '');
+
 const V2ConversationHistory = ({ history }) => {
+    const duplicateIndexes = useMemo(() => findDuplicateStepIndexes(history), [history]);
+
     const formatTime = (timeString) => {
         try {
             const time = new Date(timeString);
@@ -148,97 +183,63 @@ const V2ConversationHistory = ({ history }) => {
         }
     };
 
-    const getStepIcon = (stepType) => {
-        switch (stepType) {
-            case 'ask_input':
-            case 'ask_menu':
-            case 'ask_confirmation':
-                return '❓';
-            case 'user_input':
-            case 'menu_selection':
-            case 'confirmation_result':
-                return '✅';
-            case 'send_message':
-                return '💬';
-            case 'hangup_message':
-                return '📞';
-            default:
-                return '🔄';
-        }
-    };
-
-    const getStepColor = (stepType) => {
-        switch (stepType) {
-            case 'ask_input':
-            case 'ask_menu':
-            case 'ask_confirmation':
-                return '#1976d2'; // primary
-            case 'user_input':
-            case 'menu_selection':
-            case 'confirmation_result':
-                return '#2e7d32'; // success
-            case 'send_message':
-                return '#0288d1'; // info
-            case 'hangup_message':
-                return '#ed6c02'; // warning
-            default:
-                return '#757575'; // default
-        }
-    };
-
     return (
         <Box sx={{ maxWidth: '100%' }}>
             <Typography variant="subtitle1" gutterBottom>
                 שיחה ({history.length} צעדים)
             </Typography>
-            <Stack spacing={1} sx={{ maxHeight: '60vh', overflowY: 'auto' }}>
+            <Stack spacing={1} sx={{ maxHeight: '60vh', overflowY: 'auto', p: 1 }}>
                 {history.map((step, index) => {
+                    if (duplicateIndexes.has(index)) {
+                        return null;
+                    }
+
                     const params = step.params || {};
                     const stepType = params.stepType || 'unknown';
                     const prompt = params.prompt;
                     const userResponse = params.userResponse;
 
+                    if (stepType === 'hangup_message') {
+                        return (
+                            <Box key={index} sx={{ display: 'flex', justifyContent: 'center', my: 1 }}>
+                                <Chip size="small" label={`📞 ${prompt || 'השיחה הסתיימה'}`} sx={{ backgroundColor: '#eeeeee' }} />
+                            </Box>
+                        );
+                    }
+
+                    const isUserMessage = USER_STEP_TYPES.includes(stepType) && userResponse;
+                    const rawText = isUserMessage ? userResponse : prompt;
+                    if (!rawText) {
+                        return null;
+                    }
+                    const bubbleText = isUserMessage ? cleanUserText(rawText) : cleanBotText(rawText);
+
                     return (
-                        <Paper
+                        <Box
                             key={index}
-                            elevation={1}
                             sx={{
-                                p: 1.5,
-                                backgroundColor: userResponse ? '#f8f9fa' : '#fff',
-                                borderRight: `3px solid ${getStepColor(stepType)}`
+                                display: 'flex',
+                                justifyContent: isUserMessage ? 'flex-end' : 'flex-start'
                             }}
                         >
-                            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                                <Typography sx={{ fontSize: '1.2em', minWidth: '24px' }}>
-                                    {getStepIcon(stepType)}
+                            <Paper
+                                elevation={1}
+                                sx={{
+                                    maxWidth: '75%',
+                                    p: 1.2,
+                                    borderRadius: 2,
+                                    backgroundColor: isUserMessage ? '#dcf5dc' : '#e3f0fd',
+                                    color: isUserMessage ? '#1b5e20' : '#0d47a1'
+                                }}
+                            >
+                                <Typography variant="body2" sx={{ fontWeight: isUserMessage ? 600 : 400 }}>
+                                    {bubbleText}
                                 </Typography>
-                                <Box sx={{ flex: 1 }}>
-                                    {prompt && (
-                                        <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>
-                                            {prompt}
-                                        </Typography>
-                                    )}
-                                    {userResponse && (
-                                        <Typography
-                                            variant="body2"
-                                            sx={{
-                                                color: '#2e7d32',
-                                                backgroundColor: '#e8f5e8',
-                                                padding: '4px 8px',
-                                                borderRadius: 1,
-                                                fontWeight: 600,
-                                                mb: 0.5
-                                            }}
-                                        >
-                                            תגובת המשתמש: {userResponse}
-                                        </Typography>
-                                    )}
-                                    <Typography variant="caption" color="textSecondary">
-                                        {formatTime(step.time)}
-                                    </Typography>
-                                </Box>
-                            </Box>
-                        </Paper>
+                                <Typography variant="caption" sx={{ display: 'block', opacity: 0.6, mt: 0.3 }}>
+                                    {formatTime(step.time)}
+                                </Typography>
+                            </Paper>
+                        </Box>
                     );
                 })}
             </Stack>
