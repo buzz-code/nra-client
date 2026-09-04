@@ -51,3 +51,7 @@ export const useIsPhoneCampaign = () => useHasPermission(permissionKeys.phoneCam
 export const isYemotSimulator = (permissions) =>
     isAdmin(permissions) || hasPermissionLogic(permissions, permissionKeys.yemotSimulator);
 export const useIsYemotSimulator = () => useHasPermission(permissionKeys.yemotSimulator) || useIsAdmin();
+
+export const isViewYemotCalls = (permissions) =>
+    isAdmin(permissions) || hasPermissionLogic(permissions, permissionKeys.viewYemotCalls);
+export const useIsViewYemotCalls = () => useHasPermission(permissionKeys.viewYemotCalls) || useIsAdmin();
