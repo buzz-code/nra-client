@@ -42,7 +42,7 @@ const CommonAdminResources = ({ permissions, showPaymentTrack = true }) => (
         </>}
 
         {isViewYemotCalls(permissions) && <>
-            <Resource name="yemot_call" {...yemotCall} options={{ menuGroup: 'admin' }} icon={SettingsPhoneIcon} />
+            <Resource name="yemot_call" {...yemotCall} icon={SettingsPhoneIcon} />
         </>}
 
         {isShowUsersData(permissions) && <>
