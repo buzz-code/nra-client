@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { useRecordContext, ArrayField, SingleFieldList } from 'react-admin';
+import React, { useMemo } from 'react';
+import { useRecordContext, useNotify, ArrayField, SingleFieldList } from 'react-admin';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
 import {
@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseIcon from '@mui/icons-material/Close';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 const YemotCallHistoryField = ({ source }) => {
     const record = useRecordContext();
@@ -41,12 +42,12 @@ const YemotCallHistoryField = ({ source }) => {
     );
 };
 
+// Row-level summary only - opening the details dialog is the row's job now (see
+// yemot-call.jsx's rowClick), so this has no click handling or dialog of its own.
 const V2ConversationSummary = ({ history }) => {
-    const [dialogOpen, setDialogOpen] = useState(false);
-
     const summary = useMemo(() => {
         if (!history || history.length === 0) {
-            return { steps: 0, lastAction: 'אין פעילות', status: 'ריק' };
+            return { lastAction: 'אין פעילות', status: 'ריק' };
         }
 
         const userResponses = history.filter(step =>
@@ -70,65 +71,62 @@ const V2ConversationSummary = ({ history }) => {
         }
 
         return {
-            steps: history.length,
             lastAction: lastAction.length > 20 ? lastAction.substring(0, 20) + '...' : lastAction,
             status,
-            userResponseCount: userResponses.length
         };
     }, [history]);
 
-    const handleOpenDialog = (e) => {
-        e.stopPropagation();
-        setDialogOpen(true);
-    };
+    return (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Chip
+                size="small"
+                label={summary.lastAction}
+                color={summary.status === 'הסתיים' ? 'success' : 'default'}
+            />
+            <VisibilityIcon fontSize="small" color="action" />
+        </Box>
+    );
+};
 
-    const handleCloseDialog = () => {
-        setDialogOpen(false);
+// Standalone dialog, rendered once by the list (not per-row) and driven by
+// whichever record is passed in - see yemot-call.jsx for how it's opened
+// (row click, or a deep link via the callId URL param).
+export const YemotCallDetailsDialog = ({ record, onClose }) => {
+    const notify = useNotify();
+    const history = record?.history;
+
+    const handleCopyLink = async () => {
+        const url = new URL(window.location.href);
+        url.search = `?callId=${record.id}`;
+        try {
+            await navigator.clipboard.writeText(url.toString());
+            notify('הקישור הועתק');
+        } catch {
+            notify('העתקת הקישור נכשלה', { type: 'error' });
+        }
     };
 
     return (
-        <>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Chip
-                    size="small"
-                    label={`${summary.steps} צעדים`}
-                    color="primary"
-                    variant="outlined"
-                />
-                <Chip
-                    size="small"
-                    label={summary.lastAction}
-                    color={summary.status === 'הסתיים' ? 'success' : 'default'}
-                />
-                <IconButton
-                    size="small"
-                    onClick={handleOpenDialog}
-                    sx={{ padding: '2px' }}
-                >
-                    <VisibilityIcon fontSize="small" />
+        <Dialog
+            open={Boolean(record)}
+            onClose={onClose}
+            maxWidth="md"
+            fullWidth
+        >
+            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h6">פרטי השיחה</Typography>
+                <IconButton onClick={onClose}>
+                    <CloseIcon />
                 </IconButton>
-            </Box>
-
-            <Dialog
-                open={dialogOpen}
-                onClose={handleCloseDialog}
-                maxWidth="md"
-                fullWidth
-            >
-                <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="h6">פרטי השיחה</Typography>
-                    <IconButton onClick={handleCloseDialog}>
-                        <CloseIcon />
-                    </IconButton>
-                </DialogTitle>
-                <DialogContent>
-                    <V2ConversationHistory history={history} />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDialog}>סגור</Button>
-                </DialogActions>
-            </Dialog>
-        </>
+            </DialogTitle>
+            <DialogContent>
+                {history && <V2ConversationHistory history={history} />}
+            </DialogContent>
+            <DialogActions>
+                <Button startIcon={<ContentCopyIcon />} onClick={handleCopyLink}>העתק קישור</Button>
+                <Button onClick={onClose}>סגור</Button>
+            </DialogActions>
+        </Dialog>
     );
 };
 
@@ -196,9 +194,6 @@ const V2ConversationHistory = ({ history }) => {
 
     return (
         <Box sx={{ maxWidth: '100%' }}>
-            <Typography variant="subtitle1" gutterBottom>
-                שיחה ({history.length} צעדים)
-            </Typography>
             <Stack spacing={1} sx={{ maxHeight: '60vh', overflowY: 'auto', p: 1 }}>
                 {history.map((step, index) => {
                     if (duplicateIndexes.has(index)) {
