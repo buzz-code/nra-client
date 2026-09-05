@@ -119,7 +119,7 @@ export const sharedEntityTranslations = {
       hasError: 'שגיאה?',
       errorMessage: 'הודעת שגיאה',
       'errorMessage:$cont': 'הודעת שגיאה',
-      history: 'שלבים',
+      lastSentMessage: 'הודעה אחרונה שנשלחה',
       data: 'נתונים',
       isOpen: 'פעיל?',
       apiCallId: 'מזהה שיחה (ימות)',

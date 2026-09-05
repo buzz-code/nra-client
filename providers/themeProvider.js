@@ -66,6 +66,9 @@ export const createTheme = (options = {}) => {
                     root: ({ theme }) => ({
                         borderRadius: theme.shape.borderRadius,
                         marginInline: theme.spacing(1),
+                        '&:hover': {
+                            backgroundColor: alpha(theme.palette.text.primary, 0.04),
+                        },
                         '&.RaMenuItemLink-active': {
                             backgroundColor: alpha(theme.palette.primary.main, 0.12),
                             color: theme.palette.primary.main,
@@ -102,6 +105,24 @@ export const createTheme = (options = {}) => {
             MuiChip: {
                 styleOverrides: {
                     root: { borderRadius: 999, fontWeight: 600 },
+                },
+            },
+            // Round text inputs (search boxes, filter fields, form fields) to the
+            // same radius as buttons/cards/chips - stock MUI square corners were
+            // the one thing left reading as "default Material" instead of "themed".
+            MuiOutlinedInput: {
+                styleOverrides: {
+                    root: ({ theme }) => ({
+                        borderRadius: theme.shape.borderRadius,
+                    }),
+                },
+            },
+            MuiFilledInput: {
+                styleOverrides: {
+                    root: ({ theme }) => ({
+                        borderTopLeftRadius: theme.shape.borderRadius,
+                        borderTopRightRadius: theme.shape.borderRadius,
+                    }),
                 },
             },
             MuiTableRow: {

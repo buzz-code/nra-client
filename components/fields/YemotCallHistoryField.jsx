@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { useRecordContext, useNotify, ArrayField, SingleFieldList } from 'react-admin';
+import { useRecordContext, useNotify } from 'react-admin';
+import get from 'lodash/get';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
 import {
@@ -14,86 +15,15 @@ import {
     Button,
     IconButton
 } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-
-const YemotCallHistoryField = ({ source }) => {
-    const record = useRecordContext();
-
-    if (!record || !record[source] || !Array.isArray(record[source])) {
-        return <Typography variant="body2" color="textSecondary">אין היסטוריה</Typography>;
-    }
-
-    const history = record[source];
-    const isV2Call = record.data?.version === 'v2';
-
-    if (isV2Call) {
-        return <V2ConversationSummary history={history} />;
-    }
-
-    // Fallback to legacy display
-    return (
-        <ArrayField source={source}>
-            <SingleFieldList>
-                <LegacyYemotCallHistoryItem />
-            </SingleFieldList>
-        </ArrayField>
-    );
-};
-
-// Row-level summary only - opening the details dialog is the row's job now (see
-// yemot-call.jsx's rowClick), so this has no click handling or dialog of its own.
-const V2ConversationSummary = ({ history }) => {
-    const summary = useMemo(() => {
-        if (!history || history.length === 0) {
-            return { lastAction: 'אין פעילות', status: 'ריק' };
-        }
-
-        const userResponses = history.filter(step =>
-            step.params?.userResponse &&
-            ['user_input', 'menu_selection', 'confirmation_result'].includes(step.params?.stepType)
-        );
-
-        const lastResponse = userResponses[userResponses.length - 1];
-        const lastStep = history[history.length - 1];
-
-        let lastAction = 'לא ידוע';
-        if (lastResponse?.params?.userResponse) {
-            lastAction = lastResponse.params.userResponse;
-        } else if (lastStep?.params?.stepType === 'hangup_message') {
-            lastAction = 'השיחה הסתיימה';
-        }
-
-        let status = 'בתהליך';
-        if (lastStep?.params?.stepType === 'hangup_message') {
-            status = 'הסתיים';
-        }
-
-        return {
-            lastAction: lastAction.length > 20 ? lastAction.substring(0, 20) + '...' : lastAction,
-            status,
-        };
-    }, [history]);
-
-    return (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Chip
-                size="small"
-                label={summary.lastAction}
-                color={summary.status === 'הסתיים' ? 'success' : 'default'}
-            />
-            <VisibilityIcon fontSize="small" color="action" />
-        </Box>
-    );
-};
 
 // Standalone dialog, rendered once by the list (not per-row) and driven by
 // whichever record is passed in - see yemot-call.jsx for how it's opened
 // (row click, or a deep link via the callId URL param).
 export const YemotCallDetailsDialog = ({ record, onClose }) => {
     const notify = useNotify();
-    const history = record?.history;
+    const history = get(record, 'history');
 
     const handleCopyLink = async () => {
         const url = new URL(window.location.href);
@@ -253,36 +183,41 @@ const V2ConversationHistory = ({ history }) => {
     );
 };
 
-// Legacy component for older calls
-const LegacyYemotCallHistoryItem = () => {
+// Last bot prompt actually sent in a v2 call, regardless of whether/how the
+// caller answered it (or whether they answered at all).
+const getLastSentMessage = (history) => {
+    for (let i = history.length - 1; i >= 0; i--) {
+        const prompt = get(history[i], 'params.prompt');
+        if (prompt) {
+            return cleanBotText(prompt);
+        }
+    }
+    return null;
+};
+
+// Its own column, next to errorMessage - plain text like every other
+// TextField-shaped column, not a chip. Legacy (pre-v2) calls have no
+// structured prompt/response steps to read this from, so it renders
+// nothing for them.
+export const LastSentMessageField = () => {
     const record = useRecordContext();
-    if (!record || !record.response) {
+    const isV2Call = get(record, 'data.version') === 'v2';
+    const history = get(record, 'history');
+
+    if (!isV2Call || !Array.isArray(history)) {
         return null;
     }
 
-    const parsedResponse = useMemo(() => {
-        return record.response?.split('&')
-            .map((item) => {
-                const [key, value] = item.split('=');
-                return { key, value };
-            })
-            .filter(({ key, value }) => Boolean(value))
-            .map(({ key, value }) => {
-                const [type, text] = value.split('-');
-                return text ?? value;
-            })
-            .join(', ');
-    }, [record.response]);
-
-    if (!parsedResponse) {
+    const message = getLastSentMessage(history);
+    if (!message) {
         return null;
     }
 
     return (
-        <Tooltip title={record.time}>
-            <Chip label={parsedResponse} />
+        <Tooltip title={message}>
+            <Typography component="span" variant="body2" noWrap sx={{ maxWidth: 260, display: 'inline-block' }}>
+                {message}
+            </Typography>
         </Tooltip>
     );
 };
-
-export default YemotCallHistoryField;
