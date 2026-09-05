@@ -76,7 +76,7 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
                 <StatusChipField source="isOpen" />
                 <StatusChipField source="hasError" trueColor="error" />
                 <TextField source="errorMessage" />
-                <LastSentMessageField source="lastSentMessage" />
+                <LastSentMessageField source="lastSentMessage" sortable={false} />
                 {isAdmin && <TextField source="currentStep" />}
                 {isAdmin && <CommonJsonField source="data" />}
                 <CommonDateTimeField source="createdAt" />
