@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { LastSentMessageField } from '../YemotCallHistoryField';
 
 let mockRecord;
@@ -10,8 +10,15 @@ jest.mock('react-admin', () => ({
 }));
 
 describe('LastSentMessageField', () => {
+    it('shows an empty-call indication when there is no history yet, instead of a blank cell', () => {
+        mockRecord = { data: { version: 'v2' }, history: [] };
+        render(<LastSentMessageField source="lastSentMessage" />);
+        expect(screen.getByText('אין פעילות')).toBeInTheDocument();
+    });
+
     it('shows the last bot prompt sent, even when the caller never answered it', () => {
         mockRecord = {
+            data: { version: 'v2' },
             history: [
                 { params: { stepType: 'ask_input', prompt: 'מה מספר תעודת הזהות שלך?' } },
             ],
@@ -20,31 +27,38 @@ describe('LastSentMessageField', () => {
         expect(screen.getByText('מה מספר תעודת הזהות שלך?')).toBeInTheDocument();
     });
 
-    it('prefers the last prompt over an earlier one', () => {
+    it('shows a view-dialog button for a v2 call, and clicking it opens that record without letting the click bubble to the row', () => {
         mockRecord = {
-            history: [
-                { params: { stepType: 'ask_input', prompt: 'איזה כיתה?' } },
-                { params: { stepType: 'user_input', userResponse: "א'" } },
-                { params: { stepType: 'ask_input', prompt: 'מה השם שלך?' } },
-            ],
+            id: 42,
+            data: { version: 'v2' },
+            history: [{ params: { stepType: 'ask_input', prompt: 'איזה כיתה?' } }],
         };
-        render(<LastSentMessageField source="lastSentMessage" />);
-        expect(screen.getByText('מה השם שלך?')).toBeInTheDocument();
+        const onOpen = jest.fn();
+        const rowClick = jest.fn();
+        render(
+            <div onClick={rowClick}>
+                <LastSentMessageField source="lastSentMessage" onOpen={onOpen} />
+            </div>
+        );
+        fireEvent.click(screen.getByRole('button'));
+        expect(onOpen).toHaveBeenCalledWith(mockRecord);
+        expect(rowClick).not.toHaveBeenCalled();
     });
 
-    it('renders nothing for a legacy call, whose steps carry the raw webhook body instead of a prompt', () => {
+    it('renders no view-dialog button for a legacy (pre-v2) call - row click does not open anything for it either', () => {
         mockRecord = {
             history: [
                 { params: { ApiCallId: '123', ApiPhone: '0500000000' }, response: '1-כן' },
             ],
         };
-        const { container } = render(<LastSentMessageField source="lastSentMessage" />);
-        expect(container).toBeEmptyDOMElement();
+        render(<LastSentMessageField source="lastSentMessage" />);
+        expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 
-    it('renders nothing when there is no history yet', () => {
-        mockRecord = { history: [] };
-        const { container } = render(<LastSentMessageField source="lastSentMessage" />);
-        expect(container).toBeEmptyDOMElement();
+    it('renders nothing but the empty-call indication for a legacy call with no history', () => {
+        mockRecord = { history: undefined };
+        render(<LastSentMessageField source="lastSentMessage" />);
+        expect(screen.getByText('אין פעילות')).toBeInTheDocument();
+        expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 });

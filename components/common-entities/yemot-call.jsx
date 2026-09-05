@@ -73,14 +73,15 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
                 {isAdmin && <ReferenceField source="userId" reference="user" />}
                 {isAdmin && <TextField source="apiCallId" />}
                 <CommonPhoneField source="phone" />
-                <StatusChipField source="isOpen" />
-                <StatusChipField source="hasError" trueColor="error" />
-                <TextField source="errorMessage" />
-                <LastSentMessageField source="lastSentMessage" sortable={false} />
+                <LastSentMessageField source="lastSentMessage" sortable={false} onOpen={openCall} />
                 {isAdmin && <TextField source="currentStep" />}
                 {isAdmin && <CommonJsonField source="data" />}
                 <CommonDateTimeField source="createdAt" />
                 {isAdmin && <CommonDateTimeField source="updatedAt" />}
+                {/* Almost always the same (open/no error) - pushed last so the columns that actually vary lead the table */}
+                <StatusChipField source="isOpen" />
+                <StatusChipField source="hasError" trueColor="error" />
+                <TextField source="errorMessage" />
             </CommonDatagrid>
             <YemotCallDetailsDialog record={openRecord} onClose={closeDialog} />
         </>

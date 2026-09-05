@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 // Standalone dialog, rendered once by the list (not per-row) and driven by
 // whichever record is passed in - see yemot-call.jsx for how it's opened
@@ -198,26 +199,41 @@ const getLastSentMessage = (history) => {
     return null;
 };
 
-// Its own column, next to errorMessage - plain text like every other
-// TextField-shaped column, not a chip.
-export const LastSentMessageField = () => {
+// Its own column - plain text like every other TextField-shaped column, not
+// a chip, plus a view-dialog button. The row itself is already clickable
+// (see yemot-call.jsx's rowClick) but nothing signaled that, so this button
+// is the visible affordance; onOpen is the same handler the row uses, just
+// invoked directly instead of relying on the click bubbling up.
+export const LastSentMessageField = ({ onOpen }) => {
     const record = useRecordContext();
     const history = get(record, 'history');
+    const isEmpty = !Array.isArray(history) || history.length === 0;
+    const message = isEmpty ? null : getLastSentMessage(history);
+    const isV2Call = get(record, 'data.version') === 'v2';
 
-    if (!Array.isArray(history)) {
-        return null;
-    }
-
-    const message = getLastSentMessage(history);
-    if (!message) {
-        return null;
-    }
+    const handleOpen = (e) => {
+        e.stopPropagation();
+        onOpen?.(record);
+    };
 
     return (
-        <Tooltip title={message}>
-            <Typography component="span" variant="body2" noWrap sx={{ maxWidth: 260, display: 'inline-block' }}>
-                {message}
-            </Typography>
-        </Tooltip>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {isEmpty ? (
+                <Typography component="span" variant="body2" color="text.secondary">אין פעילות</Typography>
+            ) : message ? (
+                <Tooltip title={message}>
+                    <Typography component="span" variant="body2" noWrap sx={{ maxWidth: 220, display: 'inline-block' }}>
+                        {message}
+                    </Typography>
+                </Tooltip>
+            ) : null}
+            {isV2Call && (
+                <Tooltip title="צפייה בפרטי השיחה">
+                    <IconButton size="small" onClick={handleOpen} sx={{ padding: '2px' }}>
+                        <VisibilityIcon fontSize="small" />
+                    </IconButton>
+                </Tooltip>
+            )}
+        </Box>
     );
 };
