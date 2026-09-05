@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { AutocompleteInput, AutocompleteInputProps } from 'react-admin';
 
 const filterToQuery = searchText => searchText ? { 'name:$contL': searchText } : {};

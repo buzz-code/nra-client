@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRecordContext, ArrayField, SingleFieldList } from 'react-admin';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';

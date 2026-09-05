@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useNotify } from 'react-admin';
 import { useMutation } from '@tanstack/react-query';
 import { handleError } from '@shared/utils/notifyUtil';

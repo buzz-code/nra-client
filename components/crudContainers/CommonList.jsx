@@ -15,7 +15,6 @@ const useBulkActionButtons = (readonly, additionalBulkButtons = [], hasDelete, p
 
     const actionButtons = additionalBulkButtons.concat([
         hasTimestampColumns && <BulkFixTimezoneShiftButton key='bulkFixTimezoneShift' />,
-        // <BulkExportButton />,
         shouldShowDelete && <BulkDeleteWithConfirmButton key='bulkDeleteWithConfirmButton' />,
     ]).filter(Boolean);
 
