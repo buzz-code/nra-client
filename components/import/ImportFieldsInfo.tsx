@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Button, useTranslate } from 'react-admin';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';

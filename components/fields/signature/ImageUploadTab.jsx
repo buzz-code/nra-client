@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import SignaturePreview from './SignaturePreview';
 

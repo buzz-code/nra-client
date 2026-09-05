@@ -1,4 +1,4 @@
-import { Edit, SimpleForm, TopToolbar, ListButton, Toolbar, SaveButton, useRedirect } from 'react-admin';
+import { Edit, SimpleForm, TopToolbar, ListButton, Toolbar, SaveButton } from 'react-admin';
 
 const EditActions = (props) => (
     <TopToolbar {...props}>

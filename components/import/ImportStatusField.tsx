@@ -1,4 +1,3 @@
-import React from "react";
 import { useRecordContext, useTranslate } from "react-admin";
 import get from 'lodash/get';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
