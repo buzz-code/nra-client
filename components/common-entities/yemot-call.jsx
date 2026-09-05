@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { BooleanField, DateField, DateInput, ReferenceField, TextField, useDataProvider } from 'react-admin';
+import { DateInput, ReferenceField, TextField, useDataProvider } from 'react-admin';
 import { NullableBooleanInput, TextInput } from 'react-admin';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
-import YemotCallHistoryField, { YemotCallDetailsDialog } from '@shared/components/fields/YemotCallHistoryField';
+import { YemotCallDetailsDialog, LastSentMessageField } from '@shared/components/fields/YemotCallHistoryField';
+import StatusChipField from '@shared/components/fields/StatusChipField';
+import CommonPhoneField from '@shared/components/fields/CommonPhoneField';
+import CommonDateTimeField from '@shared/components/fields/CommonDateTimeField';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';
 import { CommonJsonField } from '@shared/components/fields/CommonJsonItem';
 import { adminUserFilter, adminUpdatedAtFilters } from '@shared/components/fields/PermissionFilter';
@@ -69,15 +72,15 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
                 {isAdmin && <TextField source="id" />}
                 {isAdmin && <ReferenceField source="userId" reference="user" />}
                 {isAdmin && <TextField source="apiCallId" />}
-                <TextField source="phone" />
-                <YemotCallHistoryField source="history" />
-                <BooleanField source="isOpen" />
-                <BooleanField source="hasError" />
+                <CommonPhoneField source="phone" />
+                <StatusChipField source="isOpen" />
+                <StatusChipField source="hasError" trueColor="error" />
                 <TextField source="errorMessage" />
+                <LastSentMessageField source="lastSentMessage" />
                 {isAdmin && <TextField source="currentStep" />}
                 {isAdmin && <CommonJsonField source="data" />}
-                <DateField showDate showTime source="createdAt" />
-                {isAdmin && <DateField showDate showTime source="updatedAt" />}
+                <CommonDateTimeField source="createdAt" />
+                {isAdmin && <CommonDateTimeField source="updatedAt" />}
             </CommonDatagrid>
             <YemotCallDetailsDialog record={openRecord} onClose={closeDialog} />
         </>
