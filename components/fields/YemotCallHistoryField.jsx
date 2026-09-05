@@ -183,8 +183,11 @@ const V2ConversationHistory = ({ history }) => {
     );
 };
 
-// Last bot prompt actually sent in a v2 call, regardless of whether/how the
-// caller answered it (or whether they answered at all).
+// Last bot prompt actually sent, regardless of whether/how the caller
+// answered it (or whether they answered at all). Only the v2 conversation
+// tracker ever writes params.prompt - legacy steps' params is the raw Yemot
+// webhook body - so this naturally has nothing to find on legacy calls
+// without needing a separate data.version check.
 const getLastSentMessage = (history) => {
     for (let i = history.length - 1; i >= 0; i--) {
         const prompt = get(history[i], 'params.prompt');
@@ -196,15 +199,12 @@ const getLastSentMessage = (history) => {
 };
 
 // Its own column, next to errorMessage - plain text like every other
-// TextField-shaped column, not a chip. Legacy (pre-v2) calls have no
-// structured prompt/response steps to read this from, so it renders
-// nothing for them.
+// TextField-shaped column, not a chip.
 export const LastSentMessageField = () => {
     const record = useRecordContext();
-    const isV2Call = get(record, 'data.version') === 'v2';
     const history = get(record, 'history');
 
-    if (!isV2Call || !Array.isArray(history)) {
+    if (!Array.isArray(history)) {
         return null;
     }
 

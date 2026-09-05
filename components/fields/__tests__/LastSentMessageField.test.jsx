@@ -10,9 +10,8 @@ jest.mock('react-admin', () => ({
 }));
 
 describe('LastSentMessageField', () => {
-    it('shows the last bot prompt sent in a v2 call, even when the caller never answered it', () => {
+    it('shows the last bot prompt sent, even when the caller never answered it', () => {
         mockRecord = {
-            data: { version: 'v2' },
             history: [
                 { params: { stepType: 'ask_input', prompt: 'מה מספר תעודת הזהות שלך?' } },
             ],
@@ -23,7 +22,6 @@ describe('LastSentMessageField', () => {
 
     it('prefers the last prompt over an earlier one', () => {
         mockRecord = {
-            data: { version: 'v2' },
             history: [
                 { params: { stepType: 'ask_input', prompt: 'איזה כיתה?' } },
                 { params: { stepType: 'user_input', userResponse: "א'" } },
@@ -34,14 +32,18 @@ describe('LastSentMessageField', () => {
         expect(screen.getByText('מה השם שלך?')).toBeInTheDocument();
     });
 
-    it('renders nothing for a legacy (pre-v2) call', () => {
-        mockRecord = { response: 'key=type-text', history: undefined };
+    it('renders nothing for a legacy call, whose steps carry the raw webhook body instead of a prompt', () => {
+        mockRecord = {
+            history: [
+                { params: { ApiCallId: '123', ApiPhone: '0500000000' }, response: '1-כן' },
+            ],
+        };
         const { container } = render(<LastSentMessageField source="lastSentMessage" />);
         expect(container).toBeEmptyDOMElement();
     });
 
-    it('renders nothing when a v2 call has no history yet', () => {
-        mockRecord = { data: { version: 'v2' }, history: [] };
+    it('renders nothing when there is no history yet', () => {
+        mockRecord = { history: [] };
         const { container } = render(<LastSentMessageField source="lastSentMessage" />);
         expect(container).toBeEmptyDOMElement();
     });
