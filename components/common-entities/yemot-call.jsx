@@ -15,6 +15,7 @@ const filters = [
     adminUserFilter,
     ...adminUpdatedAtFilters,
     <TextInput source="phone:$cont" alwaysOn />,
+    <TextInput source="history:$cont" alwaysOn />,
     <NullableBooleanInput source="isOpen" />,
     <NullableBooleanInput source="hasError" />,
     <TextInput source="errorMessage:$cont" />,

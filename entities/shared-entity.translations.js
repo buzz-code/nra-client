@@ -115,6 +115,7 @@ export const sharedEntityTranslations = {
       ...generalResourceFieldsTranslation,
       phone: 'מאת',
       'phone:$cont': 'מאת',
+      'history:$cont': 'חיפוש בתוכן השיחה (למשל ת.ז. תלמידה)',
       currentStep: 'שלב נוכחי',
       hasError: 'שגיאה?',
       errorMessage: 'הודעת שגיאה',
