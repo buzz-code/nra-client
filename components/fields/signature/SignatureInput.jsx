@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { InputHelperText, useInput } from 'react-admin';
 import { Box, FormControl, FormHelperText, FormLabel, Tabs, Tab } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';

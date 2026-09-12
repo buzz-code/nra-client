@@ -1,7 +1,6 @@
 import { useRecordContext } from 'react-admin';
 import get from 'lodash/get';
 import { formatJewishDateInHebrew, toJewishDate } from 'jewish-date';
-import { useMemo } from 'react';
 
 export const CommonHebrewDateField = ({ source }) => {
     const record = useRecordContext();

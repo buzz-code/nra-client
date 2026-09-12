@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import { Typography } from '@mui/material';
 import Inbox from '@mui/icons-material/Inbox';

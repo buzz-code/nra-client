@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Button } from '@mui/material';
 
 const SignaturePreview = ({ src, alt, onRemove }) => (

@@ -1,4 +1,4 @@
-import { useInput, TextInput } from 'react-admin';
+import { TextInput } from 'react-admin';
 
 /**
  * A time input component that outputs time as a string (HH:mm format)

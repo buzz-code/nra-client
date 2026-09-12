@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Box, Button } from '@mui/material';
 import SignaturePreview from './SignaturePreview';
 import { drawOnCanvas } from './signature-utils';
