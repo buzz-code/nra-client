@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { Button, Form, ListContextProvider, ResourceContextProvider, useList, useResourceContext, useTranslate } from "react-admin";
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';

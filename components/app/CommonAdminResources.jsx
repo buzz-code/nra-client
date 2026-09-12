@@ -2,7 +2,6 @@ import { Resource } from 'react-admin';
 import text from '@shared/components/common-entities/text';
 import user from '@shared/components/common-entities/user';
 import auditLog from '@shared/components/common-entities/audit-log';
-import mailAddress from '@shared/components/common-entities/mail-address';
 import recievedMail from '@shared/components/common-entities/recieved-mail';
 import page from '@shared/components/common-entities/page';
 import paymentTrack from '@shared/components/common-entities/payment-track';

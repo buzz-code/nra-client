@@ -2,9 +2,7 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
 import { useGetIdentity } from 'react-admin';
 import { apiUrl } from '@shared/providers/constantsProvider';
 
