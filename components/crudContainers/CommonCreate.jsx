@@ -17,7 +17,7 @@ const CreateToolbar = (props) => {
             <SaveButton
                 label="ra.action.save_and_add"
                 mutationOptions={{
-                    onSuccess: data => {
+                    onSuccess: () => {
                         notify('ra.notification.created', {
                             type: 'info',
                             messageArgs: { smart_count: 1 },

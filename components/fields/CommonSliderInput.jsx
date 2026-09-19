@@ -3,7 +3,7 @@ import Slider from '@mui/material/Slider';
 import Box from '@mui/material/Box';
 
 export const CommonSliderInput = ({ source, ...props }) => {
-    const { id, field, fieldState, formState, isRequired } = useInput({ source });
+    const { id, field, fieldState } = useInput({ source });
 
     return (
         <Box spacing={1}>
