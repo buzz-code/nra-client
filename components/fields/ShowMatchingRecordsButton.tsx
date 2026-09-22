@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useCreatePath, useRecordContext, Button, Link } from "react-admin";
 import ListIcon from '@mui/icons-material/List';
 import get from 'lodash/get';

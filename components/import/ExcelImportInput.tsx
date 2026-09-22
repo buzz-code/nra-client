@@ -1,6 +1,5 @@
 import { readAsExcel } from "@shared/utils/fileUtil";
-import React, { forwardRef, useCallback } from "react";
-import * as XLSX from 'xlsx';
+import { forwardRef, useCallback } from "react";
 
 export const ExcelImportInput = forwardRef<HTMLInputElement, any>(({ fields, onDataParsed, xlsxOptions = {} }, ref) => {
     const processFile = useCallback(file => {

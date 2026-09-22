@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { Button } from 'react-admin';
 import UploadIcon from '@mui/icons-material/FileUpload';
 import { ExcelImportInput } from './ExcelImportInput';
