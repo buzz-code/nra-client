@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 const mockNotify = jest.fn();
@@ -65,7 +64,7 @@ jest.mock('@mui/material/CircularProgress', () => () => <span>loading</span>);
 jest.mock('@mui/icons-material/Edit', () => () => <span>edit-icon</span>);
 
 jest.mock('@shared/utils/notifyUtil', () => ({
-    handleError: (notify) => (error) => notify('error', { type: 'error' }),
+    handleError: (notify) => () => notify('error', { type: 'error' }),
 }));
 
 const { InlineEditButton } = require('../InlineEditButton');

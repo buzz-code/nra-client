@@ -51,7 +51,7 @@ export const AddToDashboardButton = () => {
             await dataProvider.updateSettings({ data: { dashboardItems: [...existingItems, newItem] } });
             await authProvider.getIdentity(true);
             notify('נוסף לתמונת המצב', { type: 'info' });
-        } catch (e) {
+        } catch {
             notify('ההוספה נכשלה', { type: 'error' });
         } finally {
             setLoading(false);

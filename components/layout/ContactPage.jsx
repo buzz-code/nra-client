@@ -47,7 +47,7 @@ export const ContactPage = () => {
             notify('ההודעה נשלחה בהצלחה', { type: 'success' });
             setValues(emptyValues);
             setFiles([]);
-        } catch (error) {
+        } catch {
             notify('אירעה שגיאה בשליחת ההודעה, נסו שוב', { type: 'error' });
         } finally {
             setLoading(false);

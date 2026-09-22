@@ -32,7 +32,7 @@ export const MaintenancePage = () => {
                 // Success - maintenance mode is over, redirect to dashboard
                 authProvider.clearMaintenanceInfo();
                 navigate('/');
-            } catch (error) {
+            } catch {
                 // Still in maintenance mode (503 response) or network error - stay on page
             }
         };

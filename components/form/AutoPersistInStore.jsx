@@ -4,7 +4,7 @@ import { useStore } from 'react-admin';
 import { debounce, isEqual } from 'lodash';
 
 export const AutoPersistInStore = ({ storeKey }) => {
-    const { watch, reset, getValues } = useFormContext();
+    const { watch, reset } = useFormContext();
     const [savedValue, setSavedValue] = useStore(storeKey);
 
     // Restore saved value on mount
