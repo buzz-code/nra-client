@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { AdminContext, ResourceContextProvider, TestMemoryRouter, testDataProvider, TextField, TextInput, NumberField, NumberInput, required } from 'react-admin';
 import { getResourceComponents } from '@shared/components/crudContainers/CommonEntity';

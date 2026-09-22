@@ -11,7 +11,7 @@ import CommonReferenceInput from '@shared/components/fields/CommonReferenceInput
 import { BulkActionButton } from '../crudContainers/BulkActionButton';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-const ImpersonateButton = ({ ...props }) => {
+const ImpersonateButton = () => {
     const recordId = useGetRecordId();
     const dataProvider = useDataProvider();
     const authProvider = useAuthProvider();

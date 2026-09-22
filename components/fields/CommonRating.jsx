@@ -1,4 +1,3 @@
-import React from 'react';
 import { Rating, FormControl, FormLabel, FormHelperText, Box } from '@mui/material';
 import { get } from 'lodash';
 import { InputHelperText, useInput, useRecordContext, useTranslate } from 'react-admin';

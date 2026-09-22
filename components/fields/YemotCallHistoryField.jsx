@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useRecordContext, useNotify } from 'react-admin';
 import get from 'lodash/get';
 import Chip from '@mui/material/Chip';

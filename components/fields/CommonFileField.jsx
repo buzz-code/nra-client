@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { ImageField, useRecordContext } from 'react-admin';
 import get from 'lodash/get';
 import { unwrapFileDataValue, isImageFileRecord, getFileDisplayTitle } from '@shared/utils/fileField.util';

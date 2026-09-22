@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { AdminContext, Notification, RecordContextProvider, ResourceContextProvider, required, testDataProvider } from 'react-admin';
 import { InlineEditCell } from '../InlineEditCell';

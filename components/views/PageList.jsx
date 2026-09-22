@@ -13,7 +13,7 @@ export default (props) => {
     );
 }
 
-const PagesData = ({ ...props }) => {
+const PagesData = () => {
     const { data } = useListContext();
     return (
         <Stack spacing={2} sx={{ padding: 2 }}>

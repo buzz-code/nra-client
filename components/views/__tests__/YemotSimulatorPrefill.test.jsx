@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { AdminContext, TestMemoryRouter, testDataProvider } from 'react-admin';
 import YemotSimulator from '../YemotSimulator';

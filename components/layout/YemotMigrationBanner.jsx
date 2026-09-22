@@ -28,7 +28,7 @@ export const YemotMigrationBanner = () => {
         try {
             await dataProvider.updateSettings({ data: { yemotUrlMigrated: true } });
             await authProvider.getIdentity(true);
-        } catch (e) {
+        } catch {
             notify('העדכון נכשל, נסו שוב', { type: 'error' });
         } finally {
             setSaving(false);
