@@ -1,7 +1,6 @@
 import baseDataProvider from '../baseDataProvider';
 import saveAs from 'file-saver';
-import { CondOperator } from '@nestjsx/crud-request';
-import { GetListParams, SortPayload, fetchUtils } from 'react-admin';
+import { GetListParams, SortPayload } from 'react-admin';
 
 // Mock file-saver
 jest.mock('file-saver', () => ({

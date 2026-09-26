@@ -6,7 +6,7 @@ import { useTranslate, useSidebarState, useStore } from 'react-admin';
 
 
 export const SubMenu = (props: SubMenuProps) => {
-    const { isDropdownOpen, primaryText, leftIcon, children, ...rest } = props;
+    const { isDropdownOpen, primaryText, leftIcon, children } = props;
     const translate = useTranslate();
     const [open] = useSidebarState();
     const [isOpen, setIsOpen] = useStore('common.SubMenu.open.' + primaryText, isDropdownOpen)
