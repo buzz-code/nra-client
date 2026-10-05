@@ -2,7 +2,7 @@ import { useCreatePath, useRecordContext, Button, Link } from "react-admin";
 import ListIcon from '@mui/icons-material/List';
 import get from 'lodash/get';
 
-export const ShowMatchingRecordsButton = ({ source, resource, resourceField, filter, ...props }) => {
+export const ShowMatchingRecordsButton = ({ source, resource, resourceField, filter }) => {
     const record = useRecordContext();
     const createPath = useCreatePath();
 

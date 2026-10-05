@@ -50,7 +50,6 @@ const Datagrid = ({ isAdmin, children, ...props }) => {
             <TextField source="name" />
             <EmailField source="email" />
             <TextField source="phoneNumber" />
-            {/* {isAdmin && <TextField source="active" />} */}
             {isAdmin && <ReferenceField source="effective_id" reference="user" />}
             {isAdmin && <CommonJsonField source="permissions" />}
             {isAdmin && <CommonJsonField source="additionalData" />}

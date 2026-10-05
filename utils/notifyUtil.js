@@ -17,7 +17,6 @@ export const handleError = (notify) => (error) => {
 };
 
 export const handleActionSuccess = (notify) => (response) => {
-    console.log('handleActionSuccess', response);
     notify(
         typeof response.body === 'string'
             ? response.body

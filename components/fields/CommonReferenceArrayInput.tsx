@@ -1,4 +1,4 @@
-import { defaultSortBy, getDynamicFilter } from '@shared/utils/referenceUtil';
+import { defaultSortBy, getCombinedFilter } from '@shared/utils/referenceUtil';
 import * as React from 'react';
 import { AutocompleteInputProps, FormDataConsumer, ReferenceArrayInputProps, ReferenceArrayInput } from 'react-admin';
 import CommonAutocompleteInput from './CommonAutocompleteInput';
@@ -9,15 +9,12 @@ type CommonReferenceArrayInputProps = ReferenceArrayInputProps & AutocompleteInp
 
 export default (props: CommonReferenceArrayInputProps) => {
     const getFilterByFormData = React.useCallback((formData) => {
-        return {
-            ...(props.filter as any || {}),
-            ...getDynamicFilter(props.dynamicFilter, formData),
-        };;
+        return getCombinedFilter(props.filter, props.dynamicFilter, formData);
     }, [props.dynamicFilter, props.filter]);
 
     return (
         <FormDataConsumer>
-            {({ formData, ...rest }) => (
+            {({ formData }) => (
                 <ReferenceArrayInput sort={defaultSortBy} {...props} filter={getFilterByFormData(formData)}>
                     <CommonAutocompleteInput multiple {...props} />
                 </ReferenceArrayInput>

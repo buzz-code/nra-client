@@ -30,7 +30,6 @@ const authProvider = {
             await authProvider.getIdentity(true);
             markAuthChecked();
         } catch (error) {
-            console.log(error);
             const errorMessage = error.body?.message ?? 'Network error';
             throw new Error(errorMessage);
         }
@@ -48,7 +47,6 @@ const authProvider = {
             await authProvider.getIdentity(true);
             markAuthChecked();
         } catch (error) {
-            console.log(error);
             const errorMessage = error.body?.message ?? 'Network error';
             throw new Error(errorMessage);
         }

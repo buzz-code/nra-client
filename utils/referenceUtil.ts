@@ -1,8 +1,13 @@
-import { SortPayload } from 'react-admin';
+import { FilterPayload, SortPayload } from 'react-admin';
 
 export const defaultSortBy: SortPayload = { field: 'name', order: 'ASC' };
 
-export const getDynamicFilter = (dynamicFilter: Record<string, any>, fullValues: Record<string, any>) => {
+export const getCombinedFilter = (filter: FilterPayload | undefined, dynamicFilter: Record<string, any> | undefined, formData: Record<string, any>) => ({
+    ...(filter || {}),
+    ...getDynamicFilter(dynamicFilter, formData),
+});
+
+export const getDynamicFilter = (dynamicFilter: Record<string, any> | undefined, fullValues: Record<string, any>) => {
     const res = {};
     if (dynamicFilter) {
         for (const key in dynamicFilter) {
