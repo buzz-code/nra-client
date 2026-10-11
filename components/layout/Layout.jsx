@@ -30,7 +30,7 @@ const CustomLayout = ({ customMenuItems, menuGroups, children }) => {
 
     return (
         <DirectionalThemeProvider>
-            <Layout menu={Menu} appBar={CustomAppBar}>
+            <Layout menu={Menu} appBar={CustomAppBar} appBarAlwaysOn>
                 <TrialMessage />
                 <YemotMigrationBanner />
 

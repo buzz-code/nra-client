@@ -153,12 +153,15 @@ export const createTheme = (options = {}) => {
             // Datagrid hardcodes its own `.RaDatagrid-headerCell { backgroundColor:
             // background.paper }` (needed to keep the sticky header opaque), which
             // has higher specificity than a plain MuiTableCell override - target
-            // the same class so the tint actually wins.
+            // the same class so the tint actually wins. The tint is layered as a
+            // gradient over the opaque paper color, so scrolled rows don't show
+            // through the sticky header.
             RaDatagrid: {
                 styleOverrides: {
                     root: ({ theme }) => ({
                         '& .RaDatagrid-headerCell': {
-                            backgroundColor: alpha(theme.palette.text.primary, 0.03),
+                            backgroundColor: theme.palette.background.paper,
+                            backgroundImage: `linear-gradient(${alpha(theme.palette.text.primary, 0.03)}, ${alpha(theme.palette.text.primary, 0.03)})`,
                         },
                     }),
                 },
@@ -171,6 +174,13 @@ export const createTheme = (options = {}) => {
                     root: ({ theme }) => ({
                         '& .RaLayout-content': {
                             paddingTop: theme.spacing(3),
+                        },
+                        // The AppBar is always on (appBarAlwaysOn in Layout), so the sticky
+                        // Datagrid header must stick below it, not under it. RaAppBar
+                        // pins its toolbar to spacing(6) at every width. Dialogs render
+                        // outside RaLayout-content and keep their own top: 0.
+                        '& .RaLayout-content .RaDatagrid-headerCell': {
+                            top: theme.spacing(6),
                         },
                     }),
                 },
