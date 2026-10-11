@@ -1,4 +1,4 @@
-import { BooleanField, BooleanInput, Button, DateField, DateTimeInput, EmailField, FormDataConsumer, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, ReferenceField, Labeled, DateInput, useGetRecordId, ReferenceInput } from 'react-admin';
+import { BooleanField, BooleanInput, Button, DateField, DateTimeInput, EmailField, FormDataConsumer, maxLength, required, TextField, TextInput, useAuthProvider, useDataProvider, ReferenceField, Labeled, DateInput, useGetRecordId, ReferenceInput, NullableBooleanInput } from 'react-admin';
 import { permissionKeys } from '@shared/config/permissionsConfig';
 import { appPermissions } from 'src/utils/appPermissions';
 import { CommonDatagrid } from '@shared/components/crudContainers/CommonList';
@@ -35,6 +35,7 @@ const filters = [
     <TextInput source="email" alwaysOn />,
     <TextInput source="phoneNumber" />,
     <TextInput source="userInfo:$cont" label="מידע נוסף" />,
+    <NullableBooleanInput source="isPaid" />,
 ];
 
 const Datagrid = ({ isAdmin, children, ...props }) => {
