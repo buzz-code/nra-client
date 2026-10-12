@@ -74,8 +74,6 @@ const Inputs = ({ isCreate, isAdmin }) => {
         <TextInput source="phoneNumber" validate={maxLength(11)} />
         {isAdmin && <ReferenceInput source="effective_id" reference="user" />}
         {isAdmin && <TextInput source="active" />}
-        {isAdmin && <TextInput source="fromEmail" />}
-        {isAdmin && <TextInput source="replyToEmail" />}
         {isAdmin && <CommonJsonInput source="permissions" />}
         {isAdmin && Object.values(permissionKeys).map((key) => (
             <BooleanInput key={key} source={`permissions.${key}`} />
