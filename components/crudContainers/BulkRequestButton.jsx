@@ -24,6 +24,7 @@ export const BulkRequestButton = ({
     label, name, mutate, isLoading, icon,
     defaultRequestValues = {}, requestValues = {},
     reloadOnEnd = false, dialogTitle, children,
+    cacheValues = true,
     ...props
 }) => {
     const translate = useTranslate();
@@ -49,10 +50,12 @@ export const BulkRequestButton = ({
     }, [mutate, reloadOnEnd, refresh, requestValues]);
 
     const handleSubmit = useCallback((formValues, onClose) => {
-        setRequestValues(formValues);
+        if (cacheValues) {
+            setRequestValues(formValues);
+        }
         onClose();
         doMutation(formValues);
-    }, [setRequestValues, doMutation]);
+    }, [cacheValues, setRequestValues, doMutation]);
 
     return (
         <ActionOrDialogButton
@@ -65,7 +68,7 @@ export const BulkRequestButton = ({
                 <BulkRequestForm
                     handleSubmit={handleSubmit}
                     onClose={onClose}
-                    defaultValues={cachedRequestValues}
+                    defaultValues={cacheValues ? cachedRequestValues : defaultRequestValues}
                     isLoading={isLoading}
                     translate={translate}
                 >
