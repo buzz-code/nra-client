@@ -17,6 +17,7 @@ export function getResourceComponents({
     importer = null,
     exporter = true,
     sort,
+    sortOptions,
     configurable = true,
     additionalListActions,
     inlineEdit,
@@ -51,7 +52,7 @@ export function getResourceComponents({
                 filter={filter}
                 importer={importerDef} exporter={exporter}
                 empty={<EmptyPage importer={importerDef} />}
-                sort={sort} configurable={configurable}
+                sort={sort} sortOptions={sortOptions} configurable={configurable}
                 additionalListActions={additionalListActions}>
                 <Datagrid isAdmin={isAdmin} configurable={configurable} InlineEdit={InlineEdit} />
             </CommonList>

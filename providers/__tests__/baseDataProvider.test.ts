@@ -247,6 +247,25 @@ describe('baseDataProvider', () => {
       expect(url).toMatch(/author\.email%7C%7C%24contL%7C%7Ctest%40example\.com/);
     });
 
+    it('sends every level of a multi-field sort and joins every relation path', async () => {
+      const params: GetListParams = {
+        pagination: { page: 1, perPage: 10 },
+        sort: { field: 'klass.klassType.name,teacher.name', order: 'DESC,ASC' } as unknown as SortPayload,
+        filter: {},
+      };
+
+      httpClient.mockResolvedValueOnce({ json: { data: [], total: 0 } });
+
+      await provider.getList('posts', params);
+
+      const url = decodeURIComponent(httpClient.mock.calls[0][0]);
+      expect(url).toContain('sort[0]=klass.klassType.name,DESC');
+      expect(url).toContain('sort[1]=teacher.name,ASC');
+      expect(url).toMatch(/join\[\d\]=klass(&|$)/);
+      expect(url).toMatch(/join\[\d\]=klass\.klassType(&|$)/);
+      expect(url).toMatch(/join\[\d\]=teacher(&|$)/);
+    });
+
     it('handles deeply nested filters correctly', async () => {
       const params: GetListParams = {
         pagination: { page: 1, perPage: 10 },
