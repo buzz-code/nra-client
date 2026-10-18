@@ -7,7 +7,7 @@ import { CollapsibleSection } from '../layout/CollapsibleSection';
 export default (props) => {
     return (
         <List resource="page" sort={{ field: 'order', order: 'ASC' }} emptyWhileLoading
-            exporter={false} pagination={false} {...props}>
+            exporter={false} pagination={false} perPage={1000} storeKey={false} {...props}>
             <PagesData />
         </List>
     );
