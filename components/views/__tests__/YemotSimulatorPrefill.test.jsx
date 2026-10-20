@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { AdminContext, TestMemoryRouter, testDataProvider } from 'react-admin';
 import YemotSimulator from '../YemotSimulator';
 
@@ -11,8 +12,8 @@ import YemotSimulator from '../YemotSimulator';
  * number must therefore prefill ApiDID, otherwise they have to type it in
  * manually on every call.
  *
- * ApiDID (hidden, but a required field) must also still end up populated
- * once identity resolves, otherwise the form can't be submitted.
+ * ApiDID is shown read-only (the system number is fixed); ApiPhone (the
+ * caller) is prefilled with the same number but stays editable.
  */
 describe('YemotSimulator setup prefill', () => {
     const authProvider = {
@@ -22,9 +23,9 @@ describe('YemotSimulator setup prefill', () => {
         checkError: () => Promise.resolve(),
     };
 
-    it('prefills the system number (ApiPhone) field with the user\'s own phone number', async () => {
+    it('prefills a fixed system number and an editable caller number', async () => {
         const dataProvider = testDataProvider();
-        const { container } = render(
+        render(
             <TestMemoryRouter initialEntries={['/yemot-simulator']}>
                 <AdminContext dataProvider={dataProvider} authProvider={authProvider}>
                     <YemotSimulator />
@@ -34,8 +35,15 @@ describe('YemotSimulator setup prefill', () => {
 
         const systemNumberInput = await screen.findByLabelText('מספר מערכת');
         await waitFor(() => expect(systemNumberInput).toHaveValue('0501234567'));
+        expect(systemNumberInput).toHaveAttribute('readonly');
 
-        const apiDidInput = container.querySelector('input[name="ApiDID"]');
-        await waitFor(() => expect(apiDidInput).toHaveValue('0501234567'));
+        const callerInput = await screen.findByLabelText('מספר מתקשר');
+        await waitFor(() => expect(callerInput).toHaveValue('0501234567'));
+        expect(callerInput).not.toHaveAttribute('readonly');
+
+        await userEvent.clear(callerInput);
+        await userEvent.type(callerInput, '0539998888');
+        expect(callerInput).toHaveValue('0539998888');
+        expect(systemNumberInput).toHaveValue('0501234567');
     });
 });

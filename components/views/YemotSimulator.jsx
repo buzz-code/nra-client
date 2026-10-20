@@ -23,6 +23,13 @@ const REGEX_PATTERNS = {
 };
 
 // Utility Functions
+// Non-admins simulate their own system: the system number is their phone number
+// (fixed) and the caller defaults to it too (editable). Admins pick a user instead.
+const getOwnPhoneDefaults = (isAdmin, identity) =>
+    !isAdmin && identity?.phoneNumber
+        ? { ApiDID: identity.phoneNumber, ApiPhone: identity.phoneNumber }
+        : {};
+
 const required = (message = 'ra.validation.required') =>
     (value, allValues) => (value || allValues.hangup) ? undefined : message;
 
@@ -191,38 +198,21 @@ const ConversationTranscript = ({ history }) => {
     );
 };
 
-const PhonePrefill = ({ phase, isAdmin }) => {
-    const { identity } = useGetIdentity();
-    const form = useFormContext();
-
-    useEffect(() => {
-        if (isAdmin || phase !== 'setup' || !identity?.phoneNumber) {
-            return;
-        }
-        if (!form.getValues('ApiDID')) {
-            form.setValue('ApiDID', identity.phoneNumber);
-        }
-        if (!form.getValues('ApiPhone')) {
-            form.setValue('ApiPhone', identity.phoneNumber);
-        }
-    }, [isAdmin, phase, identity?.phoneNumber, form]);
-
-    return null;
-};
-
 const UserPhoneSelector = ({ phase }) => {
-    const form = useFormContext();
+    const { setValue } = useFormContext();
     const selectedUserId = useWatch({ name: 'selectedUserId' });
     const { data: selectedUser } = useGetOne(
         'user',
         { id: selectedUserId },
         { enabled: !!selectedUserId }
     );
+    const selectedPhone = selectedUser?.phoneNumber || '';
 
+    // Runs only when the selected user's number changes, so an edited caller number sticks.
     useEffect(() => {
-        form.setValue('ApiDID', selectedUser?.phoneNumber || '');
-        form.setValue('ApiPhone', selectedUser?.phoneNumber || '');
-    }, [selectedUser, form]);
+        setValue('ApiDID', selectedPhone);
+        setValue('ApiPhone', selectedPhone);
+    }, [selectedPhone, setValue]);
 
     return (
         <Box
@@ -291,12 +281,12 @@ const NewCallButton = ({ onNewCall, isAdmin, ...props }) => {
     const handleClick = useCallback(() => {
         form.reset({
             ...DEFAULT_VALUES,
+            ...getOwnPhoneDefaults(isAdmin, identity),
             ApiCallId: String(Math.random()).slice(2),
-            ApiPhone: !isAdmin && identity?.phoneNumber ? identity.phoneNumber : DEFAULT_VALUES.ApiPhone,
             selectedUserId: null,
         });
         onNewCall();
-    }, [form, isAdmin, identity?.phoneNumber, onNewCall]);
+    }, [form, isAdmin, identity, onNewCall]);
 
     return (
         <RefreshButton
@@ -334,14 +324,21 @@ const CallInputs = ({ phase, params, activeLabel, isAdmin }) => {
         <>
             <TextInput source="ApiCallId" validate={required()} readOnly sx={{ display: 'none' }} />
             <TextInput source="ApiExtension" validate={required()} readOnly sx={{ display: 'none' }} />
-            <TextInput source="ApiDID" validate={required()} readOnly sx={{ display: 'none' }} />
+            {isAdmin && <UserPhoneSelector phase={phase} />}
+            {/* System number is fixed (the user's own / the selected user's); only the caller is editable. */}
+            <TextInput
+                source="ApiDID"
+                label="מספר מערכת"
+                validate={required()}
+                readOnly
+                sx={{ display: phase === 'setup' ? undefined : 'none' }}
+            />
             <TextInput
                 source="ApiPhone"
-                label="מספר מערכת"
+                label="מספר מתקשר"
                 validate={required()}
                 sx={{ display: phase === 'setup' ? undefined : 'none' }}
             />
-            {isAdmin && <UserPhoneSelector phase={phase} />}
             <TextInput
                 source="ApiEnterID"
                 label="מספר זיהוי"
@@ -462,7 +459,7 @@ const YemotSimulator = () => {
     const activeLabel = history.length ? getPromptText(history[history.length - 1].prompt) : '';
     const initialDefaultValues = {
         ...DEFAULT_VALUES,
-        ApiPhone: !isAdmin && identity?.phoneNumber ? identity.phoneNumber : DEFAULT_VALUES.ApiPhone,
+        ...getOwnPhoneDefaults(isAdmin, identity),
     };
     const canUseSimulator = isAdmin || !!identity?.phoneNumber;
 
@@ -470,7 +467,8 @@ const YemotSimulator = () => {
         <Card>
             <Title title="סימולטור" />
             <CardContent>
-                {!identityLoading && !canUseSimulator ? (
+                {/* Wait for identity so the form mounts with the user's own numbers as defaults. */}
+                {identityLoading ? null : !canUseSimulator ? (
                     <NoPhoneMessage />
                 ) : (
                     <>
@@ -486,7 +484,6 @@ const YemotSimulator = () => {
                                 />
                             }
                         >
-                            <PhonePrefill phase={phase} isAdmin={isAdmin} />
                             <CallSetupSummary values={phase !== 'setup' ? setupValues : null} />
                             <ConversationTranscript history={history} />
                             <CallInputs phase={phase} params={params} activeLabel={activeLabel} isAdmin={isAdmin} />
