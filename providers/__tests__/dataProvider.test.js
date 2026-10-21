@@ -35,7 +35,7 @@ describe('dataProvider', () => {
       await dataProvider.simulateYemotCall(callData);
 
       expect(fetchJson).toHaveBeenCalledWith(
-        `${apiUrl}/yemot/handle-call`,
+        `${apiUrl}/yemot/simulate`,
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify(callData),

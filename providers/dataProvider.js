@@ -9,7 +9,7 @@ export default dataProvider;
 
 
 dataProvider.simulateYemotCall = async (body) =>
-    dataProvider.exec('yemot', 'handle-call', {
+    dataProvider.exec('yemot', 'simulate', {
         method: 'POST',
         body: JSON.stringify(body)
     });
