@@ -1,6 +1,6 @@
 import { createContext, isValidElement, useCallback, useContext, useEffect, useMemo, useState, Children } from 'react';
 import { Button, useListContext, useResourceContext, useTranslateLabel } from 'react-admin';
-import { Badge, Box, Button as MuiButton, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Badge, Box, Button as MuiButton, useMediaQuery, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import SortIcon from '@mui/icons-material/Sort';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
@@ -57,6 +57,7 @@ export const AdvancedSortButton = () => {
     const translateLabel = useTranslateLabel();
     const [open, setOpen] = useState(false);
     const [levels, setLevels] = useState([]);
+    const isSmall = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 
     const currentLevels = parseSort(sort);
     const options = context?.options ?? [];
@@ -101,14 +102,14 @@ export const AdvancedSortButton = () => {
 
     return (
         <>
-            {/* On phones react-admin's Button shows only the icon, so the level count is also a badge. */}
+            {/* On phones react-admin's Button shows only the icon, so the level count is also a badge there. */}
             <Button
                 label={currentLevels.length > 1 ? `מיון (${currentLevels.length})` : 'מיון'}
                 onClick={handleOpen}
             >
-                <Badge badgeContent={currentLevels.length > 1 ? currentLevels.length : 0} color="primary" sx={{ '& .MuiBadge-badge': { display: { sm: 'none' } } }}>
-                    <SortIcon />
-                </Badge>
+                {isSmall && currentLevels.length > 1
+                    ? <Badge badgeContent={currentLevels.length} color="primary"><SortIcon /></Badge>
+                    : <SortIcon />}
             </Button>
             <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
                 <DialogTitle>מיון מתקדם</DialogTitle>
