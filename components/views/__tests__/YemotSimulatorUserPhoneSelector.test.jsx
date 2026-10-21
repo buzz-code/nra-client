@@ -7,11 +7,9 @@ import YemotSimulator from '../YemotSimulator';
  * Regression test for the admin "מאת משתמש" (from user) selector.
  *
  * Selecting a user must prefill ApiDID (the system/DID number, matched
- * server-side against User.phoneNumber). ApiPhone is a required hidden
- * field that PhonePrefill never sets for admins, so it must also be
- * prefilled here (mirroring PhonePrefill's own behavior for non-admins,
- * which sets both ApiDID and ApiPhone to the same number) - otherwise
- * the form can never pass validation for admins using this selector.
+ * server-side against User.phoneNumber), shown read-only. ApiPhone (the
+ * caller) is prefilled with the same number, as for non-admins, and stays
+ * editable.
  * The reference input's filter must also use an operator crud-request
  * accepts without a value (`$notnull`), since `$ne` with an empty string
  * value is silently dropped from the query string and the API returns
@@ -32,7 +30,7 @@ describe('YemotSimulator admin user selector', () => {
       getList: () => Promise.resolve({ data: [user], total: 1 }),
       getOne: () => Promise.resolve({ data: user }),
     });
-    const { container } = render(
+    render(
       <TestMemoryRouter initialEntries={['/yemot-simulator']}>
         <AdminContext dataProvider={dataProvider} authProvider={authProvider}>
           <YemotSimulator />
@@ -47,8 +45,14 @@ describe('YemotSimulator admin user selector', () => {
 
     const apiDidInput = await screen.findByLabelText('מספר מערכת');
     await waitFor(() => expect(apiDidInput).toHaveValue('0521112222'));
+    expect(apiDidInput).toHaveAttribute('readonly');
 
-    const apiPhoneInput = container.querySelector('input[name="ApiPhone"]');
+    const apiPhoneInput = await screen.findByLabelText('מספר מתקשר');
     await waitFor(() => expect(apiPhoneInput).toHaveValue('0521112222'));
+
+    await userEvent.clear(apiPhoneInput);
+    await userEvent.type(apiPhoneInput, '0539998888');
+    expect(apiPhoneInput).toHaveValue('0539998888');
+    expect(apiDidInput).toHaveValue('0521112222');
   });
 });
