@@ -26,3 +26,7 @@ Full rollout process: the `shared-changes-workflow` and `bump-shared-ref` skills
 ## Tests
 
 `yarn test` (Jest + jsdom). Mock `react-admin` and `@shared/*` imports with `jest.mock`; assert on wiring, not fetched data — no live backend. See the `write-tests` skill.
+
+## Task tracking
+
+Every code task is an issue in `buzz-code/ops`; follow the `ops-tracking` skill (`.github/skills/`, symlinked from `.claude/skills/`): find/create the issue, keep its `status:*` label current, PR body `Fixes buzz-code/ops#N`. This repo is public: reference items only as `buzz-code/ops#N` with a neutral technical description.
