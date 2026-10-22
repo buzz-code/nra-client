@@ -3,6 +3,7 @@ import { CommonListActions } from '@shared/components/crudContainers/CommonListA
 import { CommonEmpty } from '@shared/components/crudContainers/CommonEmpty';
 import { BulkFixTimezoneShiftButton } from '@shared/components/crudContainers/BulkFixTimezoneShiftButton';
 import { useEffect, useRef } from 'react';
+import { SortColumnsProvider, useRegisterSortColumns } from '@shared/components/crudContainers/AdvancedSort';
 import { useDefaultPageSize } from '@shared/utils/settingsUtil';
 import { PAGE_SIZE_OPTIONS } from '@shared/config/settings';
 
@@ -64,22 +65,25 @@ const ListToolbarHeight = () => {
     return <span ref={ref} hidden />;
 };
 
-export const CommonList = ({ children, importer, exporter, filterDefaultValues, configurable = true, additionalListActions, ...props }) => {
+export const CommonList = ({ children, importer, exporter, filterDefaultValues, configurable = true, additionalListActions, sortOptions, ...props }) => {
     const defaultPageSize = useDefaultPageSize();
     
     return (
-        <List actions={<CommonListActions importer={importer} configurable={configurable}>{additionalListActions}</CommonListActions>}
-            pagination={<CommonPagination />} perPage={defaultPageSize}
-            exporter={exporter} filterDefaultValues={filterDefaultValues} sx={stickyToolbarSx} {...props}>
-            <ListToolbarHeight />
-            {children}
-        </List>
+        <SortColumnsProvider extraOptions={sortOptions} defaultSort={props.sort}>
+            <List actions={<CommonListActions importer={importer} configurable={configurable}>{additionalListActions}</CommonListActions>}
+                pagination={<CommonPagination />} perPage={defaultPageSize}
+                exporter={exporter} filterDefaultValues={filterDefaultValues} sx={stickyToolbarSx} {...props}>
+                <ListToolbarHeight />
+                {children}
+            </List>
+        </SortColumnsProvider>
     );
 }
 
 export const CommonDatagrid = ({ children, readonly, additionalBulkButtons, hasDelete, configurable = true, InlineEdit, empty = <CommonEmpty />, ...props }) => {
     const bulkActionButtons = useBulkActionButtons(readonly, additionalBulkButtons, hasDelete, props);
     const RaDataGrid = configurable ? DatagridConfigurable : Datagrid;
+    useRegisterSortColumns(children);
 
     return (
         <RaDataGrid rowClick={!readonly && 'edit'} bulkActionButtons={bulkActionButtons} empty={empty} {...props}>

@@ -4,6 +4,7 @@ import { stringify } from 'query-string';
 import { DataProvider, fetchUtils, GetListParams, RaRecord } from 'react-admin';
 import saveAs from 'file-saver';
 import { MAX_PAGE_SIZE } from '@shared/config/settings';
+import { parseSort } from '@shared/utils/sortUtil';
 
 /**
  * Maps react-admin queries to a nestjsx/crud powered REST API
@@ -100,7 +101,7 @@ const composeQueryParams = (queryParams: any = {}): string => {
 
 const mergeEncodedQueries = (...encodedQueries) => encodedQueries.map((query) => query).join('&')
 
-const getQueryJoin = (sort: QuerySort, filter: QueryFilter[]): QueryJoin[] => {
+const getQueryJoin = (sort: QuerySort[], filter: QueryFilter[]): QueryJoin[] => {
   const sortJoin = getSortJoin(sort);
   const filterJoin = getFilterJoin(filter);
   const joins = sortJoin.concat(filterJoin);
@@ -109,16 +110,17 @@ const getQueryJoin = (sort: QuerySort, filter: QueryFilter[]): QueryJoin[] => {
   return uniqueJoins;
 }
 
-const getSortJoin = (sort: QuerySort): QueryJoin[] => {
-  if (!sort) {
-    return [];
-  }
-
+const getSortJoin = (sort: QuerySort[]): QueryJoin[] => {
   const sortJoin: QueryJoin[] = [];
-  if (sort?.field.includes('.')) {
-    const [relation] = sort.field.split('.');
-    sortJoin.push({ field: relation });
-  }
+  sort.forEach(({ field }) => {
+    const parts = field.split('.');
+    parts.pop();
+    let path = '';
+    parts.forEach((part) => {
+      path = path ? `${path}.${part}` : part;
+      sortJoin.push({ field: path });
+    });
+  });
   return sortJoin;
 }
 
@@ -191,7 +193,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
     const { page, perPage } = params.pagination;
     const cappedPerPage = capPageSize(perPage);
     const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
-    const sort = params.sort as QuerySort;
+    const sort = parseSort(params.sort) as QuerySort[];
     const queryFilter = composeFilter(filter);
 
     const encodedQueryParams = composeQueryParams(queryParams)
@@ -246,7 +248,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
     const cappedPerPage = capPageSize(perPage);
     const { q: queryParams, extra, ...otherFilters } = params.filter || {}
     const filter: QueryFilter[] = composeFilter(otherFilters);
-    const sort = params.sort as QuerySort;
+    const sort = parseSort(params.sort) as QuerySort[];
 
     filter.push({
       field: params.target,
@@ -327,7 +329,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
 
   getCount: (resource, params) => {
     const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
-    const sort = params.sort as QuerySort;
+    const sort = parseSort(params.sort) as QuerySort[];
     const queryFilter = composeFilter(filter);
 
     const encodedQueryParams = composeQueryParams(queryParams)
@@ -351,7 +353,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
   export: (resource, params, format, resourceLabel) => {
     const { page, perPage } = params.pagination;
     const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
-    const sort = params.sort as QuerySort;
+    const sort = parseSort(params.sort) as QuerySort[];
     const queryFilter = composeFilter(filter);
 
     const encodedQueryParams = composeQueryParams(queryParams)

@@ -3,6 +3,7 @@ import { CreateButton, TopToolbar, FilterButton, useListContext, useResourceCont
 import { ResourceImportButton } from '@shared/components/crudContainers/ResourceImportButton';
 import { ResourceExportButton } from './ResourceExportButton';
 import { AddToDashboardButton } from './AddToDashboardButton';
+import { AdvancedSortButton } from './AdvancedSort';
 
 export const CommonListActions = ({ importer, configurable, children, ...props }) => {
     const {
@@ -21,6 +22,7 @@ export const CommonListActions = ({ importer, configurable, children, ...props }
         () => (
             <TopToolbar {...restProps}>
                 {filters && <FilterButton />}
+                <AdvancedSortButton />
                 {hasCreate && <CreateButton />}
                 {children}
                 {configurable && <SelectColumnsButton />}
