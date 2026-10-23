@@ -9,7 +9,8 @@ import { TrialMessage } from './TrialMessage';
 import { YemotMigrationBanner } from './YemotMigrationBanner';
 import { setRumUser } from '@shared/utils/openobserveRumUtil';
 
-const CustomLayout = ({ customMenuItems, menuGroups, children }) => {
+// showYearSelector: false for apps whose data isn't scoped by school year.
+const CustomLayout = ({ customMenuItems, menuGroups, showYearSelector = true, children }) => {
     const isAdmin = useIsAdmin();
     const { permissions } = usePermissions();
     const { data: identity } = useGetIdentity();
@@ -28,9 +29,11 @@ const CustomLayout = ({ customMenuItems, menuGroups, children }) => {
         </CustomMenu>
     );
 
+    const AppBar = (props) => <CustomAppBar {...props} showYearSelector={showYearSelector} />;
+
     return (
         <DirectionalThemeProvider>
-            <Layout menu={Menu} appBar={CustomAppBar} appBarAlwaysOn>
+            <Layout menu={Menu} appBar={AppBar} appBarAlwaysOn>
                 <TrialMessage />
                 <YemotMigrationBanner />
 
