@@ -45,6 +45,15 @@ const stickyToolbarSx = (theme) => ({
         '& .RaList-content .RaDatagrid-headerCell': {
             top: `calc(${theme.spacing(6)} + var(--list-toolbar-height, 0px))`,
         },
+        // The bulk actions strip (shown while rows are selected) is drawn over the
+        // bottom of the toolbar, offset up from its zero-height root; stick that
+        // root right above the header so the strip stays over the sticky toolbar.
+        // The root gets only a generated class (…-RaBulkActionsToolbar-root), no static one.
+        '& .RaList-content [class*="RaBulkActionsToolbar-root"]': {
+            position: 'sticky',
+            top: `calc(${theme.spacing(6)} + var(--list-toolbar-height, 0px))`,
+            zIndex: 4,
+        },
     },
 });
 
