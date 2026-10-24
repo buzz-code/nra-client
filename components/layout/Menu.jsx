@@ -5,7 +5,7 @@ import SubMenu from './SubMenu';
 import { useIsAdmin } from '@shared/utils/permissionsUtil';
 import { filterArrayByParams } from '@shared/utils/filtersUtil';
 
-const CustomMenu = ({ menuGroups, childrenPosition = 'end', children }) => {
+const CustomMenu = ({ menuGroups, children }) => {
     const resources = useResourceDefinitions();
     const hasDashboard = useHasDashboard();
     const isAdmin = useIsAdmin();
@@ -51,7 +51,6 @@ const CustomMenu = ({ menuGroups, childrenPosition = 'end', children }) => {
             {hasDashboard && (
                 <Menu.DashboardItem key="default-dashboard-menu-item" leftIcon={<DashboardOutlinedIcon />} />
             )}
-            {childrenPosition === 'start' && children}
             {menuGroupsArr.map(group =>
                 group.children.length > 0 && (
                     <SubMenu key={group.name} primaryText={group.label} leftIcon={group.icon}>
@@ -60,7 +59,7 @@ const CustomMenu = ({ menuGroups, childrenPosition = 'end', children }) => {
                 )
             )}
             {otherResources}
-            {childrenPosition !== 'start' && children}
+            {children}
         </Menu>
     );
 };
