@@ -9,8 +9,10 @@ import { TrialMessage } from './TrialMessage';
 import { YemotMigrationBanner } from './YemotMigrationBanner';
 import { setRumUser } from '@shared/utils/openobserveRumUtil';
 
-// showYearSelector: false for apps whose data isn't scoped by school year.
-const CustomLayout = ({ customMenuItems, menuGroups, showYearSelector = true, children }) => {
+// appBarContent: replaces the app bar's year picker (null hides it, for apps whose data
+// isn't scoped by school year). customMenuItemsPosition: 'end' (default) lists the custom
+// items after the menu groups, 'start' right after the dashboard item.
+const CustomLayout = ({ customMenuItems, menuGroups, appBarContent, customMenuItemsPosition = 'end', children }) => {
     const isAdmin = useIsAdmin();
     const { permissions } = usePermissions();
     const { data: identity } = useGetIdentity();
@@ -24,12 +26,12 @@ const CustomLayout = ({ customMenuItems, menuGroups, showYearSelector = true, ch
     }, [identity]);
 
     const Menu = () => (
-        <CustomMenu menuGroups={menuItemsArr}>
+        <CustomMenu menuGroups={menuItemsArr} childrenPosition={customMenuItemsPosition}>
             {customMenuItemsArr}
         </CustomMenu>
     );
 
-    const AppBar = (props) => <CustomAppBar {...props} showYearSelector={showYearSelector} />;
+    const AppBar = (props) => <CustomAppBar {...props} content={appBarContent} />;
 
     return (
         <DirectionalThemeProvider>
