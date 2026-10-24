@@ -1,10 +1,12 @@
 import { AppBar, TitlePortal } from 'react-admin';
 import YearSelector from './YearSelector';
 
-const CustomAppBar = ({ showYearSelector = true, ...props }) => (
+// content: what the app bar shows next to the title. Defaults to the year picker;
+// pass null for nothing, or an app's own control (e.g. a project switcher).
+const CustomAppBar = ({ content = <YearSelector />, ...props }) => (
     <AppBar {...props}>
         <TitlePortal />
-        {showYearSelector && <YearSelector />}
+        {content}
     </AppBar>
 );
 
