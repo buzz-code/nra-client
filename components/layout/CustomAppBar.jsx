@@ -1,10 +1,10 @@
 import { AppBar, TitlePortal } from 'react-admin';
 import YearSelector from './YearSelector';
 
-const CustomAppBar = (props) => (
+const CustomAppBar = ({ showYearSelector = true, ...props }) => (
     <AppBar {...props}>
         <TitlePortal />
-        <YearSelector />
+        {showYearSelector && <YearSelector />}
     </AppBar>
 );
 
