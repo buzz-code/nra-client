@@ -54,6 +54,15 @@ const stickyToolbarSx = (theme) => ({
             top: `calc(${theme.spacing(6)} + var(--list-toolbar-height, 0px))`,
             zIndex: 4,
         },
+        // Keep the pagination row at the bottom of the screen, so pages can be
+        // changed without scrolling to the end of the list.
+        '& .RaList-main > .MuiTablePagination-root': {
+            position: 'sticky',
+            bottom: 0,
+            zIndex: 3,
+            backgroundColor: theme.palette.background.paper,
+            borderTop: `1px solid ${theme.palette.divider}`,
+        },
     },
 });
 
