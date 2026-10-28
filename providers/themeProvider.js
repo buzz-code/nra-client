@@ -107,6 +107,17 @@ export const createTheme = (options = {}) => {
                     root: { borderRadius: 999, fontWeight: 600 },
                 },
             },
+            // Outlined fields instead of react-admin's grey filled ones: they read cleaner,
+            // and line up with the rounded buttons and chips. Keeps react-admin's other
+            // field defaults (size, margin, fullWidth).
+            MuiTextField: {
+                ...defaultTheme.components?.MuiTextField,
+                defaultProps: { ...defaultTheme.components?.MuiTextField?.defaultProps, variant: 'outlined' },
+            },
+            MuiFormControl: {
+                ...defaultTheme.components?.MuiFormControl,
+                defaultProps: { ...defaultTheme.components?.MuiFormControl?.defaultProps, variant: 'outlined' },
+            },
             // Round text inputs (search boxes, filter fields, form fields) to the
             // same radius as buttons/cards/chips - stock MUI square corners were
             // the one thing left reading as "default Material" instead of "themed".

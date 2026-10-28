@@ -12,6 +12,9 @@ jest.mock('react-admin', () => ({
       fontFamily: 'Roboto, sans-serif',
     },
     components: {
+      MuiTextField: {
+        defaultProps: { variant: 'filled', margin: 'dense', size: 'small' },
+      },
       MuiButton: {
         styleOverrides: {
           root: {
@@ -56,5 +59,10 @@ describe('themeProvider', () => {
     // Should have RTL configuration
     expect(theme).toHaveProperty('direction');
     expect(theme).toHaveProperty('isRtl');
+  });
+
+  it('makes fields outlined and keeps the other react-admin field defaults', () => {
+    expect(theme.components.MuiTextField.defaultProps).toEqual({ variant: 'outlined', margin: 'dense', size: 'small' });
+    expect(theme.components.MuiFormControl.defaultProps).toEqual({ variant: 'outlined' });
   });
 });
