@@ -38,7 +38,7 @@ const iconMap = {
 export default ({ dashboardItems = [], children }) => {
     return <Grid container spacing={2}>
         <Title title={"תמונת מצב"} />
-        {dashboardItems.map((item, index) => (
+        {dashboardItems.filter(isValidItem).map((item, index) => (
             <Grid item xs={6} md={3} key={index}>
                 <DashboardItem {...item} />
             </Grid>
@@ -49,6 +49,10 @@ export default ({ dashboardItems = [], children }) => {
         {children}
     </Grid>
 }
+
+// Items saved from a pivot list have a query string in the resource; react-router
+// throws on '?' in a link pathname, which would break the whole dashboard.
+const isValidItem = (item) => !item?.resource?.includes('?');
 
 // Cards are added from a list's own toolbar (AddToDashboardButton), not from
 // Settings anymore - this just points users there instead of leaving the
