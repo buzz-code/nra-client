@@ -58,6 +58,12 @@ export const AddToDashboardButton = () => {
         }
     };
 
+    // Pivot lists use a resource with a query string (e.g. 'student/pivot?extra.pivot=X').
+    // The dashboard can't link or count those, so don't offer to add them.
+    if (resource?.includes('?')) {
+        return null;
+    }
+
     return (
         <Button label="הוסף לתמונת מצב" onClick={handleClick} disabled={loading}>
             <DashboardCustomizeOutlinedIcon />
