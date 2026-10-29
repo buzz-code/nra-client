@@ -1,5 +1,5 @@
 import { Layout, useGetIdentity, usePermissions } from 'react-admin';
-import { useEffect } from 'react';
+import { createContext, useContext, useEffect } from 'react';
 import CustomMenu from '@shared/components/layout/Menu';
 import CustomAppBar from './CustomAppBar';
 import DirectionalThemeProvider from './DirectionalThemeProvider';
@@ -8,6 +8,11 @@ import { filterArrayByParams } from '@shared/utils/filtersUtil';
 import { TrialMessage } from './TrialMessage';
 import { YemotMigrationBanner } from './YemotMigrationBanner';
 import { setRumUser } from '@shared/utils/openobserveRumUtil';
+
+// Passed through context so the app bar component stays the same between renders;
+// a component created during render remounts the app bar and closes its user menu.
+const AppBarContentContext = createContext(undefined);
+const AppBar = (props) => <CustomAppBar {...props} content={useContext(AppBarContentContext)} />;
 
 // appBarContent: replaces the app bar's year picker (null hides it, for apps whose data
 // isn't scoped by school year).
@@ -30,16 +35,16 @@ const CustomLayout = ({ customMenuItems, menuGroups, appBarContent, children }) 
         </CustomMenu>
     );
 
-    const AppBar = (props) => <CustomAppBar {...props} content={appBarContent} />;
-
     return (
         <DirectionalThemeProvider>
-            <Layout menu={Menu} appBar={AppBar} appBarAlwaysOn>
-                <TrialMessage />
-                <YemotMigrationBanner />
+            <AppBarContentContext.Provider value={appBarContent}>
+                <Layout menu={Menu} appBar={AppBar} appBarAlwaysOn>
+                    <TrialMessage />
+                    <YemotMigrationBanner />
 
-                {children}
-            </Layout>
+                    {children}
+                </Layout>
+            </AppBarContentContext.Provider>
         </DirectionalThemeProvider>
     )
 }
