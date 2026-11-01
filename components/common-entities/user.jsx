@@ -35,7 +35,7 @@ const filters = [
     <TextInput source="email" alwaysOn />,
     <TextInput source="phoneNumber" />,
     <TextInput source="userInfo:$cont" label="מידע נוסף" />,
-    <NullableBooleanInput source="isPaid" />,
+    <NullableBooleanInput source="isPaid" alwaysOn />,
 ];
 
 const Datagrid = ({ isAdmin, children, ...props }) => {
@@ -112,6 +112,7 @@ const entity = {
     Inputs,
     Representation,
     filters,
+    filterDefaultValues: { isPaid: true },
 };
 
 export default getResourceComponents(entity);

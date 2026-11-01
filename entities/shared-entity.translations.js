@@ -204,7 +204,9 @@ export const sharedEntityTranslations = {
     fields: {
       ...generalResourceFieldsTranslation,
       type: 'סוג',
+      'type:$cont': 'סוג',
       status: 'סטטוס',
+      'status:$cont': 'סטטוס',
       progress: 'התקדמות',
       attempts: 'ניסיונות',
       error: 'שגיאה',
