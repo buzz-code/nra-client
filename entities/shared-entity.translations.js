@@ -87,6 +87,7 @@ export const sharedEntityTranslations = {
       ...generalResourceFieldsTranslation,
       description: 'תיאור',
       value: 'ערך',
+      filepath: 'נתיב קובץ שמע',
     }
   },
   text_by_user: {
@@ -95,6 +96,7 @@ export const sharedEntityTranslations = {
       ...generalResourceFieldsTranslation,
       description: 'תיאור',
       value: 'ערך',
+      filepath: 'נתיב קובץ שמע',
     }
   },
   recieved_mail: {
