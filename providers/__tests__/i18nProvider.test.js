@@ -122,6 +122,11 @@ describe('i18nProvider', () => {
       expect(i18nProvider.translate('ra.auth.organization_name')).toBe('שם המוסד');
     });
 
+    it('translates download and PDF busy errors in Hebrew', () => {
+      expect(i18nProvider.translate('ra.notification.file_download_incomplete')).toContain('סינון האינטרנט');
+      expect(i18nProvider.translate('ra.notification.pdf_render_busy')).toBe('המערכת מפיקה כרגע דוחות אחרים. נא לנסות שוב בעוד מספר דקות.');
+    });
+
     it('handles missing translations by returning the key', () => {
       expect(i18nProvider.translate('ra.action.nonexistent')).toBe('ra.action.nonexistent');
     });
@@ -140,6 +145,11 @@ describe('i18nProvider', () => {
         expect(i18nProvider.getLocale()).toBe('en');
         expect(i18nProvider.translate('ra.action.save')).toBe('Save');
         expect(i18nProvider.translate('ra.auth.organization_name')).toBe('Organization Name');
+      });
+
+      it('translates download and PDF busy errors in English', () => {
+        expect(i18nProvider.translate('ra.notification.file_download_incomplete')).toContain('content filter');
+        expect(i18nProvider.translate('ra.notification.pdf_render_busy')).toBe('The system is currently generating other reports. Please try again in a few minutes.');
       });
     });
   });
