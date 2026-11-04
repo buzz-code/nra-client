@@ -25,7 +25,7 @@ Full rollout process: the `shared-changes-workflow` and `bump-shared-ref` skills
 
 ## Tests
 
-`yarn test` (Jest + jsdom). Mock `react-admin` and `@shared/*` imports with `jest.mock`; assert on wiring, not fetched data — no live backend. See the `write-tests` skill.
+Standalone: `yarn install && yarn test` from the repo root (Jest + jsdom; config lives in `package.json`, `@shared/*` maps to the repo root). CI (`.github/workflows/test.yml`) runs this on every PR and push to `main`. Consumers still run these tests via `client/shared` with their own Jest config. Test deps are duplicated from the consumers' `client/package.json` — keep versions in sync when they change. Mock `react-admin` and `@shared/*` imports with `jest.mock`; assert on wiring, not fetched data — no live backend. See the `write-tests` skill.
 
 ## Task tracking
 
