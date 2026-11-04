@@ -103,6 +103,8 @@ const extendedTranslation = {
         notification: {
             not_authorized: "אין לך הרשאה לצפות בנתונים אלו.",
             application_update_available: 'גרסה חדשה זמינה.',
+            file_download_incomplete: 'הקובץ לא התקבל במלואו. ככל הנראה סינון האינטרנט (למשל נטפרי) חסם או קטע את ההורדה. נא לפנות לספק הסינון ולבקש לאשר את האתר, או לנסות להוריד מרשת אחרת.',
+            pdf_render_busy: 'המערכת מפיקה כרגע דוחות אחרים. נא לנסות שוב בעוד מספר דקות.',
         },
         validation: {
             valueConfirm: 'ערך לא תואם',
@@ -165,6 +167,16 @@ const extendedTranslation = {
     }
 }
 
+// English texts for keys this package adds on top of ra-language-english.
+const extendedEnglishTranslation = {
+    ra: {
+        notification: {
+            file_download_incomplete: 'The file was not fully received. An internet content filter (such as NetFree) most likely blocked or cut off the download. Please ask your filter provider to approve this site, or try downloading from another network.',
+            pdf_render_busy: 'The system is currently generating other reports. Please try again in a few minutes.',
+        },
+    },
+}
+
 export const getI18nProvider = (domainTranslations, isDummy = false) => {
     if (isDummy) {
         return {
@@ -174,7 +186,7 @@ export const getI18nProvider = (domainTranslations, isDummy = false) => {
         };
     }
 
-    const translations = { en, he: deepMerge(he, deepMerge(extendedTranslation, domainTranslations)) };
+    const translations = { en: deepMerge(en, extendedEnglishTranslation), he: deepMerge(he, deepMerge(extendedTranslation, domainTranslations)) };
 
     const i18nProvider = polyglotI18nProvider(
         locale => translations[locale],

@@ -1,4 +1,4 @@
-import baseDataProvider from '../baseDataProvider';
+import baseDataProvider, { FILE_DOWNLOAD_INCOMPLETE_KEY } from '../baseDataProvider';
 import saveAs from 'file-saver';
 import { GetListParams, SortPayload } from 'react-admin';
 
@@ -183,6 +183,54 @@ describe('baseDataProvider', () => {
       await provider.export('posts', params, 'json', 'Posts');
 
       expect(mockSaveAs).toHaveBeenCalledWith(mockBlob, 'test.json');
+    });
+
+    describe('incomplete file responses', () => {
+      const params: GetListParams = {
+        pagination: { page: 1, perPage: 10 },
+        sort: { field: 'id', order: 'ASC' } as SortPayload,
+        filter: {},
+      };
+      let consoleError: jest.SpyInstance;
+
+      beforeEach(() => {
+        consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+      });
+
+      afterEach(() => {
+        consoleError.mockRestore();
+      });
+
+      it('throws the translatable incomplete-download error on content length mismatch', async () => {
+        httpClient.mockResolvedValueOnce({
+          json: { type: 'application/pdf', data: 'abc', disposition: '', contentLength: 10 },
+        });
+
+        const error = await provider.export('posts', params, 'pdf', 'Posts').catch(e => e);
+
+        expect(error.message).toBe(FILE_DOWNLOAD_INCOMPLETE_KEY);
+        expect(error.details).toBe('content length mismatch: expected 10, got 3');
+        expect(consoleError).toHaveBeenCalled();
+        expect(mockSaveAs).not.toHaveBeenCalled();
+      });
+
+      it('throws the same error when response keys are missing', async () => {
+        httpClient.mockResolvedValueOnce({ json: { type: 'application/pdf' } });
+
+        const error = await provider.export('posts', params, 'pdf', 'Posts').catch(e => e);
+
+        expect(error.message).toBe(FILE_DOWNLOAD_INCOMPLETE_KEY);
+        expect(error.details).toBe('missing keys: data, disposition, contentLength');
+      });
+
+      it('throws the same error on an empty response', async () => {
+        httpClient.mockResolvedValueOnce({ json: null });
+
+        const error = await provider.export('posts', params, 'pdf', 'Posts').catch(e => e);
+
+        expect(error.message).toBe(FILE_DOWNLOAD_INCOMPLETE_KEY);
+        expect(error.details).toBe('empty response');
+      });
     });
   });
 

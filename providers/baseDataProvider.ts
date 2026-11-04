@@ -166,19 +166,32 @@ const saveResponseFile = async (res, filename) => {
   return saveAs(blob, calcFileName(res.json.disposition, filename));
 }
 
+// Translation key shown to the user when a file response arrives incomplete or
+// malformed. The usual cause is a content filter on the user's network that
+// blocks or truncates the download, so the message explains that instead of
+// exposing the technical details.
+export const FILE_DOWNLOAD_INCOMPLETE_KEY = 'ra.notification.file_download_incomplete';
+
+const fileResponseError = (details: string) => {
+  console.error(`Invalid file response: ${details}`);
+  const error = new Error(FILE_DOWNLOAD_INCOMPLETE_KEY);
+  (error as any).details = details;
+  return error;
+}
+
 const validateFileResponse = (response: any) => {
   if (!response) {
-    throw new Error('Invalid file response');
+    throw fileResponseError('empty response');
   }
   const expectedKeys = ['data', 'type', 'disposition', 'contentLength'];
   const missingKeys = expectedKeys.filter(key => !(key in response));
   if (missingKeys.length > 0) {
-    throw new Error(`Invalid file response, missing keys: ${missingKeys.join(', ')}`);
+    throw fileResponseError(`missing keys: ${missingKeys.join(', ')}`);
   }
   const { data, contentLength } = response;
-  const actualLength = data.length;
+  const actualLength = data?.length;
   if (actualLength !== contentLength) {
-    throw new Error(`Invalid file response, content length mismatch: expected ${contentLength}, got ${actualLength}`);
+    throw fileResponseError(`content length mismatch: expected ${contentLength}, got ${actualLength}`);
   }
 }
 
