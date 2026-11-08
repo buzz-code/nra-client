@@ -125,6 +125,7 @@ describe('i18nProvider', () => {
     it('translates download and PDF busy errors in Hebrew', () => {
       expect(i18nProvider.translate('ra.notification.file_download_incomplete')).toContain('סינון האינטרנט');
       expect(i18nProvider.translate('ra.notification.pdf_render_busy')).toBe('המערכת מפיקה כרגע דוחות אחרים. נא לנסות שוב בעוד מספר דקות.');
+      expect(i18nProvider.translate('ra.notification.pdf_print_timeout')).toContain('הדוח גדול מדי');
     });
 
     it('handles missing translations by returning the key', () => {
@@ -150,6 +151,7 @@ describe('i18nProvider', () => {
       it('translates download and PDF busy errors in English', () => {
         expect(i18nProvider.translate('ra.notification.file_download_incomplete')).toContain('content filter');
         expect(i18nProvider.translate('ra.notification.pdf_render_busy')).toBe('The system is currently generating other reports. Please try again in a few minutes.');
+        expect(i18nProvider.translate('ra.notification.pdf_print_timeout')).toContain('too large');
       });
     });
   });

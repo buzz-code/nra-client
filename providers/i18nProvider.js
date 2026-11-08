@@ -105,6 +105,7 @@ const extendedTranslation = {
             application_update_available: 'גרסה חדשה זמינה.',
             file_download_incomplete: 'הקובץ לא התקבל במלואו. ככל הנראה סינון האינטרנט (למשל נטפרי) חסם או קטע את ההורדה. נא לפנות לספק הסינון ולבקש לאשר את האתר, או לנסות להוריד מרשת אחרת.',
             pdf_render_busy: 'המערכת מפיקה כרגע דוחות אחרים. נא לנסות שוב בעוד מספר דקות.',
+            pdf_print_timeout: 'הדוח גדול מדי להפקה כ-PDF. יש לצמצם את הסינון (למשל לטווח תאריכים קצר יותר) או להוריד אותו כקובץ Excel.',
         },
         validation: {
             valueConfirm: 'ערך לא תואם',
@@ -173,6 +174,7 @@ const extendedEnglishTranslation = {
         notification: {
             file_download_incomplete: 'The file was not fully received. An internet content filter (such as NetFree) most likely blocked or cut off the download. Please ask your filter provider to approve this site, or try downloading from another network.',
             pdf_render_busy: 'The system is currently generating other reports. Please try again in a few minutes.',
+            pdf_print_timeout: 'The report is too large to produce as a PDF. Narrow the filter (for example, a shorter date range) or download it as an Excel file.',
         },
     },
 }
