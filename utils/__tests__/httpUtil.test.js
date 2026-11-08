@@ -18,6 +18,11 @@ describe('translateErrorCode', () => {
         expect(translateErrorCode(error).message).toBe('ra.notification.pdf_render_busy');
     });
 
+    it('translates the PDF print timeout code', () => {
+        const error = buildHttpError({ statusCode: 413, code: 'PDF_PRINT_TIMEOUT', message: 'too big' });
+        expect(translateErrorCode(error).message).toBe('ra.notification.pdf_print_timeout');
+    });
+
     it('leaves errors without a known code untouched', () => {
         const error = buildHttpError({ statusCode: 500, message: 'Internal server error' });
         expect(translateErrorCode(error).message).toBe('Internal server error');

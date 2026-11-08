@@ -5,6 +5,7 @@ import { fetchUtils } from 'react-admin';
 // translation key, which react-admin's notify() translates to the user's locale.
 export const ERROR_CODE_TRANSLATION_KEYS = {
     PDF_RENDER_BUSY: 'ra.notification.pdf_render_busy',
+    PDF_PRINT_TIMEOUT: 'ra.notification.pdf_print_timeout',
 };
 
 export const translateErrorCode = (error) => {
