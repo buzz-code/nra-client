@@ -18,6 +18,11 @@ describe('CustomAppBar', () => {
         expect(screen.queryByText('year-selector')).not.toBeInTheDocument();
     });
 
+    it('shows the app icon before the title', () => {
+        const { container } = renderBar();
+        expect(container.querySelector('img[src="/icon.svg"]')).toBeInTheDocument();
+    });
+
     it('shows nothing next to the title for null content', () => {
         renderBar({ content: null });
         expect(screen.queryByText('year-selector')).not.toBeInTheDocument();
