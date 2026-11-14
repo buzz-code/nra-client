@@ -7,26 +7,10 @@ import { MAX_PAGE_SIZE } from '@shared/config/settings';
 import { parseSort } from '@shared/utils/sortUtil';
 
 /**
- * Maps react-admin queries to a nestjsx/crud powered REST API
+ * Maps react-admin queries to a nestjsx/crud powered REST API.
+ * Extended fork of ra-data-nestjsx-crud; the app's instance is built in ./dataProvider.js.
  *
  * @see https://github.com/nestjsx/crud
- *
- * @example
- *
- * import React from 'react';
- * import { Admin, Resource } from 'react-admin';
- * import crudProvider from 'ra-data-nestjsx-crud';
- *
- * import { PostList } from './posts';
- *
- * const dataProvider = crudProvider('http://localhost:3000');
- * const App = () => (
- *     <Admin dataProvider={dataProvider}>
- *         <Resource name="posts" list={PostList} />
- *     </Admin>
- * );
- *
- * export default App;
  */
 
 interface ExtendedDataProvider extends DataProvider {
@@ -38,7 +22,7 @@ interface ExtendedDataProvider extends DataProvider {
   getCount: (
     resource: string,
     params: GetListParams,
-  ) => Promise<Number>;
+  ) => Promise<number>;
   export: (
     resource: string,
     params: GetListParams,
@@ -99,7 +83,35 @@ const composeQueryParams = (queryParams: any = {}): string => {
   return stringify(fetchUtils.flattenObject(queryParams), { skipNull: true });
 }
 
-const mergeEncodedQueries = (...encodedQueries) => encodedQueries.map((query) => query).join('&')
+const mergeEncodedQueries = (...encodedQueries) => encodedQueries.join('&')
+
+// Query string shared by getList, getCount and export. Without perPage the query is unpaginated.
+// Builder call order is kept as-is: it sets the order of the query-string params.
+const composeListQuery = (params: GetListParams, perPage?: number): string => {
+  const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
+  const sort = parseSort(params.sort) as QuerySort[];
+  const queryFilter = composeFilter(filter);
+
+  const builder = RequestQueryBuilder.create({
+    filter: queryFilter,
+    or: composeFilter(orFilter || {})
+  });
+  if (perPage === undefined) {
+    builder.sortBy(sort);
+  } else {
+    const { page } = params.pagination;
+    builder
+      .setLimit(perPage)
+      .setPage(page)
+      .sortBy(sort)
+      .setOffset((page - 1) * perPage);
+  }
+  const encodedQueryFilter = builder
+    .setJoin(getQueryJoin(sort, queryFilter))
+    .query();
+
+  return mergeEncodedQueries(composeQueryParams(queryParams), encodedQueryFilter, composeQueryParams({ extra }));
+}
 
 const getQueryJoin = (sort: QuerySort[], filter: QueryFilter[]): QueryJoin[] => {
   const sortJoin = getSortJoin(sort);
@@ -174,8 +186,8 @@ export const FILE_DOWNLOAD_INCOMPLETE_KEY = 'ra.notification.file_download_incom
 
 const fileResponseError = (details: string) => {
   console.error(`Invalid file response: ${details}`);
-  const error = new Error(FILE_DOWNLOAD_INCOMPLETE_KEY);
-  (error as any).details = details;
+  const error: Error & { details?: string } = new Error(FILE_DOWNLOAD_INCOMPLETE_KEY);
+  error.details = details;
   return error;
 }
 
@@ -203,27 +215,7 @@ const buildUrl = (apiUrl: string, resource: string, query: string) => {
 export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedDataProvider => ({
   supportAbortSignal: true,
   getList: (resource, params) => {
-    const { page, perPage } = params.pagination;
-    const cappedPerPage = capPageSize(perPage);
-    const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
-    const sort = parseSort(params.sort) as QuerySort[];
-    const queryFilter = composeFilter(filter);
-
-    const encodedQueryParams = composeQueryParams(queryParams)
-    const encodedQueryFilter = RequestQueryBuilder.create({
-      filter: queryFilter,
-      or: composeFilter(orFilter || {})
-    })
-      .setLimit(cappedPerPage)
-      .setPage(page)
-      .sortBy(sort)
-      .setOffset((page - 1) * cappedPerPage)
-      .setJoin(getQueryJoin(sort, queryFilter))
-      .query();
-
-    const encodedQueryExtra = composeQueryParams({ extra });
-
-    const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter, encodedQueryExtra);
+    const query = composeListQuery(params, capPageSize(params.pagination.perPage));
 
     const url = buildUrl(apiUrl, resource, query);
 
@@ -341,22 +333,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
     ).then((responses) => ({ data: responses.map(({ json }) => json) })),
 
   getCount: (resource, params) => {
-    const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
-    const sort = parseSort(params.sort) as QuerySort[];
-    const queryFilter = composeFilter(filter);
-
-    const encodedQueryParams = composeQueryParams(queryParams)
-    const encodedQueryFilter = RequestQueryBuilder.create({
-      filter: queryFilter,
-      or: composeFilter(orFilter || {})
-    })
-      .sortBy(sort)
-      .setJoin(getQueryJoin(sort, queryFilter))
-      .query();
-
-    const encodedQueryExtra = composeQueryParams({ extra });
-
-    const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter, encodedQueryExtra);
+    const query = composeListQuery(params);
 
     const url = `${apiUrl}/${resource}/get-count?${query}`;
 
@@ -364,26 +341,7 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
   },
 
   export: (resource, params, format, resourceLabel) => {
-    const { page, perPage } = params.pagination;
-    const { q: queryParams, $OR: orFilter, extra, ...filter } = params.filter || {};
-    const sort = parseSort(params.sort) as QuerySort[];
-    const queryFilter = composeFilter(filter);
-
-    const encodedQueryParams = composeQueryParams(queryParams)
-    const encodedQueryFilter = RequestQueryBuilder.create({
-      filter: queryFilter,
-      or: composeFilter(orFilter || {})
-    })
-      .setLimit(perPage)
-      .setPage(page)
-      .sortBy(sort)
-      .setOffset((page - 1) * perPage)
-      .setJoin(getQueryJoin(sort, queryFilter))
-      .query();
-
-    const encodedQueryExtra = composeQueryParams({ extra });
-
-    const query = mergeEncodedQueries(encodedQueryParams, encodedQueryFilter, encodedQueryExtra);
+    const query = composeListQuery(params, params.pagination.perPage);
 
     const url = `${apiUrl}/${resource}/export?extra.format=${format}&${query}`;
 
