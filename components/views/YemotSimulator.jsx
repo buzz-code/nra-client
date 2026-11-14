@@ -12,8 +12,8 @@ import { useIsAdmin } from '@shared/utils/permissionsUtil';
 const DEFAULT_VALUES = {
     ApiCallId: String(Math.random()).slice(2),
     ApiExtension: '123',
-    ApiDID: '', //0774311257
-    ApiPhone: '', //0527609942
+    ApiDID: '',
+    ApiPhone: '',
     ApiEnterID: '',
 };
 
