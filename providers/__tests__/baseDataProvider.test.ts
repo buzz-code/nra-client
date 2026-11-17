@@ -106,6 +106,18 @@ describe('baseDataProvider', () => {
         })
       );
     });
+
+    it('sends file content instead of a temporary blob: URL', async () => {
+      const rawFile = new File(['hello'], 'a.txt', { type: 'text/plain' });
+      const previousData = { id: 1, fileData: null };
+      const data = { id: 1, fileData: { src: 'blob:http://app/123', title: 'a.txt', rawFile } };
+      httpClient.mockResolvedValueOnce({ json: data });
+
+      await provider.update('uploaded_file', { id: 1, previousData, data });
+
+      const body = JSON.parse(httpClient.mock.calls[0][1].body);
+      expect(body.fileData.src).toBe('data:text/plain;base64,aGVsbG8=');
+    });
   });
 
   describe('create', () => {
@@ -123,6 +135,17 @@ describe('baseDataProvider', () => {
         })
       );
       expect(result).toEqual({ data: { id: 1, title: 'new post' } });
+    });
+
+    it('sends file content instead of a temporary blob: URL', async () => {
+      const rawFile = new File(['hello'], 'a.txt', { type: 'text/plain' });
+      const data = { fileData: { src: 'blob:http://app/123', title: 'a.txt', rawFile } };
+      httpClient.mockResolvedValueOnce({ json: { id: 1 } });
+
+      await provider.create('uploaded_file', { data });
+
+      const body = JSON.parse(httpClient.mock.calls[0][1].body);
+      expect(body.fileData.src).toBe('data:text/plain;base64,aGVsbG8=');
     });
   });
 
