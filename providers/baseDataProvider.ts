@@ -5,6 +5,7 @@ import { DataProvider, fetchUtils, GetListParams, RaRecord } from 'react-admin';
 import saveAs from 'file-saver';
 import { MAX_PAGE_SIZE } from '@shared/config/settings';
 import { parseSort } from '@shared/utils/sortUtil';
+import { resolvePendingFiles } from '@shared/utils/pendingFiles.util';
 
 /**
  * Maps react-admin queries to a nestjsx/crud powered REST API.
@@ -283,9 +284,9 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
     }));
   },
 
-  update: (resource, params) => {
+  update: async (resource, params) => {
     // no need to send all fields, only updated fields are enough
-    const data = countDiff(params.data, params.previousData);
+    const data = await resolvePendingFiles(countDiff(params.data, params.previousData));
     return httpClient(`${apiUrl}/${resource}/${params.id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
@@ -304,13 +305,15 @@ export default (apiUrl: string, httpClient = fetchUtils.fetchJson): ExtendedData
       data: responses.map(({ json }) => json),
     })),
 
-  create: (resource, params) =>
-    httpClient(`${apiUrl}/${resource}`, {
+  create: async (resource, params) => {
+    const data = await resolvePendingFiles(params.data);
+    return httpClient(`${apiUrl}/${resource}`, {
       method: 'POST',
-      body: JSON.stringify(params.data),
+      body: JSON.stringify(data),
     }).then(({ json }) => ({
-      data: { ...params.data, id: json.id } as any,
-    })),
+      data: { ...data, id: json.id } as any,
+    }));
+  },
 
   createMany: (resource, bulk) =>
     httpClient(`${apiUrl}/${resource}/bulk`, {
