@@ -1,9 +1,9 @@
 import { readAsDataURL } from '@shared/utils/fileUtil';
 
-const isPlainObject = (value: any): value is Record<string, any> =>
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
     value !== null && typeof value === 'object' && Object.getPrototypeOf(value) === Object.prototype;
 
-const isPendingFile = (value: any): boolean =>
+const isPendingFile = (value: unknown): value is { src: string; rawFile: Blob } =>
     isPlainObject(value) &&
     typeof value.src === 'string' &&
     value.src.startsWith('blob:') &&

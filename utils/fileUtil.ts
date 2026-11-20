@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
 
-export const readAsDataURL = (file: File): Promise<string> => {
+export const readAsDataURL = (file: Blob): Promise<string> => {
     const reader = new FileReader();
     return new Promise((resolve, reject) => {
         reader.onload = (event) => resolve((event.target.result) as string);
