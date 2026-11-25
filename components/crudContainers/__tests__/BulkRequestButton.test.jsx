@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BulkRequestButton } from '../BulkRequestButton';
 
 const mockSetRequestValues = jest.fn();
@@ -22,8 +22,7 @@ jest.mock('react-admin', () => ({
     useRefresh: () => jest.fn(),
 }));
 
-const renderAndSubmit = (props) => {
-    const mutate = jest.fn();
+const renderAndSubmit = (props, mutate = jest.fn()) => {
     render(
         <BulkRequestButton label="פעולה" name="action" mutate={mutate} {...props}>
             <input />
@@ -54,5 +53,20 @@ describe('BulkRequestButton', () => {
         expect(defaultValues).toEqual({ field: 'default' });
         expect(mockSetRequestValues).not.toHaveBeenCalled();
         expect(mutate).toHaveBeenCalledWith({ 'extra.field': 'value' }, expect.anything());
+    });
+
+    it('keeps the dialog open when the request fails', async () => {
+        const mutate = jest.fn((data, options) => options.onSettled());
+        renderAndSubmit({}, mutate);
+        expect(mutate).toHaveBeenCalled();
+        // longer than the dialog's close transition
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        expect(screen.getByTestId('form')).toBeInTheDocument();
+    });
+
+    it('closes the dialog when the request succeeds', async () => {
+        const mutate = jest.fn((data, options) => { options.onSuccess(); options.onSettled(); });
+        renderAndSubmit({}, mutate);
+        await waitFor(() => expect(screen.queryByTestId('form')).not.toBeInTheDocument());
     });
 });

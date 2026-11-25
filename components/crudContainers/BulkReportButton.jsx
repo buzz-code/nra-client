@@ -21,7 +21,11 @@ export const BulkReportButton = ({ label, icon, name, filename, defaultRequestVa
                     notify('ra.message.report_generation_success');
                     onUnselectItems();
                 })
-                .catch(handleError(notify));
+                .catch((error) => {
+                    handleError(notify)(error);
+                    // rethrow so the dialog stays open on failure
+                    throw error;
+                });
         }
     });
 
