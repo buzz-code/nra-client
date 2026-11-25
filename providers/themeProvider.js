@@ -143,7 +143,7 @@ export const createTheme = (options = {}) => {
                     // child of <thead> and never matches "even".
                     root: ({ theme }) => ({
                         '&:nth-of-type(even)': {
-                            backgroundColor: alpha(theme.palette.text.primary, 0.02),
+                            backgroundColor: alpha(theme.palette.text.primary, 0.05),
                         },
                         '&.MuiTableRow-hover:hover': {
                             backgroundColor: alpha(theme.palette.primary.main, 0.04),
