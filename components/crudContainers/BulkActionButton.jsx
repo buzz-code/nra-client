@@ -19,7 +19,11 @@ export const BulkActionButton = ({ label, icon, name, defaultRequestValues, relo
                 .then(() => {
                     onUnselectItems();
                 })
-                .catch(handleError(notify));
+                .catch((error) => {
+                    handleError(notify)(error);
+                    // rethrow so the dialog stays open on failure
+                    throw error;
+                });
         }
     });
 
